@@ -1,0 +1,56 @@
+#!/bin/sh
+
+#################
+# L O G I T
+#################
+logit()
+{
+  logger -trc.serverlayout -plocal7.info -is "$1"
+  echo "$1"
+}
+
+#######################
+# G E T D I S K D A T A
+#######################
+getdiskdata()
+{
+  AUTODATAFILE="/tmp/AutomaticData.cfg"
+  echo -n "" > ${AUTODATAFILE}
+  INDEX=1
+  for DISK_NO in {a..z}
+  do
+    if [ -b "/dev/sd$DISK_NO" ]; then
+      MY_COMMAND=$(ls /dev/disk/by-id -las | grep -F 'ata-' | grep -v 'part[0-9]' | grep -F "sd$DISK_NO")
+      if [ "$MY_COMMAND" != "" ]; then
+        smartctl -i /dev/sd$DISK_NO > /tmp/diskinfo_output
+        MODEL=$(grep -Po '(?<=(Device Model:     )).*(?=)' /tmp/diskinfo_output)
+        SN=$(grep -Po '(?<=(Serial Number:    )).*(?=| )' /tmp/diskinfo_output)
+        FIRMWARE=$(grep -Po '(?<=(Firmware Version: )).*(?=| )' /tmp/diskinfo_output)
+        CAPACITY=$(grep "User Capacity:" /tmp/diskinfo_output | grep -Po '(?<=(\[)).*(?=\])')
+        echo "[$INDEX]" >> ${AUTODATAFILE}
+        echo "TYPE=\"SATA\"" >> ${AUTODATAFILE}
+        echo "DEVICE=\"sd$DISK_NO\"" >> ${AUTODATAFILE}
+        echo "MODEL=\"$MODEL\"" >> ${AUTODATAFILE}
+        echo "SN=\"$SN\"" >> ${AUTODATAFILE}
+        echo "FIRMWARE=\"$FIRMWARE\"" >> ${AUTODATAFILE}
+        echo "CAPACITY=\"$CAPACITY\"" >> ${AUTODATAFILE}
+        rm -f /tmp/diskinfo_output
+        ((INDEX++))
+      fi
+    fi
+  done
+}
+
+###################
+# M A I N
+###################
+
+case "$1" in
+  'getdiskdata')
+    getdiskdata
+  ;;
+  *)
+    echo "usage $0 "
+    echo ""
+    echo "         getdiskdata"
+esac

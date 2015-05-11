@@ -1,0 +1,190 @@
+<?xml version='1.0' standalone='yes'?>
+
+<!DOCTYPE PLUGIN [
+<!ENTITY name        "serverlayout">
+<!ENTITY author      "Dan Kessler">
+<!ENTITY version     "2015.05.10">
+<!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
+<!ENTITY packageVER  "v1.0">
+<!ENTITY packageMD5  "5d7114ba4b96fc709251ed3f33c59ced">
+<!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
+<!ENTITY packageURL  "https://github.com/theone11/serverlayout_plugin/raw/master/&packagefile;">
+<!ENTITY pluginLOC   "/boot/config/plugins/&name;">
+<!ENTITY emhttpLOC   "/usr/local/emhttp/plugins/&name;">
+]>
+
+<PLUGIN  name="&name;"
+         author="&author;"
+         version="&version;"
+         pluginURL="&pluginURL;"
+>
+
+<CHANGES>
+###2015.05.10
+- Initial Release
+</CHANGES>
+
+<!--
+############################################
+# Plugin Install script
+############################################
+-->
+<FILE Name="/tmp/&name;-install" Run="/bin/bash">
+<INLINE>
+<!--
+#################
+# L O G I T
+#################
+-->
+logit()
+{
+  <!--logger -trc.&name; -plocal7.info -is "$1"-->
+  echo ""
+  echo "$1"
+}
+
+DOWNLOAD_PKG="false"
+INSTALL_PKG="false"
+
+logit "Installing plugin..."
+
+<!--
+logit "Cleaning up older versions if exist in &emhttpLOC;"
+[ -d "&emhttpLOC;" ] &amp;&amp; rm -fR "&emhttpLOC;"
+-->
+
+<!--# Create plugin folder if needed -->
+if [ ! -d "&pluginLOC;" ] ; then
+  logit "Creating plugin folder &pluginLOC;"
+  mkdir -p "&pluginLOC;"
+else
+  logit "Plugin folder &pluginLOC; already exists"
+fi
+
+<!--# Check local package file -->
+logit "Checking existing package &pluginLOC;/&packagefile;..."
+if [ -f "&pluginLOC;/&packagefile;" ] ; then
+  PKG_LOCAL_MD5=$(/usr/bin/md5sum &pluginLOC;/&packagefile; | cut -d' ' -f1)
+  if [ "$PKG_LOCAL_MD5" == "&packageMD5;" ] ; then
+    logit "Latest package already exists &pluginLOC;/&packagefile;"
+    INSTALL_PKG="true"
+  else
+    logit "Local/Online package MD5 mismatch ($PKG_LOCAL_MD5/&packageMD5;) on &pluginLOC;/&packagefile; - deleting local package"
+    DOWNLOAD_PKG="true"
+  fi
+else
+  logit "Latest package does not exist &pluginLOC;/&packagefile;"
+  DOWNLOAD_PKG="true"
+fi
+
+<!--# Download plugin files -->
+if [ "$DOWNLOAD_PKG" == "true" ]; then
+
+  <!--# Save existing packages until new package is downloaded OK -->
+  logit "Saving any previous packages from &pluginLOC;"
+  mkdir -p "/tmp/&name;-packages"
+  TEMP="&pluginLOC;/&name;-package-*"
+  mv -f $TEMP "/tmp/&name;-packages"
+
+  logit "Attempting to download plugin package &packageURL;..."
+  wget --quiet --spider --no-check-certificate --timeout=10 &packageURL;
+  if [ ! $? == "0" ] ; then
+    logit "Package server down &packageURL; - Plugin cannot install"
+    INSTALL_PKG="false"
+  else
+    wget --quiet --no-check-certificate --timeout=10 -O &pluginLOC;/&packagefile; &packageURL;
+    if [ ! -f "&pluginLOC;/&packagefile;" ] ; then
+      logit "Package download failed &packageURL; - Plugin cannot install"
+      INSTALL_PKG="false"
+    else
+      PKG_LOCAL_MD5=$(/usr/bin/md5sum &pluginLOC;/&packagefile; | cut -d' ' -f1)
+      if [ "$PKG_LOCAL_MD5" != "&packageMD5;" ] ; then
+        logit "Package MD5 mismatch ($PKG_LOCAL_MD5/&packageMD5;) on &pluginLOC;/&packagefile; - Plugin cannot install"
+        INSTALL_PKG="false"
+      else
+        logit "Package &packagefile; downloaded to &pluginLOC; - MD5 match "$PKG_LOCAL_MD5""
+        INSTALL_PKG="true"
+      fi
+    fi
+  fi
+fi
+
+if [ "$INSTALL_PKG" == "true" ] ; then
+  logit "Extracting plugin package..."
+  <!--# Remove current existing files -->
+  [ -f "/etc/rc.d/rc.&name;" ] &amp;&amp; rm -f "/etc/rc.d/rc.&name;"
+  [ -d "&emhttpLOC;" ] &amp;&amp; rm -fR "&emhttpLOC;"
+  <!--# Extract files -->
+  tar -xf "&pluginLOC;/&packagefile;" -C "/"
+  <!-- Make rc.&name executable -->
+  chmod 0770 "/etc/rc.d/rc.&name;"
+  <!--# Edit PAGE file  - add version number and ending "---" -->
+  echo "Version=\"&version;\"" &gt;&gt; "&emhttpLOC;/&name;.page"
+  echo "---" &gt;&gt; "&emhttpLOC;/&name;.page"
+  <!--# Create or fix configuration file -->
+  if [ ! -f "&pluginLOC;/&name;.cfg" ] ; then
+    logit "Configuration file not found. Creating configuration file..."
+    echo "# VirtualBox plugin configuration - Do not modify manually - Change via WEBUI" &gt; "&pluginLOC;/&name;.cfg"
+  fi
+  logit "Checking all configuration file parameters exist"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep ROWS` ] &amp;&amp; echo "ROWS=\"6\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep COLUMNS` ] &amp;&amp; echo "COLUMNS=\"4\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep ORIENTATION` ] &amp;&amp; echo "ORIENTATION=\"0\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW1` ] &amp;&amp; echo "SHOW1=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW2` ] &amp;&amp; echo "SHOW2=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW3` ] &amp;&amp; echo "SHOW3=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW4` ] &amp;&amp; echo "SHOW4=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW5` ] &amp;&amp; echo "SHOW5=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW6` ] &amp;&amp; echo "SHOW6=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+
+  rm -Rf "/tmp/&name;-packages"
+  rm -f "/tmp/&name;-install"
+  logit "Plugin and Package file &packagefile; extracted and installed successfully"
+  exit 0
+else
+  <!-- Revert back to previous packages -->
+  if [ -f "&pluginLOC;/&packagefile;" ] ; then
+    <!-- Remove bad MD5 downloaded package if exists -->
+    rm -f "&pluginLOC;/&packagefile;"
+  fi
+  logit "Reverting back to previously saved packages..."
+  TEMP1="/tmp/&name;-packages"
+  TEMP2=$(ls $TEMP1)
+  if [ "$TEMP2" != "" ] ; then
+    TEMP="/tmp/&name;-packages/&name;-package-*"
+    mv -f $TEMP "&pluginLOC;"
+    logit "Previous packages restored"
+  else
+    logit "No previous packages to restored"
+  fi
+  rm -Rf "/tmp/&name;-packages"
+  rm -f "/tmp/&name;-install"
+  logit "Plugin install failed"
+  exit 1
+fi
+</INLINE>
+</FILE>
+
+<!--
+############################################
+# plugin Remove method
+############################################
+-->
+<FILE Run="/bin/bash" Method="remove">
+<INLINE>
+logit()
+{
+  <!--logger -trc.&name; -plocal7.info -is "$1"-->
+  echo "$1"
+  echo ""
+}
+
+logit "Removing plugin..."
+[ -f "/tmp/&name;-install" ] &amp;&amp; rm -f "/tmp/&name;-install"
+[ -f "/etc/rc.d/rc.&name;" ] &amp;&amp; "/etc/rc.d/rc.&name;" stop
+[ -f "/etc/rc.d/rc.&name;" ] &amp;&amp; rm -f "/etc/rc.d/rc.&name;"
+[ -d "&emhttpLOC;" ] &amp;&amp; rm -fR "&emhttpLOC;"
+logit "Plugin stopped and removed - no files removed from &pluginLOC;"
+</INLINE>
+</FILE>
+</PLUGIN>
