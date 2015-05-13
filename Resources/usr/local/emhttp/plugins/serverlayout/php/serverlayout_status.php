@@ -7,84 +7,83 @@ $columns = $serverlayout_cfg['COLUMNS'];
 $orientation = $serverlayout_cfg['ORIENTATION'];
 $num_trays = $num_columns * $num_rows;
 
-$width = 293;
-$height = 80;
-
 if (file_exists($automatic_data)) {
   $serverlayout_auto = parse_ini_file($automatic_data, true);
   $num_disks = count($serverlayout_auto, COUNT_NORMAL);
 } else {
   $num_disks = 0;
 }
+
+          $x_translate = $rows;
+          $y_translate = $columns;
+         
 ?>
 
 <HTML>
 <HEAD>
-
-<style> 
-
-#container {
-  overflow: hidden;
-  min-width: <? echo ($width * $columns); ?>px;
-  max-width: <? echo ($width * $columns); ?>px;
-  min-height: <? echo ($height * $rows); ?>px;
-  max-height: <? echo ($height * $rows); ?>px;
-  transform: rotate(-<? echo $orientation ?>deg)
-             translate(-<? echo $orientation/90*($columns/2*$width - $rows/2*$height) ?>px,
-                        <? echo $orientation/90*($rows/2*$height - $columns/2*$width) ?>px);
-  border-spacing: 0px;
-  border-width: 0px;
+<style>
+.container {
+  width: <? echo ($width * $columns); ?>px;
+  height: <? echo ($width * $rows); ?>px;
   margin: 50px;
-  padding: 0px;
-  borders: 0px;
-  background: rgba(54, 25, 25, 0);
+  background: rgba(54, 25, 25, 0);  /* Transparent Background */
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-#tray {
-  border-color: black;
-  line-height:20px;
-  background-image: url("frontpanel.jpg");
-  background-size: 306px 80px;
-  background-repeat: no-repeat;
+.row_container {
+  width: <? echo ($width * $columns); ?>px;
+  height: <? if ($orientation == 0) { echo $height; } else { echo $width; } ?>px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
 
-  max-height: <? echo $height; ?>px;
-  max-width: <? echo $width; ?>px;
-  height: <? echo $height; ?>px;
+.cell_container {
   width: <? echo $width; ?>px;
+  height: <? echo $height; ?>px;
+  box-sizing: border-box;
   float:left;
-  border-spacing: 0px;
-  border-width: 0px;
-  margin: 0px;
-  padding:0px;
-  borders: 0px;
-  color: black;
-  display: table;
+  background-image: url(<?php echo $frontpanel_imgfile; ?>);
+  background-size: cover;
+  overflow: hidden;
 }
 
-#tray_text {
+.cell_text {
   text-align: center;
-  vertical-align: middle;
-  border-spacing: 0px;
-  border-width: 0px;
-  margin: 0px;
-  padding:0px;
+  position: relative;           /* Vertical Center */
+  top: 50%;                     /* Vertical Center */
+  transform: translateY(-50%);  /* Vertical Center */
   padding-left: 65px;
   padding-right: 5px;
-  borders: 0px;
-  display: table-cell;
-  vertical-align: middle;
+  box-sizing: border-box;
+  overflow: hidden;
 }
-;
 </style>
 
+<script type="text/javascript">
+function UpdateDIVSizes() {
+  var orientation = <?php echo $orientation; ?>;
+  var element = document.getElementsByClassName("container");
+  for (i = 0; i < element.length; i++) {
+    if (orientation == 0) {
+      element[i].style.height = <?php echo ($height * $rows); ?>;
+    } else {
+      element[i].style.width = <?php echo ($height * $columns); ?>;
+    }
+  }
+}
+</script>
 </HEAD>
-<BODY>
+<BODY onload="UpdateDIVSizes()">
 
-<div id="container">
+<div class="container">
 <?php for ($i = 1; $i <= $rows; $i++) { ?>
-  <?php for ($j = 1; $j <= $columns; $j++) { ?>
-      <div id="tray">
-      <div id="tray_text">
+  <div class="row_container">
+  <?php for ($j = 1; $j <= $columns; $j++) {
+      $x_translate = $orientation/90*(-$width/2 + $height/2 - ($j-1)*($width-$height));
+      $y_translate = $orientation/90*(-$width/2 + $height/2); ?>
+    <div class="cell_container" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+      <div class="cell_text">
       <?php $tray_num = (($i-1) * $columns) + $j;
             echo $tray_num." / ";
             for ($k = 1; $k <= $num_disks; $k++) {
@@ -101,8 +100,9 @@ if (file_exists($automatic_data)) {
               }
             } ?>
       </div>
-      </div>
+    </div>
   <?php } ?>
+  </div>
 <?php } ?>
 </div>
 

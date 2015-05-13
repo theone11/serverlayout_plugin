@@ -5,69 +5,64 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
   if(isset($_POST['apply'])) {
     // Write new configuration data    
     $arguments = "";
-    $num_rows_new = $_POST['ROWS'];
-    $arguments .= "ROWS=\"".$num_rows_new."\"\n";
-    $num_columns_new = $_POST['COLUMNS'];
-    $arguments .= "COLUMNS=\"".$num_columns_new."\"\n";
+    $rows_new = $_POST['ROWS'];
+    $arguments .= "ROWS=\"".$rows_new."\"\n";
+    $columns_new = $_POST['COLUMNS'];
+    $arguments .= "COLUMNS=\"".$columns_new."\"\n";
     $orientation_new = $_POST['ORIENTATION'];
     $arguments .= "ORIENTATION=\"".$orientation_new."\"\n";
-      
-    for ($i = 1; $i <= ($num_data_col-$num_data_col_not_show); $i++) {  // Write SHOW/HIDE configuration
+    // Write SHOW/HIDE configuration
+    for ($i = 1; $i <= ($num_data_col-$num_data_col_not_show); $i++) {
       $temp = "SHOW".$i;
-      echo $_POST[$temp].", ";
-      if (isset($_POST[$temp])) {
-        echo "isset, ";
-      } else {
-        echo "not isset, ";
-      }
       if (isset($_POST[$temp]) and ($_POST[$temp] == "SHOW")) {
         $arguments .= "SHOW".$i."=\"SHOW\"\n";
       } else {
         $arguments .= "SHOW".$i."=\"HIDE\"\n";
       }
     }
-
     // Get previous ROWS and COLUMNS settings
     $serverlayout_cfg = parse_ini_file($serverlayout_cfg_file, true);
-    $num_rows_old = $serverlayout_cfg['ROWS'];
-    $num_columns_old = $serverlayout_cfg['COLUMNS'];
-
-    // Check if ROWS or COLUMNS have changed
-    if (($num_rows_new == $num_rows_old) and ($num_columns_new == $num_columns_old)) {
-      // ROWS or COLUMNS have NOT changed - Prepare disks' data
-      if (file_exists($automatic_data)) {
-        $serverlayout_auto = parse_ini_file($automatic_data, true);
-        $num_disks = count($serverlayout_auto, COUNT_NORMAL);
-      } else {
-        $num_disks = 0;
-      }
-      for ($i = 1; $i <= $num_disks; $i++) {
-        $temp = $serverlayout_auto[$i]['SN'];
-        $arguments .= "[".$temp."]\n";
-        if ($serverlayout_auto[$i]['TYPE'] != "USB") {
+    $rows_old = $serverlayout_cfg['ROWS'];
+    $columns_old = $serverlayout_cfg['COLUMNS'];
+    $orientation_old = $serverlayout_cfg['ORIENTATION'];
+    // Get number of disks
+    if (file_exists($automatic_data)) {
+      $serverlayout_auto = parse_ini_file($automatic_data, true);
+      $num_disks = count($serverlayout_auto, COUNT_NORMAL);
+    } else {
+      $num_disks = 0;
+    }
+    for ($i = 1; $i <= $num_disks; $i++) {
+      $temp = $serverlayout_auto[$i]['SN'];
+      $arguments .= "[".$temp."]\n";
+      // Check if ROWS / COLUMNS / ORIENTATION have changed
+      if (($rows_new != $rows_old) or ($columns_new != $columns_old) or ($orientation_new != $orientation_old)) {
+        // At least one of the following ROWS / COLUMNS / ORIENTATION has changed - Don't save TRAY_NUM assignments
+        if ($serverlayout_auto[$i]['TYPE'] != "USB") {  // Also don't save if device is USB
           $temp = "TRAY_NUM".$i;
           $temp2 = $_POST[$temp];
           $arguments .= "TRAY_NUM=\"".$temp2."\"\n";
         }
-        $temp = "PURCHASE_DATE".$i;
-        $temp2 = $_POST[$temp];
-        $arguments .= "PURCHASE_DATE=\"".$temp2."\"\n";
       }
-    } else {
-      // ROWS or COLUMNS HAVE changed - Do NOT prepare disks' data - Do nothing
+      // Save all other disk information
+      $temp = "PURCHASE_DATE".$i;
+      $temp2 = $_POST[$temp];
+      $arguments .= "PURCHASE_DATE=\"".$temp2."\"\n";
     }
+    // Save to CONFIG file
     file_put_contents($serverlayout_cfg_file, $arguments);
 
   } elseif (isset($_POST['scan'])) {
       shell_exec($scan_command);
   }
 
-//  }
-} else {
+} else {  // Not POST method
+
 //  $is_post = false;
 //  $dataOK = true;
 //  $rowsERR = false;
 //  $columnsERR = false;
+
 }
 
 if (file_exists($automatic_data)) {
@@ -78,17 +73,56 @@ if (file_exists($automatic_data)) {
 }
 
 $serverlayout_cfg = parse_ini_file($serverlayout_cfg_file, true);
-$num_rows = $serverlayout_cfg['ROWS'];
-$num_columns = $serverlayout_cfg['COLUMNS'];
+$rows = $serverlayout_cfg['ROWS'];
+$columns = $serverlayout_cfg['COLUMNS'];
 $orientation = $serverlayout_cfg['ORIENTATION'];
-$num_trays = $num_columns * $num_rows;
+$num_trays = $columns * $rows;
 
+$width_preview = $width/$factor;
+$height_preview = $height/$factor;
 ?>
 
 <HTML>
 
 <HEAD>
-<style> </style>
+<style>
+.container_preview {
+  width: <? echo ($width_preview * $columns); ?>px;
+  height: <? echo ($width_preview * $rows); ?>px;
+  margin: 0px;
+  background: rgba(54, 25, 25, 0);  /* Transparent Background */
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+.row_container_preview {
+  width: <? echo ($width_preview * $columns); ?>px;
+  height: <? if ($orientation == 0) { echo $height_preview; } else { echo $width_preview; } ?>px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.cell_container_preview {
+  width: <? echo $width_preview; ?>px;
+  height: <? echo $height_preview; ?>px;
+  box-sizing: border-box;
+  float:left;
+  background-image: url(<?php echo $frontpanel_imgfile; ?>);
+  background-size: cover;
+  overflow: hidden;
+}
+
+.cell_text_preview {
+  text-align: center;
+  position: relative;           /* Vertical Center */
+  top: 50%;                     /* Vertical Center */
+  transform: translateY(-50%);  /* Vertical Center */
+  padding-left: <?php echo (65/$factor); ?>px;
+  padding-right: 5px;
+  box-sizing: border-box;
+  overflow: hidden;
+}
+</style>
 
 <script type="text/javascript">
 function validateForm() {
@@ -116,6 +150,7 @@ function StartUp() {
   TrayOptionsStartup();
   InitDisabledFields();
   InitShowCheckboxed();
+  UpdateDIVSizes();
 }
 
 function InitShowCheckboxed() {
@@ -288,31 +323,14 @@ function UpdateTrayOptions(current_tray_num, element) {
                              echo "\""; echo $serverlayout_auto[$i]['DEVICE']; echo "\", ";
                            }
                         } ?>];
-  var myTable = document.getElementById("PREVIEWTABLE");  // Get table element
   if (value != "") {
-    var temp = value % <?php echo $num_columns; ?>;
-    if (temp == 0) {
-      var row = (value / <?php echo $num_columns; ?>) - 1;  // Calculate ROW
-      var column = <?php echo $num_columns; ?> - 1;  // Calculate COLUMN
-    } else {
-      var row = Math.floor(value / <?php echo $num_columns; ?>);  // Calculate ROW
-      var column = (value % <?php echo $num_columns; ?>) - 1;  // Calculate COLUMN
-    }
 //    alert("Updating TRAY_NUM"+current_tray_num+" device_id \""+device_list[current_tray_num-1]+" to "+value+" ("+row+", "+column+")");
-    myTable.rows[row].cells[column].innerHTML = value+" - "+device_list[current_tray_num-1];  // Update table cell data
+    document.getElementById("TRAY_TEXT"+value).innerHTML = value+" - "+device_list[current_tray_num-1]; // Change DIV HTML content
   }
 
   if (oldvalue != "") {
-    var temp = oldvalue % <?php echo $num_columns; ?>;
-    if (temp == 0) {
-      var oldrow = (oldvalue / <?php echo $num_columns; ?>) - 1;  // Calculate ROW
-      var oldcolumn = <?php echo $num_columns; ?> - 1;  // Calculate COLUMN
-    } else {
-      var oldrow = Math.floor(oldvalue / <?php echo $num_columns; ?>);  // Calculate ROW
-      var oldcolumn = (oldvalue % <?php echo $num_columns; ?>) - 1;  // Calculate COLUMN
-    }
 //    alert("Updating TRAY_NUM"+current_tray_num+" device_id \""+device_list[current_tray_num-1]+"\" from "+oldvalue+" ("+oldrow+", "+oldcolumn+")");
-    myTable.rows[oldrow].cells[oldcolumn].innerHTML = oldvalue+" - ";  // Update table cell data
+    document.getElementById("TRAY_TEXT"+value).innerHTML = oldvalue+" - "; // Change DIV HTML content
   }
 }
 
@@ -355,6 +373,19 @@ function EditTableCheckbox(myCheckbox) {
     }
   }
 }
+
+function UpdateDIVSizes() {
+  var orientation = <?php echo $orientation; ?>;
+  var element = document.getElementsByClassName("container_preview");
+  for (i = 0; i < element.length; i++) {
+    if (orientation == 0) {
+      element[i].style.height = <?php echo ($height_preview * $rows); ?>;
+    } else {
+      element[i].style.width = <?php echo ($height_preview * $columns); ?>;
+    }
+  }
+}
+
 </script>
 </HEAD>
 
@@ -365,7 +396,7 @@ function EditTableCheckbox(myCheckbox) {
     <h2>Set server layout</h2>
     <p><u>Notes:</u><p>
     <ul>
-      <li>Changing the layout (Rows/Columns) will result in resetting all manually entered data (Trays #, Purchase Date, etc...)</li>
+      <li>Changing the layout (Rows/Columns/Orientation) will result in resetting Drive Tray assignments (Trays #)</li>
       <li>Maximum number of drive trays allowed is <?php echo $max_trays ?></li>
       <li>First choose the number of rows and then choose the number of columns</li>
     </ul>
@@ -411,8 +442,8 @@ function EditTableCheckbox(myCheckbox) {
       <?php for ($i = 1; $i <= $num_disks; $i++) { ?>
       <tr>
         <td><?php switch ($serverlayout_auto[$i]['TYPE']) {
-                    case "SATA": ?> <img src="SATA_Logo.jpg" style="width:30px;height:20px"> <? break;
-                    case "USB": ?> <img src="USB_Logo.jpg" style="width:30px;height:20px"> <? break;
+                    case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:30px;height:20px"> <? break;
+                    case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:30px;height:20px"> <? break;
                     default: echo $serverlayout_auto[$i]['TYPE']; break; } ?>
         </td>
         <td><?php echo $serverlayout_auto[$i]['DEVICE']; ?></td>
@@ -448,25 +479,29 @@ function EditTableCheckbox(myCheckbox) {
   <br>
   <br>
 
-  <div>
-    <h2>Preview of server layout</h2>
-    <table id="PREVIEWTABLE">
-      <?php for ($i = 1; $i <= $num_rows; $i++) { ?>
-      <tr>
-        <?php for ($j = 1; $j <= $num_columns; $j++) { ?>
-        <td>
-          <?php $tray_num = (($i-1) * $num_columns) + $j;
-                echo "$tray_num - ";
-                for ($k = 1; $k <= $num_disks; $k++) {
-                  if ($serverlayout_cfg[$serverlayout_auto[$k]['SN']]['TRAY_NUM'] == $tray_num) { echo $serverlayout_auto[$k]['DEVICE']; }
-                } ?>
-        </td>
-        <?php } ?>
-      </tr>
-      <?php } ?>
-    </table>
+  <h2>Preview of server layout</h2>
+  <div class="container_preview">
+  <?php for ($i = 1; $i <= $rows; $i++) { ?>
+    <div class="row_container_preview">
+    <?php for ($j = 1; $j <= $columns; $j++) {
+        $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
+        $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
+      <div class="cell_container_preview" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+        <?php $tray_num = (($i-1) * $columns) + $j; ?>
+        <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
+        <?php echo $tray_num." - ";
+              for ($k = 1; $k <= $num_disks; $k++) {
+                if ($serverlayout_cfg[$serverlayout_auto[$k]['SN']]['TRAY_NUM'] == $tray_num) {
+                  echo $serverlayout_auto[$k]['DEVICE'];
+                }
+              } ?>
+        </div>
+      </div>
+    <?php } ?>
+    </div>
+  <?php } ?>
   </div>
-  
+
   <br>
   <br>
 
