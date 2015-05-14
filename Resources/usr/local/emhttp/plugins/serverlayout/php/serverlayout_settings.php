@@ -24,7 +24,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $serverlayout_cfg = parse_ini_file($serverlayout_cfg_file, true);
     $rows_old = $serverlayout_cfg['ROWS'];
     $columns_old = $serverlayout_cfg['COLUMNS'];
-    $orientation_old = $serverlayout_cfg['ORIENTATION'];
     // Get number of disks
     if (file_exists($automatic_data)) {
       $serverlayout_auto = parse_ini_file($automatic_data, true);
@@ -36,8 +35,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $temp = $serverlayout_auto[$i]['SN'];
       $arguments .= "[".$temp."]\n";
       // Check if ROWS / COLUMNS / ORIENTATION have changed
-      if (($rows_new != $rows_old) or ($columns_new != $columns_old) or ($orientation_new != $orientation_old)) {
-        // At least one of the following ROWS / COLUMNS / ORIENTATION has changed - Don't save TRAY_NUM assignments
+      if (($rows_new == $rows_old) and ($columns_new == $columns_old)) {
+        // At least one of the following ROWS / COLUMNS has changed - Don't save TRAY_NUM assignments
         if ($serverlayout_auto[$i]['TYPE'] != "USB") {  // Also don't save if device is USB
           $temp = "TRAY_NUM".$i;
           $temp2 = $_POST[$temp];
@@ -256,8 +255,6 @@ function UpdateTrayOptions(current_tray_num, element) {
   var num_trays = <?php echo $num_trays ?>;
   var value = element.value;
   var oldvalue = element.oldvalue;
-    
-//  alert("TRAY_NUM"+current_tray_num+" changed to "+value+".\nFor all other "+(num_disks-1)+" disks, "+value+" will be removed and "+oldvalue+" will be returned");
   
   for (i = 1; i <= num_disks; i++) {
     var index = "TRAY_NUM"+i;
@@ -266,24 +263,18 @@ function UpdateTrayOptions(current_tray_num, element) {
     if (tray_num != null) {  // If no Element exists (USB) then nothing to do
       
       if (i != parseInt(current_tray_num)) {  // Only manipulate other TRAY_NUMs
-//        alert("Processing "+index+" - current_tray_num="+current_tray_num+"\nNew value = "+value+", oldvalue = "+oldvalue);
         // Start - Remove option from all other TRAY_NUMs
         if (value != "") {  // If new value is not "Unassigned" then remove it from other TRAYS
           var num_options = tray_num.options.length;
           for (j = 0; j < num_options; j++) {  // Go over all options
             if (tray_num.options[j].value == value) {  // Find option with same value
-  // cannot happen because            if (tray_num.value == value) {  // If current selected value is to be removed then change new value to "Unassigned" which is "" 
-  // "value" would not have             tray_num.value = "";
-  // been available to choose           }
               tray_num.options.remove(j);  // Remove option
-//              alert("Removed "+value+" from TRAY_NUM"+i);
               break;  // Need to break because option found and length is now 1 option less
             }
           }
         }
         // Start - Add previous option back to all other TRAY_NUMs
         if (oldvalue != "") {
-//          alert("Adding "+parseInt(oldvalue));
           var num_options = tray_num.options.length;  // Get number of options again because changed - option might have been removed
           var not_found = true;
           for (j = 1; j < num_options; j++) {  // Go over all options except EMPTY
@@ -293,8 +284,7 @@ function UpdateTrayOptions(current_tray_num, element) {
               new_option.value = oldvalue;
               new_option.text = oldvalue;
               tray_num.options.add(new_option, j);
-//              alert("Added "+oldvalue+" to TRAY_NUM"+i+" at position "+j);
-              break;
+              break;  // Found and added option in correct (sorted) place
             }
           }
           if (not_found) {
@@ -302,18 +292,11 @@ function UpdateTrayOptions(current_tray_num, element) {
             new_option.value = oldvalue;
             new_option.text = oldvalue;
             tray_num.options.add(new_option, num_options);
-//            alert("Added "+oldvalue+" to TRAY_NUM"+i+" at position "+j);
           }
         }
       }
     }
   }
-//  alert("Completed Processing");
-//}
-
-//function UpdatePreviewTable() {
-//  var num_disks = <?php echo $num_disks ?>;
-
 
   // Create device_list array for all disks found
   var device_list = [<?for ($i = 1; $i <= $num_disks; $i++) {
@@ -323,14 +306,13 @@ function UpdateTrayOptions(current_tray_num, element) {
                              echo "\""; echo $serverlayout_auto[$i]['DEVICE']; echo "\", ";
                            }
                         } ?>];
+  
+//  alert("Moving device"+device_list[current_tray_num-1]+" from "+oldvalue+" to "+value);
   if (value != "") {
-//    alert("Updating TRAY_NUM"+current_tray_num+" device_id \""+device_list[current_tray_num-1]+" to "+value+" ("+row+", "+column+")");
-    document.getElementById("TRAY_TEXT"+value).innerHTML = value+" - "+device_list[current_tray_num-1]; // Change DIV HTML content
+    document.getElementById("TRAY_TEXT"+value).innerHTML = value+" - "+device_list[current_tray_num-1]; // Change DIV HTML content for new tray if it is assigned
   }
-
   if (oldvalue != "") {
-//    alert("Updating TRAY_NUM"+current_tray_num+" device_id \""+device_list[current_tray_num-1]+"\" from "+oldvalue+" ("+oldrow+", "+oldcolumn+")");
-    document.getElementById("TRAY_TEXT"+value).innerHTML = oldvalue+" - "; // Change DIV HTML content
+    document.getElementById("TRAY_TEXT"+oldvalue).innerHTML = oldvalue+" - "; // Change DIV HTML content for previous tray if it was assigned
   }
 }
 
