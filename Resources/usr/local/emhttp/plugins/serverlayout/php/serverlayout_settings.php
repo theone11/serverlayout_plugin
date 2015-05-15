@@ -97,14 +97,6 @@ if ($orientation == 0) {
     $layout_orientation = 90;
   }
 }  
-
-$control_div_h_width = (3 * ($control_width + $control_margin) + 4*$control_margin);
-$control_div_h_height = ((2 * $heading_height) + (2 * $control_height) + 4*$control_margin);
-$previewtable_div_h_width = 0;
-$previewtable_div_h_height = 0;
-
-$control_div_v_width = $control_width + 2*$control_margin;
-$control_div_v_height = ((2 * $heading_height) + (6 * $control_height) + (8 * $control_margin));
 ?>
 
 <HTML>

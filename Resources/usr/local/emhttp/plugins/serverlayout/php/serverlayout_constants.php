@@ -10,17 +10,10 @@ $frontpanel_imgfile = "../images/frontpanel.jpg";
 $sata_imgfile = "../images/SATA_Logo.png";
 $usb_imgfile = "../images/USB_Logo.png";
 
-$factor= 4;
+// Drives' background constants
+$factor= 4;  // Status table vs. Preview table size
 $border_radius = 8;
 $background_padding = 4;
-
 $width = 320;
 $height = 80;
-
-// Constants for serverlayout layout styles
-$control_width = 180;
-$control_height = 40;
-$control_margin = 10;
-$heading_height = 40;
-$heading_margin = 10;
 ?>

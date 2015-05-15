@@ -13,10 +13,6 @@ if (file_exists($automatic_data)) {
 } else {
   $num_disks = 0;
 }
-
-          $x_translate = $rows;
-          $y_translate = $columns;
-         
 ?>
 
 <HTML>
