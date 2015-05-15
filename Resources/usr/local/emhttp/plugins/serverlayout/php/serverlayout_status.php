@@ -43,20 +43,32 @@ if (file_exists($automatic_data)) {
   height: <? echo $height; ?>px;
   box-sizing: border-box;
   float:left;
-  background-image: url(<?php echo $frontpanel_imgfile; ?>);
-  background-size: cover;
   overflow: hidden;
 }
+
+.cell_background {
+  width: <? echo ($width-$background_padding); ?>px;
+  height: <? echo ($height-$background_padding); ?>px;
+  box-sizing: border-box;
+  float:left;
+  background-image: url(<?php echo $frontpanel_imgfile; ?>);
+  border-radius: <?php echo $border_radius; ?>px;
+	background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}  
 
 .cell_text {
   text-align: center;
   position: relative;           /* Vertical Center */
   top: 50%;                     /* Vertical Center */
   transform: translateY(-50%);  /* Vertical Center */
-  padding-left: 65px;
+  padding-left: 5px;
   padding-right: 5px;
   box-sizing: border-box;
   overflow: hidden;
+  color: white;
 }
 </style>
 
@@ -83,22 +95,24 @@ function UpdateDIVSizes() {
       $x_translate = $orientation/90*(-$width/2 + $height/2 - ($j-1)*($width-$height));
       $y_translate = $orientation/90*(-$width/2 + $height/2); ?>
     <div class="cell_container" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
-      <div class="cell_text">
-      <?php $tray_num = (($i-1) * $columns) + $j;
-            echo $tray_num." / ";
-            for ($k = 1; $k <= $num_disks; $k++) {
-              if ($serverlayout_cfg[$serverlayout_auto[$k]['SN']]['TRAY_NUM'] == $tray_num) {
-                for ($m = 1; $m <= ($num_data_col-$num_data_col_not_show); $m++) {
-                  $index = "SHOW".$m;
-                  if (($m == 1) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['DEVICE']." / "; }
-                  if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['MODEL']." / "; }
-                  if (($m == 3) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['SN']." / "; }
-                  if (($m == 4) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FIRMWARE']." / "; }
-                  if (($m == 5) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['CAPACITY']." / "; }
-                  if (($m == 6) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_cfg[$serverlayout_auto[$k]['SN']]['PURCHASE_DATE']." / "; }
+      <div class="cell_background">
+        <div class="cell_text">
+        <?php $tray_num = (($i-1) * $columns) + $j;
+              echo $tray_num." / ";
+              for ($k = 1; $k <= $num_disks; $k++) {
+                if ($serverlayout_cfg[$serverlayout_auto[$k]['SN']]['TRAY_NUM'] == $tray_num) {
+                  for ($m = 1; $m <= ($num_data_col-$num_data_col_not_show); $m++) {
+                    $index = "SHOW".$m;
+                    if (($m == 1) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['DEVICE']." / "; }
+                    if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['MODEL']." / "; }
+                    if (($m == 3) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['SN']." / "; }
+                    if (($m == 4) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FIRMWARE']." / "; }
+                    if (($m == 5) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['CAPACITY']." / "; }
+                    if (($m == 6) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_cfg[$serverlayout_auto[$k]['SN']]['PURCHASE_DATE']." / "; }
+                  }
                 }
-              }
-            } ?>
+              } ?>
+        </div>
       </div>
     </div>
   <?php } ?>

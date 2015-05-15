@@ -77,8 +77,34 @@ $columns = $serverlayout_cfg['COLUMNS'];
 $orientation = $serverlayout_cfg['ORIENTATION'];
 $num_trays = $columns * $rows;
 
+// Variables and Calculations for layout styles
+
 $width_preview = $width/$factor;
 $height_preview = $height/$factor;
+$border_radius_preview = $border_radius/$factor;
+$background_padding_preview = $background_padding;
+
+if ($orientation == 0) {
+  if (($columns * $width) > ($rows * $height)) {
+    $layout_orientation = 0;
+  } else {
+    $layout_orientation = 90;
+  }
+} else {
+  if (($columns * $height) > ($rows * $width)) {
+    $layout_orientation = 0;
+  } else {
+    $layout_orientation = 90;
+  }
+}  
+
+$control_div_h_width = (3 * ($control_width + $control_margin) + 4*$control_margin);
+$control_div_h_height = ((2 * $heading_height) + (2 * $control_height) + 4*$control_margin);
+$previewtable_div_h_width = 0;
+$previewtable_div_h_height = 0;
+
+$control_div_v_width = $control_width + 2*$control_margin;
+$control_div_v_height = ((2 * $heading_height) + (6 * $control_height) + (8 * $control_margin));
 ?>
 
 <HTML>
@@ -106,20 +132,32 @@ $height_preview = $height/$factor;
   height: <? echo $height_preview; ?>px;
   box-sizing: border-box;
   float:left;
-  background-image: url(<?php echo $frontpanel_imgfile; ?>);
-  background-size: cover;
   overflow: hidden;
 }
+
+.cell_background_preview {
+  width: <? echo ($width_preview-$background_padding_preview); ?>px;
+  height: <? echo ($height_preview-$background_padding_preview); ?>px;
+  box-sizing: border-box;
+  float:left;
+  background-image: url(<?php echo $frontpanel_imgfile; ?>);
+  border-radius: <?php echo $border_radius_preview; ?>px;
+	background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}  
 
 .cell_text_preview {
   text-align: center;
   position: relative;           /* Vertical Center */
   top: 50%;                     /* Vertical Center */
   transform: translateY(-50%);  /* Vertical Center */
-  padding-left: <?php echo (65/$factor); ?>px;
+  padding-left: 5px;
   padding-right: 5px;
   box-sizing: border-box;
   overflow: hidden;
+  color: white;
 }
 </style>
 
@@ -374,122 +412,134 @@ function UpdateDIVSizes() {
 <BODY onload="StartUp()">
 
 <form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-  <div>
-    <h2>Set server layout</h2>
-    <p><u>Notes:</u><p>
-    <ul>
-      <li>Changing the layout (Rows/Columns/Orientation) will result in resetting Drive Tray assignments (Trays #)</li>
-      <li>Maximum number of drive trays allowed is <?php echo $max_trays ?></li>
-      <li>First choose the number of rows and then choose the number of columns</li>
-    </ul>
-    <p>
-      Rows: <select name="ROWS" id="ROWS" size="1" onchange="DefineColumnsDropDownList()">
-              <option value="" disabled></option>
-              <?php for ($k = 1; $k <= $max_trays; $k++) { ?>
-              <option value="<? echo $k ?>"<? if ($serverlayout_cfg['ROWS'] == $k) { ?> selected<? } ?>><? echo $k ?></option>
-              <?php } ?>
-            </select>
-    </p>
-    <p>
-      Columns: <select name="COLUMNS" id="COLUMNS" size="1">
-               </select>
-    </p>
-    <p>
-      Drive Trays Orientation:
-        <select name="ORIENTATION" id="ORIENTATION" size="1" >
-          <option value="0"<? if ($orientation == "0") { ?> selected<? } ?>>Horizontal</option>
-          <option value="90"<? if ($orientation == "90") { ?> selected<? } ?>>Vertical</option>
-        </select>
-    </p>
-    Enable editing: <input type="checkbox" name="EDIT_LAYOUT" id="EDIT_LAYOUT" onchange="EditLayoutCheckbox(this)">
-  </div>
 
-  <br>
-  <br>
-
-  <div>
-    <h2>List of devices found</h2>
-    <table>
-      <tr>
-        <td></td>
-        <?php for ($i = 1; $i <= ($num_data_col-$num_data_col_not_show); $i++) { ?>
-        <td align="center"><input type="checkbox" name="SHOW<?php echo $i ?>" id="SHOW<?php echo $i ?>" value="SHOW"></td>
-        <?php } ?>
-        <td></td>
-      </tr>
-      <tr>
-        <th>Type</th> <th>Device</th> <th>Model</th> <th>Serial Number</th> <th>Firmware</th> <th>Capacity</th> <th>Purchase Date</th> <th>Tray #</th>
-      </tr>
-      <?php if ($num_disks > 0) { ?>
-      <?php for ($i = 1; $i <= $num_disks; $i++) { ?>
-      <tr>
-        <td><?php switch ($serverlayout_auto[$i]['TYPE']) {
-                    case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:30px;height:20px"> <? break;
-                    case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:30px;height:20px"> <? break;
-                    default: echo $serverlayout_auto[$i]['TYPE']; break; } ?>
-        </td>
-        <td><?php echo $serverlayout_auto[$i]['DEVICE']; ?></td>
-        <td><?php echo $serverlayout_auto[$i]['MODEL']; ?></td>
-        <td><?php echo $serverlayout_auto[$i]['SN']; ?></td>
-        <td><?php echo $serverlayout_auto[$i]['FIRMWARE']; ?></td>
-        <td><?php echo $serverlayout_auto[$i]['CAPACITY']; ?></td>
-        <td><input type="text" name="PURCHASE_DATE<?php echo $i ?>" id="PURCHASE_DATE<?php echo $i ?>" style="width: 6em;" maxlength="10" value="<?=$serverlayout_cfg[$serverlayout_auto[$i]['SN']]['PURCHASE_DATE'];?>"></td>
-        <td>
-          <?php if ($serverlayout_auto[$i]['TYPE'] != "USB") { ?>
-          <select name="TRAY_NUM<?php echo $i ?>" id="TRAY_NUM<?php echo $i ?>" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions(<?php echo $i ?>, this); this.oldvalue = this.value;">
-          </select>
-          <?php } else { ?>
-          <?php echo $serverlayout_cfg[$serverlayout_auto[$i]['SN']]['TRAY_NUM']; ?>
-          <?php } ?>
-        </td>
-      </tr>
-      <?php } ?>
-      <tr>
-        <td></td> <td></td> <td></td> <td></td> <td></td> <td></td> <td colspan="2" align="center">Enable editing: <input type="checkbox" name="EDIT_TABLE" id="EDIT_TABLE" onchange="EditTableCheckbox(this)"></td>      
-      </tr>
-      <?php } else { ?>
-      <tr>
-        <td align="center" colspan="<? echo $num_data_col; ?>">No disks found - Scan Hardware</td>
-      </tr>
-      <?php } ?>
-      <tr>
-        <td align="center" colspan="<? echo $num_data_col; ?>"><input type="submit" name="scan" value="Scan Hardware"></td>
-      </tr>
-    </table>
-  </div>
-
-  <br>
-  <br>
-
-  <h2>Preview of server layout</h2>
-  <div class="container_preview">
-  <?php for ($i = 1; $i <= $rows; $i++) { ?>
-    <div class="row_container_preview">
-    <?php for ($j = 1; $j <= $columns; $j++) {
-        $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
-        $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
-      <div class="cell_container_preview" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
-        <?php $tray_num = (($i-1) * $columns) + $j; ?>
-        <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
-        <?php echo $tray_num." - ";
-              for ($k = 1; $k <= $num_disks; $k++) {
-                if ($serverlayout_cfg[$serverlayout_auto[$k]['SN']]['TRAY_NUM'] == $tray_num) {
-                  echo $serverlayout_auto[$k]['DEVICE'];
-                }
-              } ?>
-        </div>
+  <?php if ($layout_orientation == 0) { $level_1_div_width = 100; } else { $level_1_div_width = 24; } ?>
+  <div style="width: <?php echo $level_1_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden">
+    <?php if ($layout_orientation == 0) { $level_2_div_width = 49; } else { $level_2_div_width = 100; } ?>
+    <div style="width: <?php echo $level_2_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden">
+      <div id="title">
+        <span class="left">Controls</span>
       </div>
-    <?php } ?>
+      <?php if ($layout_orientation == 0) { $level_3_div_width = 33; } else { $level_3_div_width = 100; } ?>
+      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
+        <input type="submit" name="apply" value="Save & Apply"></div>
+      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
+        <input type="submit" name="scan" value="Scan Hardware"></div>
+      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
+        <button type="button" onClick="done();">Exit ServerLayout</button></div>
+
+      <div id="title">
+        <span class="left">Layout Settings - Enable editing <input type="checkbox" name="EDIT_LAYOUT" id="EDIT_LAYOUT" onchange="EditLayoutCheckbox(this)"></span>
+      </div>
+      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
+        Rows: <select name="ROWS" id="ROWS" size="1" onchange="DefineColumnsDropDownList()">
+                  <option value="" disabled></option>
+                  <?php for ($k = 1; $k <= $max_trays; $k++) { ?>
+                  <option value="<? echo $k ?>"<? if ($serverlayout_cfg['ROWS'] == $k) { ?> selected<? } ?>><? echo $k ?></option>
+                  <?php } ?>
+                </select></div>
+      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
+        Columns: <select name="COLUMNS" id="COLUMNS" size="1">
+                   </select></div>
+      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
+        Drive Trays Orientation:
+          <select name="ORIENTATION" id="ORIENTATION" size="1" >
+            <option value="0"<? if ($orientation == "0") { ?> selected<? } ?>>Horizontal</option>
+            <option value="90"<? if ($orientation == "90") { ?> selected<? } ?>>Vertical</option>
+          </select></div>
+    <?php if ($layout_orientation == 0) { ?>
     </div>
-  <?php } ?>
+
+    <div style="width: 49%; float:right; border: 0px solid black; overflow: hidden">
+    <?php } ?>
+      <div id="title">
+        <span class="left">Preview Server Layout</span>
+      </div>
+      <div class="container_preview">
+      <?php for ($i = 1; $i <= $rows; $i++) { ?>
+        <div class="row_container_preview">
+        <?php for ($j = 1; $j <= $columns; $j++) {
+            $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
+            $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
+          <div class="cell_container_preview" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+            <div class="cell_background_preview">
+              <?php $tray_num = (($i-1) * $columns) + $j; ?>
+              <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
+              <?php echo $tray_num." - ";
+                    for ($k = 1; $k <= $num_disks; $k++) {
+                      if ($serverlayout_cfg[$serverlayout_auto[$k]['SN']]['TRAY_NUM'] == $tray_num) {
+                        echo $serverlayout_auto[$k]['DEVICE'];
+                      }
+                    } ?>
+              </div>
+            </div>
+          </div>
+        <?php } ?>
+        </div>
+      <?php } ?>
+      </div>
+    </div>
   </div>
 
+  <?php if ($layout_orientation == 0) { ?>
+  <br>
+  <br>
+  <br>
+  <br>
+  <br>
   <br>
   <br>
 
-  <div>
-    <h2>Press "Apply" button to save data</h2>
-    <input type="submit" name="apply" value="Apply">
+  <div style="width: 100%; float:left; border: 0px solid black;">
+  <?php } else { ?>
+  <div style="width: 74%; float:right; border: 0px solid black;">
+  <?php } ?>
+    <div id="title">
+      <span class="left">Device List and Data Entry - Enable editing <input type="checkbox" name="EDIT_TABLE" id="EDIT_TABLE" onchange="EditTableCheckbox(this)"></span>
+    </div>
+    <div>
+      <table>
+        <tr>
+          <td></td>
+          <?php for ($i = 1; $i <= ($num_data_col-$num_data_col_not_show); $i++) { ?>
+          <td align="center"><input type="checkbox" name="SHOW<?php echo $i ?>" id="SHOW<?php echo $i ?>" value="SHOW"></td>
+          <?php } ?>
+          <td></td>
+        </tr>
+        <tr>
+          <th>Type</th> <th>Device</th> <th>Model</th> <th>Serial Number</th> <th>Firmware</th> <th>Capacity</th> <th>Purchase Date</th> <th>Tray #</th>
+        </tr>
+        <?php if ($num_disks > 0) { ?>
+          <?php for ($i = 1; $i <= $num_disks; $i++) { ?>
+        <tr>
+          <td><?php switch ($serverlayout_auto[$i]['TYPE']) {
+                      case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:30px;height:20px"> <? break;
+                      case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:30px;height:20px"> <? break;
+                      default: echo $serverlayout_auto[$i]['TYPE']; break; } ?>
+          </td>
+          <td><?php echo $serverlayout_auto[$i]['DEVICE']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['MODEL']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['SN']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['FIRMWARE']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['CAPACITY']; ?></td>
+          <td><input type="text" name="PURCHASE_DATE<?php echo $i ?>" id="PURCHASE_DATE<?php echo $i ?>" style="width: 6em;" maxlength="10" value="<?=$serverlayout_cfg[$serverlayout_auto[$i]['SN']]['PURCHASE_DATE'];?>"></td>
+          <td>
+            <?php if ($serverlayout_auto[$i]['TYPE'] != "USB") { ?>
+            <select name="TRAY_NUM<?php echo $i ?>" id="TRAY_NUM<?php echo $i ?>" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions(<?php echo $i ?>, this); this.oldvalue = this.value;">
+            </select>
+            <?php } else { ?>
+            <?php echo $serverlayout_cfg[$serverlayout_auto[$i]['SN']]['TRAY_NUM']; ?>
+            <?php } ?>
+          </td>
+        </tr>
+          <?php } ?>
+        <?php } else { ?>
+        <tr>
+          <td align="center" colspan="<? echo $num_data_col; ?>">No disks found - Scan Hardware</td>
+        </tr>
+        <?php } ?>
+      </table>
+    </div>
   </div>
 </form>
 
