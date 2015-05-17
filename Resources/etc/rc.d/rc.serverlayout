@@ -14,7 +14,7 @@ logit()
 #######################
 getdiskdata()
 {
-  AUTODATAFILE="/tmp/AutomaticData.cfg"
+  AUTODATAFILE=$1
   echo -n "" > ${AUTODATAFILE}
   INDEX=1
   for DISK_NO in {a..z}
@@ -39,6 +39,60 @@ getdiskdata()
       fi
     fi
   done
+
+  for DISK_NO in {0..99}
+  do
+    if [ -b "/dev/sr$DISK_NO" ]; then
+      MY_COMMAND=$(lsscsi | grep -F 'cd/dvd' | grep -F "sr$DISK_NO")
+      if [ "$MY_COMMAND" != "" ]; then
+  #      smartctl -i /dev/sr$DISK_NO > /tmp/diskinfo_output
+  #      VENDOR=$(grep -Po '(?<=(Vendor:               )).*(?=)' /tmp/diskinfo_output)
+  #      PRODUCT=$(grep -Po '(?<=(Product:              )).*(?=| )' /tmp/diskinfo_output)
+  #      FIRMWARE=$(grep -Po '(?<=(Revision:             )).*(?=| )' /tmp/diskinfo_output)
+  #      CAPACITY=$(grep -Po '(?<=(Device type:          )).*(?=| )' /tmp/diskinfo_output)
+        hdparm -I /dev/sr$DISK_NO > /tmp/diskinfo_output
+        MODEL=$(cat /tmp/diskinfo_output | grep -Po '(?<=(Model Number:       )).*(?=|)' | sed 's/[[:space:]]\+$//')
+        SN=$(cat /tmp/diskinfo_output | grep -Po '(?<=(Serial Number:      )).*(?=|)' | sed 's/[[:space:]]\+$//')
+        FIRMWARE=$(cat /tmp/diskinfo_output | grep -Po '(?<=(Firmware Revision:  )).*(?=|)' | sed 's/[[:space:]]\+$//')
+        echo "[$INDEX]" >> ${AUTODATAFILE}
+        echo "TYPE=\"CD/DVD\"" >> ${AUTODATAFILE}
+        echo "DEVICE=\"sr$DISK_NO\"" >> ${AUTODATAFILE}
+  #      echo "MODEL=\"$VENDOR $PRODUCT\"" >> ${AUTODATAFILE}
+        echo "MODEL=\"$MODEL\"" >> ${AUTODATAFILE}
+        echo "SN=\"$SN\"" >> ${AUTODATAFILE}
+        echo "FIRMWARE=\"$FIRMWARE\"" >> ${AUTODATAFILE}
+  #      echo "CAPACITY=\"$CAPACITY\"" >> ${AUTODATAFILE}
+        echo "CAPACITY=\"CD/DVD\"" >> ${AUTODATAFILE}
+        rm -f /tmp/diskinfo_output
+        ((INDEX++))
+      fi
+    fi
+  done
+
+  lsusb > /tmp/lsusb_output
+  while read LINE
+  do
+    BUS=$(echo $LINE | grep -Po '(?<=(Bus )).*(?= Device)')
+    DEVICE=$(echo $LINE | grep -Po '(?<=(Device )).*(?=: ID)')
+    if [ "$(lsusb -D "/dev/bus/usb/$BUS/$DEVICE" | grep "bInterfaceClass" | grep "Mass Storage")" != "" ] ; then
+      MANUFACTURER=$(lsusb -D "/dev/bus/usb/$BUS/$DEVICE" | grep "iManufacturer" | grep -Po '(?<=(iManufacturer           1 )).*(?=| )')
+      PRODUCT=$(lsusb -D "/dev/bus/usb/$BUS/$DEVICE" | grep "iProduct" | grep -Po '(?<=(iProduct                2 )).*(?=| )')
+      SN=$(lsusb -D "/dev/bus/usb/$BUS/$DEVICE" | grep "iSerial" | grep -Po '(?<=(iSerial                 3 )).*(?=| )')
+      if [ "$(ls -las /dev/disk/by-id | grep $SN)" != "" ] ; then
+        DEVICE=$(ls -las /dev/disk/by-id | grep -m1 $SN | head -1 | tail -c4)
+        CAPACITY=$(sgdisk --print /dev/$DEVICE | grep -m1 "/dev/$DEVICE" | head -1 | grep -Po '(?<=(sectors, )).*(?=| )')
+        echo "[$INDEX]" >> ${AUTODATAFILE}
+        echo "TYPE=\"USB\"" >> ${AUTODATAFILE}
+        echo "DEVICE=\"$DEVICE\"" >> ${AUTODATAFILE}
+        echo "MODEL=\"$MANUFACTURER $PRODUCT\"" >> ${AUTODATAFILE}
+        echo "SN=\"$SN\"" >> ${AUTODATAFILE}
+        echo "CAPACITY=\"$CAPACITY\"" >> ${AUTODATAFILE}
+        echo 
+        ((INDEX++))
+      fi
+    fi  
+  done < /tmp/lsusb_output
+  rm -f /tmp/lsusb_output
 }
 
 ###################
@@ -47,10 +101,10 @@ getdiskdata()
 
 case "$1" in
   'getdiskdata')
-    getdiskdata
+   getdiskdata $2
   ;;
   *)
     echo "usage $0 "
     echo ""
-    echo "         getdiskdata"
+    echo "         getdiskdata output_filename"
 esac

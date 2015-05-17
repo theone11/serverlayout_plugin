@@ -499,23 +499,31 @@ function UpdateDIVSizes() {
           <td></td>
         </tr>
         <tr>
-          <th>Type</th> <th>Device</th> <th>Model</th> <th>Serial Number</th> <th>Firmware</th> <th>Capacity</th> <th>Purchase Date</th> <th>Tray #</th>
+          <th style="white-space:nowrap">Type</th>
+          <th style="white-space:nowrap">Device</th> 
+          <th style="white-space:nowrap">Model</th> 
+          <th style="white-space:nowrap">Serial Number</th> 
+          <th style="white-space:nowrap">Firmware</th> 
+          <th style="white-space:nowrap">Capacity</th> 
+          <th style="white-space:nowrap">Purchase Date</th> 
+          <th style="white-space:nowrap">Tray #</th>
         </tr>
         <?php if ($num_disks > 0) { ?>
           <?php for ($i = 1; $i <= $num_disks; $i++) { ?>
         <tr>
-          <td><?php switch ($serverlayout_auto[$i]['TYPE']) {
-                      case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:30px;height:20px"> <? break;
-                      case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:30px;height:20px"> <? break;
+          <td style="white-space:nowrap"><?php switch ($serverlayout_auto[$i]['TYPE']) {
+                      case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:auto;height:20px"> <? break;
+                      case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:auto;height:20px"> <? break;
+                      case "CD/DVD": ?> <img src=<?php echo $optical_imgfile; ?> style="width:auto;height:20px"> <? break;
                       default: echo $serverlayout_auto[$i]['TYPE']; break; } ?>
           </td>
-          <td><?php echo $serverlayout_auto[$i]['DEVICE']; ?></td>
-          <td><?php echo $serverlayout_auto[$i]['MODEL']; ?></td>
-          <td><?php echo $serverlayout_auto[$i]['SN']; ?></td>
-          <td><?php echo $serverlayout_auto[$i]['FIRMWARE']; ?></td>
-          <td><?php echo $serverlayout_auto[$i]['CAPACITY']; ?></td>
-          <td><input type="text" name="PURCHASE_DATE<?php echo $i ?>" id="PURCHASE_DATE<?php echo $i ?>" style="width: 6em;" maxlength="10" value="<?=$serverlayout_cfg[$serverlayout_auto[$i]['SN']]['PURCHASE_DATE'];?>"></td>
-          <td>
+          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['DEVICE']; ?></td>
+          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['MODEL']; ?></td>
+          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['SN']; ?></td>
+          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['FIRMWARE']; ?></td>
+          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['CAPACITY']; ?></td>
+          <td style="white-space:nowrap"><input type="text" name="PURCHASE_DATE<?php echo $i ?>" id="PURCHASE_DATE<?php echo $i ?>" style="width: 6em;" maxlength="10" value="<?=$serverlayout_cfg[$serverlayout_auto[$i]['SN']]['PURCHASE_DATE'];?>"></td>
+          <td style="white-space:nowrap">
             <?php if ($serverlayout_auto[$i]['TYPE'] != "USB") { ?>
             <select name="TRAY_NUM<?php echo $i ?>" id="TRAY_NUM<?php echo $i ?>" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions(<?php echo $i ?>, this); this.oldvalue = this.value;">
             </select>
@@ -527,7 +535,7 @@ function UpdateDIVSizes() {
           <?php } ?>
         <?php } else { ?>
         <tr>
-          <td align="center" colspan="<? echo $num_data_col; ?>">No disks found - Scan Hardware</td>
+          <td style="white-space:nowrap" align="center" colspan="<? echo $num_data_col; ?>">No disks found - Scan Hardware</td>
         </tr>
         <?php } ?>
       </table>
