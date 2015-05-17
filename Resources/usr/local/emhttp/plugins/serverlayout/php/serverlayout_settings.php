@@ -1,69 +1,4 @@
 <?php
-include 'serverlayout_constants.php';
-
-if ($_SERVER["REQUEST_METHOD"] == "POST") {
-  if(isset($_POST['apply'])) {
-    // Write new configuration data    
-    $arguments = "";
-    $rows_new = $_POST['ROWS'];
-    $arguments .= "ROWS=\"".$rows_new."\"\n";
-    $columns_new = $_POST['COLUMNS'];
-    $arguments .= "COLUMNS=\"".$columns_new."\"\n";
-    $orientation_new = $_POST['ORIENTATION'];
-    $arguments .= "ORIENTATION=\"".$orientation_new."\"\n";
-    // Write SHOW/HIDE configuration
-    for ($i = 1; $i <= ($num_data_col-$num_data_col_not_show); $i++) {
-      $temp = "SHOW".$i;
-      if (isset($_POST[$temp]) and ($_POST[$temp] == "SHOW")) {
-        $arguments .= "SHOW".$i."=\"SHOW\"\n";
-      } else {
-        $arguments .= "SHOW".$i."=\"HIDE\"\n";
-      }
-    }
-    // Get previous ROWS and COLUMNS settings
-    $serverlayout_cfg = parse_ini_file($serverlayout_cfg_file, true);
-    $rows_old = $serverlayout_cfg['ROWS'];
-    $columns_old = $serverlayout_cfg['COLUMNS'];
-    // Get number of disks
-    if (file_exists($automatic_data)) {
-      $serverlayout_auto = parse_ini_file($automatic_data, true);
-      $num_disks = count($serverlayout_auto, COUNT_NORMAL);
-    } else {
-      $num_disks = 0;
-    }
-    for ($i = 1; $i <= $num_disks; $i++) {
-      $temp = $serverlayout_auto[$i]['SN'];
-      $arguments .= "[".$temp."]\n";
-      // Check if ROWS / COLUMNS / ORIENTATION have changed
-      if (($rows_new == $rows_old) and ($columns_new == $columns_old)) {
-        // At least one of the following ROWS / COLUMNS has changed - Don't save TRAY_NUM assignments
-        if ($serverlayout_auto[$i]['TYPE'] != "USB") {  // Also don't save if device is USB
-          $temp = "TRAY_NUM".$i;
-          $temp2 = $_POST[$temp];
-          $arguments .= "TRAY_NUM=\"".$temp2."\"\n";
-        }
-      }
-      // Save all other disk information
-      $temp = "PURCHASE_DATE".$i;
-      $temp2 = $_POST[$temp];
-      $arguments .= "PURCHASE_DATE=\"".$temp2."\"\n";
-    }
-    // Save to CONFIG file
-    file_put_contents($serverlayout_cfg_file, $arguments);
-
-  } elseif (isset($_POST['scan'])) {
-      shell_exec($scan_command);
-  }
-
-} else {  // Not POST method
-
-//  $is_post = false;
-//  $dataOK = true;
-//  $rowsERR = false;
-//  $columnsERR = false;
-
-}
-
 if (file_exists($automatic_data)) {
   $serverlayout_auto = parse_ini_file($automatic_data, true);
   $num_disks = count($serverlayout_auto, COUNT_NORMAL);
@@ -151,6 +86,18 @@ if ($orientation == 0) {
   overflow: hidden;
   color: white;
 }
+
+table.disk_data td {width:auto; white-space:nowrap;}
+table.disk_data thead tr:first-child td{text-align:center;font-size:13px;background:-webkit-radial-gradient(#E0E0E0,#C0C0C0);background:linear-gradient(#E0E0E0,#C0C0C0);border-right:1px solid #F0F0F0;}
+table.disk_data tbody td {padding-left:5px; padding-right:5px;}
+table.disk_data tbody td:nth-child(-n+2) {text-align:center;}
+table.disk_data tbody td:nth-child(n+3):nth-child(-n+5) {text-align:left;}
+table.disk_data tbody td:nth-child(n+6):nth-child(-n+7) {text-align:right;}
+table.disk_data tbody td:nth-child(n+8):nth-child(-n+8) {text-align:center;}
+table.disk_data tbody td:nth-child(n+9):nth-child(-n+9) {text-align:right;}
+table.disk_data tbody tr:nth-child(even){background-color:#F8F8F8;}
+table.disk_data tbody tr:hover {background-color:yellow;}
+
 </style>
 
 <script type="text/javascript">
@@ -389,22 +336,89 @@ function EditTableCheckbox(myCheckbox) {
 function UpdateDIVSizes() {
   var orientation = <?php echo $orientation; ?>;
   var element = document.getElementsByClassName("container_preview");
-  for (i = 0; i < element.length; i++) {
-    if (orientation == 0) {
-      element[i].style.height = <?php echo ($height_preview * $rows); ?>;
-    } else {
-      element[i].style.width = <?php echo ($height_preview * $columns); ?>;
-    }
+  if (orientation == 0) {
+    element.style.height = <?php echo ($height_preview * $rows); ?>;
+  } else {
+    element.style.width = <?php echo ($height_preview * $columns); ?>;
   }
 }
 
 </script>
 </HEAD>
 
-<BODY onload="StartUp()">
+<BODY>
 
-<form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+<form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="progressFrame">
 
+  <?php if ($layout_orientation == 0) { ?>
+
+  <div style="width: 99%; float:left; border: 0px solid black;">
+  <?php } else { ?>
+  <div style="width: 74%; float:right; border: 0px solid black;">
+  <?php } ?>
+    <div id="title">
+      <span class="left">Device List and Data Entry - Enable editing <input type="checkbox" name="EDIT_TABLE" id="EDIT_TABLE" onchange="EditTableCheckbox(this)"></span>
+    </div>
+    <div>
+      <table class="disk_data">
+        <thead>
+        <tr>
+          <?php for ($i = 1; $i <= $num_data_col; $i++) { ?>
+          <td>
+          <?php switch ($i) {
+                  case 1: echo "Type"; break;
+                  case 2: echo "Device"; break;
+                  case 3: echo "Manufacturer"; break;
+                  case 4: echo "Model"; break;
+                  case 5: echo "Serial Number"; break;
+                  case 6: echo "Firmware"; break;
+                  case 7: echo "Capacity"; break;
+                  case 8: echo "Purchase Date"; break;
+                  case 9: echo "Tray #"; break;
+                  default :echo "Missing title"; break;
+                }
+                if (($i > 1) and ($i <= ($num_data_col-$num_data_col_not_show+1))) { ?>
+            <input type="checkbox" name="SHOW<?php echo ($i-1) ?>" id="SHOW<?php echo ($i-1) ?>" value="SHOW">
+                  <?php } ?>
+          </td>
+          <?php } ?>
+        </tr>
+        <?php if ($num_disks > 0) { ?>
+          <?php for ($i = 1; $i <= $num_disks; $i++) { ?>
+        <tbody><tr>
+          <td>
+          <?php switch ($serverlayout_auto[$i]['TYPE']) {
+                  case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:auto;height:20px"> <? break;
+                  case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:auto;height:20px"> <? break;
+                  case "CD/DVD": ?> <img src=<?php echo $optical_imgfile; ?> style="width:auto;height:20px"> <? break;
+                  default: echo $serverlayout_auto[$i]['TYPE']; break; } ?>
+          </td>
+          <td><?php echo $serverlayout_auto[$i]['DEVICE']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['FAMILY']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['MODEL']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['SN']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['FIRMWARE']; ?></td>
+          <td><?php echo $serverlayout_auto[$i]['CAPACITY']; ?></td>
+          <td><input type="text" name="PURCHASE_DATE<?php echo $i ?>" id="PURCHASE_DATE<?php echo $i ?>" style="width: 6em;" maxlength="10" value="<?=$serverlayout_cfg[$serverlayout_auto[$i]['SN']]['PURCHASE_DATE'];?>"></td>
+          <td>
+            <?php if ($serverlayout_auto[$i]['TYPE'] != "USB") { ?>
+            <select name="TRAY_NUM<?php echo $i ?>" id="TRAY_NUM<?php echo $i ?>" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions(<?php echo $i ?>, this); this.oldvalue = this.value;">
+            </select>
+            <?php } else { ?>
+            <?php echo $serverlayout_cfg[$serverlayout_auto[$i]['SN']]['TRAY_NUM']; ?>
+            <?php } ?>
+          </td>
+        </tr>
+          <?php } ?>
+        <?php } else { ?>
+        <tr>
+          <td align="center" colspan="<? echo $num_data_col; ?>">No disks found - Scan Hardware</td>
+        </tr>
+        <?php } ?>
+      </table>
+    </div>
+  </div>
+  
   <?php if ($layout_orientation == 0) { $level_1_div_width = 100; } else { $level_1_div_width = 24; } ?>
   <div style="width: <?php echo $level_1_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden">
     <?php if ($layout_orientation == 0) { $level_2_div_width = 49; } else { $level_2_div_width = 100; } ?>
@@ -419,7 +433,6 @@ function UpdateDIVSizes() {
         <input type="submit" name="scan" value="Scan Hardware"></div>
       <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
         <button type="button" onClick="done();">Exit ServerLayout</button></div>
-
       <div id="title">
         <span class="left">Layout Settings - Enable editing <input type="checkbox" name="EDIT_LAYOUT" id="EDIT_LAYOUT" onchange="EditLayoutCheckbox(this)"></span>
       </div>
@@ -473,77 +486,9 @@ function UpdateDIVSizes() {
     </div>
   </div>
 
-  <?php if ($layout_orientation == 0) { ?>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-  <br>
-
-  <div style="width: 100%; float:left; border: 0px solid black;">
-  <?php } else { ?>
-  <div style="width: 74%; float:right; border: 0px solid black;">
-  <?php } ?>
-    <div id="title">
-      <span class="left">Device List and Data Entry - Enable editing <input type="checkbox" name="EDIT_TABLE" id="EDIT_TABLE" onchange="EditTableCheckbox(this)"></span>
-    </div>
-    <div>
-      <table>
-        <tr>
-          <td></td>
-          <?php for ($i = 1; $i <= ($num_data_col-$num_data_col_not_show); $i++) { ?>
-          <td align="center"><input type="checkbox" name="SHOW<?php echo $i ?>" id="SHOW<?php echo $i ?>" value="SHOW"></td>
-          <?php } ?>
-          <td></td>
-        </tr>
-        <tr>
-          <th style="white-space:nowrap">Type</th>
-          <th style="white-space:nowrap">Device</th> 
-          <th style="white-space:nowrap">Family</th> 
-          <th style="white-space:nowrap">Model</th> 
-          <th style="white-space:nowrap">Serial Number</th> 
-          <th style="white-space:nowrap">Firmware</th> 
-          <th style="white-space:nowrap">Capacity</th> 
-          <th style="white-space:nowrap">Purchase Date</th> 
-          <th style="white-space:nowrap">Tray #</th>
-        </tr>
-        <?php if ($num_disks > 0) { ?>
-          <?php for ($i = 1; $i <= $num_disks; $i++) { ?>
-        <tr>
-          <td style="white-space:nowrap"><?php switch ($serverlayout_auto[$i]['TYPE']) {
-                      case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:auto;height:20px"> <? break;
-                      case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:auto;height:20px"> <? break;
-                      case "CD/DVD": ?> <img src=<?php echo $optical_imgfile; ?> style="width:auto;height:20px"> <? break;
-                      default: echo $serverlayout_auto[$i]['TYPE']; break; } ?>
-          </td>
-          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['DEVICE']; ?></td>
-          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['FAMILY']; ?></td>
-          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['MODEL']; ?></td>
-          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['SN']; ?></td>
-          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['FIRMWARE']; ?></td>
-          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['CAPACITY']; ?></td>
-          <td style="white-space:nowrap"><input type="text" name="PURCHASE_DATE<?php echo $i ?>" id="PURCHASE_DATE<?php echo $i ?>" style="width: 6em;" maxlength="10" value="<?=$serverlayout_cfg[$serverlayout_auto[$i]['SN']]['PURCHASE_DATE'];?>"></td>
-          <td style="white-space:nowrap">
-            <?php if ($serverlayout_auto[$i]['TYPE'] != "USB") { ?>
-            <select name="TRAY_NUM<?php echo $i ?>" id="TRAY_NUM<?php echo $i ?>" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions(<?php echo $i ?>, this); this.oldvalue = this.value;">
-            </select>
-            <?php } else { ?>
-            <?php echo $serverlayout_cfg[$serverlayout_auto[$i]['SN']]['TRAY_NUM']; ?>
-            <?php } ?>
-          </td>
-        </tr>
-          <?php } ?>
-        <?php } else { ?>
-        <tr>
-          <td style="white-space:nowrap" align="center" colspan="<? echo $num_data_col; ?>">No disks found - Scan Hardware</td>
-        </tr>
-        <?php } ?>
-      </table>
-    </div>
-  </div>
 </form>
+
+<script>StartUp();</script>
 
 </BODY>
 </HTML>

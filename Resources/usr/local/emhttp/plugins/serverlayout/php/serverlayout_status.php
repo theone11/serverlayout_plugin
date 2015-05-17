@@ -21,7 +21,7 @@ if (file_exists($automatic_data)) {
 .container {
   width: <? echo ($width * $columns); ?>px;
   height: <? echo ($width * $rows); ?>px;
-  margin: 50px;
+  margin: 0px;
   background: rgba(54, 25, 25, 0);  /* Transparent Background */
   overflow: hidden;
   box-sizing: border-box;
@@ -72,17 +72,15 @@ if (file_exists($automatic_data)) {
 function UpdateDIVSizes() {
   var orientation = <?php echo $orientation; ?>;
   var element = document.getElementsByClassName("container");
-  for (i = 0; i < element.length; i++) {
-    if (orientation == 0) {
-      element[i].style.height = <?php echo ($height * $rows); ?>;
-    } else {
-      element[i].style.width = <?php echo ($height * $columns); ?>;
-    }
+  if (orientation == 0) {
+    element[i].style.height = <?php echo ($height * $rows); ?>;
+  } else {
+    element[i].style.width = <?php echo ($height * $columns); ?>;
   }
 }
 </script>
 </HEAD>
-<BODY onload="UpdateDIVSizes()">
+<BODY>
 
 <div class="container">
 <?php for ($i = 1; $i <= $rows; $i++) { ?>
@@ -101,11 +99,11 @@ function UpdateDIVSizes() {
                     $index = "SHOW".$m;
                     if (($m == 1) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['DEVICE']." / "; }
                     if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FAMILY']." / "; }
-                    if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['MODEL']." / "; }
-                    if (($m == 3) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['SN']." / "; }
-                    if (($m == 4) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FIRMWARE']." / "; }
-                    if (($m == 5) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['CAPACITY']." / "; }
-                    if (($m == 6) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_cfg[$serverlayout_auto[$k]['SN']]['PURCHASE_DATE']." / "; }
+                    if (($m == 3) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['MODEL']." / "; }
+                    if (($m == 4) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['SN']." / "; }
+                    if (($m == 5) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FIRMWARE']." / "; }
+                    if (($m == 6) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['CAPACITY']." / "; }
+                    if (($m == 7) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_cfg[$serverlayout_auto[$k]['SN']]['PURCHASE_DATE']." / "; }
                   }
                 }
               } ?>
@@ -116,6 +114,8 @@ function UpdateDIVSizes() {
   </div>
 <?php } ?>
 </div>
+
+<script>UpdateDIVSizes();</script>
 
 </BODY>
 </HTML>
