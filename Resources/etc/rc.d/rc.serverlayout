@@ -17,12 +17,15 @@ getdiskdata()
   AUTODATAFILE=$1
   echo -n "" > ${AUTODATAFILE}
   INDEX=1
+
+  # Hard Drives
   for DISK_NO in {a..z}
   do
     if [ -b "/dev/sd$DISK_NO" ]; then
       MY_COMMAND=$(ls /dev/disk/by-id -las | grep -F 'ata-' | grep -v 'part[0-9]' | grep -F "sd$DISK_NO")
       if [ "$MY_COMMAND" != "" ]; then
         smartctl -i /dev/sd$DISK_NO > /tmp/diskinfo_output
+        FAMILY=$(grep -Po '(?<=(Model Family:     )).*(?=)' /tmp/diskinfo_output)
         MODEL=$(grep -Po '(?<=(Device Model:     )).*(?=)' /tmp/diskinfo_output)
         SN=$(grep -Po '(?<=(Serial Number:    )).*(?=| )' /tmp/diskinfo_output)
         FIRMWARE=$(grep -Po '(?<=(Firmware Version: )).*(?=| )' /tmp/diskinfo_output)
@@ -30,6 +33,7 @@ getdiskdata()
         echo "[$INDEX]" >> ${AUTODATAFILE}
         echo "TYPE=\"SATA\"" >> ${AUTODATAFILE}
         echo "DEVICE=\"sd$DISK_NO\"" >> ${AUTODATAFILE}
+        echo "FAMILY=\"$FAMILY\"" >> ${AUTODATAFILE}
         echo "MODEL=\"$MODEL\"" >> ${AUTODATAFILE}
         echo "SN=\"$SN\"" >> ${AUTODATAFILE}
         echo "FIRMWARE=\"$FIRMWARE\"" >> ${AUTODATAFILE}
@@ -40,35 +44,37 @@ getdiskdata()
     fi
   done
 
+  # Optical Drives
   for DISK_NO in {0..99}
   do
     if [ -b "/dev/sr$DISK_NO" ]; then
       MY_COMMAND=$(lsscsi | grep -F 'cd/dvd' | grep -F "sr$DISK_NO")
       if [ "$MY_COMMAND" != "" ]; then
-  #      smartctl -i /dev/sr$DISK_NO > /tmp/diskinfo_output
-  #      VENDOR=$(grep -Po '(?<=(Vendor:               )).*(?=)' /tmp/diskinfo_output)
-  #      PRODUCT=$(grep -Po '(?<=(Product:              )).*(?=| )' /tmp/diskinfo_output)
-  #      FIRMWARE=$(grep -Po '(?<=(Revision:             )).*(?=| )' /tmp/diskinfo_output)
-  #      CAPACITY=$(grep -Po '(?<=(Device type:          )).*(?=| )' /tmp/diskinfo_output)
+        smartctl -i /dev/sr$DISK_NO > /tmp/diskinfo_output
+        VENDOR=$(grep -Po '(?<=(Vendor:               )).*(?=)' /tmp/diskinfo_output)
+        PRODUCT=$(grep -Po '(?<=(Product:              )).*(?=| )' /tmp/diskinfo_output)
+        FIRMWARE=$(grep -Po '(?<=(Revision:             )).*(?=| )' /tmp/diskinfo_output)
+        CAPACITY=$(grep -Po '(?<=(Device type:          )).*(?=| )' /tmp/diskinfo_output)
+
         hdparm -I /dev/sr$DISK_NO > /tmp/diskinfo_output
-        MODEL=$(cat /tmp/diskinfo_output | grep -Po '(?<=(Model Number:       )).*(?=|)' | sed 's/[[:space:]]\+$//')
+  #      MODEL=$(cat /tmp/diskinfo_output | grep -Po '(?<=(Model Number:       )).*(?=|)' | sed 's/[[:space:]]\+$//')
         SN=$(cat /tmp/diskinfo_output | grep -Po '(?<=(Serial Number:      )).*(?=|)' | sed 's/[[:space:]]\+$//')
-        FIRMWARE=$(cat /tmp/diskinfo_output | grep -Po '(?<=(Firmware Revision:  )).*(?=|)' | sed 's/[[:space:]]\+$//')
+  #      FIRMWARE=$(cat /tmp/diskinfo_output | grep -Po '(?<=(Firmware Revision:  )).*(?=|)' | sed 's/[[:space:]]\+$//')
         echo "[$INDEX]" >> ${AUTODATAFILE}
         echo "TYPE=\"CD/DVD\"" >> ${AUTODATAFILE}
         echo "DEVICE=\"sr$DISK_NO\"" >> ${AUTODATAFILE}
-  #      echo "MODEL=\"$VENDOR $PRODUCT\"" >> ${AUTODATAFILE}
-        echo "MODEL=\"$MODEL\"" >> ${AUTODATAFILE}
+        echo "FAMILY=\"$VENDOR\"" >> ${AUTODATAFILE}
+        echo "MODEL=\"$PRODUCT\"" >> ${AUTODATAFILE}
         echo "SN=\"$SN\"" >> ${AUTODATAFILE}
         echo "FIRMWARE=\"$FIRMWARE\"" >> ${AUTODATAFILE}
-  #      echo "CAPACITY=\"$CAPACITY\"" >> ${AUTODATAFILE}
-        echo "CAPACITY=\"CD/DVD\"" >> ${AUTODATAFILE}
+        echo "CAPACITY=\"$CAPACITY\"" >> ${AUTODATAFILE}
         rm -f /tmp/diskinfo_output
         ((INDEX++))
       fi
     fi
   done
 
+  # USB Mass Storage Devices
   lsusb > /tmp/lsusb_output
   while read LINE
   do
@@ -84,7 +90,8 @@ getdiskdata()
         echo "[$INDEX]" >> ${AUTODATAFILE}
         echo "TYPE=\"USB\"" >> ${AUTODATAFILE}
         echo "DEVICE=\"$DEVICE\"" >> ${AUTODATAFILE}
-        echo "MODEL=\"$MANUFACTURER $PRODUCT\"" >> ${AUTODATAFILE}
+        echo "FAMILY=\"$MANUFACTURER\"" >> ${AUTODATAFILE}
+        echo "MODEL=\"$PRODUCT\"" >> ${AUTODATAFILE}
         echo "SN=\"$SN\"" >> ${AUTODATAFILE}
         echo "CAPACITY=\"$CAPACITY\"" >> ${AUTODATAFILE}
         echo 

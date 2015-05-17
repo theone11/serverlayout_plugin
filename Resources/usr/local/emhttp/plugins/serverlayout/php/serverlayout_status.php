@@ -100,6 +100,7 @@ function UpdateDIVSizes() {
                   for ($m = 1; $m <= ($num_data_col-$num_data_col_not_show); $m++) {
                     $index = "SHOW".$m;
                     if (($m == 1) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['DEVICE']." / "; }
+                    if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FAMILY']." / "; }
                     if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['MODEL']." / "; }
                     if (($m == 3) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['SN']." / "; }
                     if (($m == 4) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FIRMWARE']." / "; }

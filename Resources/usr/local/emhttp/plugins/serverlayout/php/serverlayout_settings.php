@@ -501,6 +501,7 @@ function UpdateDIVSizes() {
         <tr>
           <th style="white-space:nowrap">Type</th>
           <th style="white-space:nowrap">Device</th> 
+          <th style="white-space:nowrap">Family</th> 
           <th style="white-space:nowrap">Model</th> 
           <th style="white-space:nowrap">Serial Number</th> 
           <th style="white-space:nowrap">Firmware</th> 
@@ -518,6 +519,7 @@ function UpdateDIVSizes() {
                       default: echo $serverlayout_auto[$i]['TYPE']; break; } ?>
           </td>
           <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['DEVICE']; ?></td>
+          <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['FAMILY']; ?></td>
           <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['MODEL']; ?></td>
           <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['SN']; ?></td>
           <td style="white-space:nowrap"><?php echo $serverlayout_auto[$i]['FIRMWARE']; ?></td>
