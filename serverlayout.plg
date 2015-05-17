@@ -118,7 +118,7 @@ if [ "$INSTALL_PKG" == "true" ] ; then
   tar -xf "&pluginLOC;/&packagefile;" -C "/"
   <!-- Make rc.&name executable -->
   chmod 0770 "/etc/rc.d/rc.&name;"
-  <!--# Edit PAGE file  - add version number and ending "---" -->
+  <!--# Edit PAGE file  - add version number and ending "-" -->
   echo "Version=\"&version;\"" &gt;&gt; "&emhttpLOC;/&name;.page"
   echo "---" &gt;&gt; "&emhttpLOC;/&name;.page"
   <!--# Create or fix configuration file -->
