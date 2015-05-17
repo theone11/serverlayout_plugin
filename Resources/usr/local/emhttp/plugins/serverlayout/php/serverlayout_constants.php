@@ -2,9 +2,9 @@
 $max_trays = 26;
 $num_data_col = 9;
 $num_data_col_not_show = 2;  // TYPE (Must be 1st), TRAY_NUM (Must be last)
-$automatic_data = "../AutomaticData.cfg";  // "/boot/config/plugins/serverlayout/AutomaticData.cfg";
-$serverlayout_cfg_file = "../serverlayout.cfg";  // "/boot/config/plugins/serverlayout/serverlayout.cfg";
-$scan_command = "../getdiskinfo_smartctl.sh ".$automatic_data;  // "/etc/rc.d/rc.serverlayout getdiskinfo $automatic_data";
+$automatic_data = "/boot/config/plugins/serverlayout/AutomaticData.cfg";
+$serverlayout_cfg_file = "/boot/config/plugins/serverlayout/serverlayout.cfg";
+$scan_command = "/etc/rc.d/rc.serverlayout getdiskdata ".$automatic_data;
 
 $frontpanel_imgfile = "../images/frontpanel.jpg";
 $sata_imgfile = "../images/SATA_Logo.png";

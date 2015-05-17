@@ -3,12 +3,12 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.05.10">
-<!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
+<!ENTITY version     "2015.05.17">
+<!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Development/&name;.plg">
 <!ENTITY packageVER  "v1.0">
-<!ENTITY packageMD5  "5d7114ba4b96fc709251ed3f33c59ced">
+<!ENTITY packageMD5  "952e356e876a84a82d4ac85a1da30812">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
-<!ENTITY packageURL  "https://github.com/theone11/serverlayout_plugin/raw/master/&packagefile;">
+<!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Development/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
 <!ENTITY emhttpLOC   "/usr/local/emhttp/plugins/&name;">
 ]>
@@ -20,7 +20,7 @@
 >
 
 <CHANGES>
-###2015.05.10
+###2015.05.17
 - Initial Release
 </CHANGES>
 
@@ -124,7 +124,6 @@ if [ "$INSTALL_PKG" == "true" ] ; then
   <!--# Create or fix configuration file -->
   if [ ! -f "&pluginLOC;/&name;.cfg" ] ; then
     logit "Configuration file not found. Creating configuration file..."
-    echo "# VirtualBox plugin configuration - Do not modify manually - Change via WEBUI" &gt; "&pluginLOC;/&name;.cfg"
   fi
   logit "Checking all configuration file parameters exist"
   [ ! `cat "&pluginLOC;/&name;.cfg" | grep ROWS` ] &amp;&amp; echo "ROWS=\"6\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
@@ -136,6 +135,7 @@ if [ "$INSTALL_PKG" == "true" ] ; then
   [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW4` ] &amp;&amp; echo "SHOW4=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
   [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW5` ] &amp;&amp; echo "SHOW5=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
   [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW6` ] &amp;&amp; echo "SHOW6=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
+  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW7` ] &amp;&amp; echo "SHOW7=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
 
   rm -Rf "/tmp/&name;-packages"
   rm -f "/tmp/&name;-install"
@@ -181,7 +181,6 @@ logit()
 
 logit "Removing plugin..."
 [ -f "/tmp/&name;-install" ] &amp;&amp; rm -f "/tmp/&name;-install"
-[ -f "/etc/rc.d/rc.&name;" ] &amp;&amp; "/etc/rc.d/rc.&name;" stop
 [ -f "/etc/rc.d/rc.&name;" ] &amp;&amp; rm -f "/etc/rc.d/rc.&name;"
 [ -d "&emhttpLOC;" ] &amp;&amp; rm -fR "&emhttpLOC;"
 logit "Plugin stopped and removed - no files removed from &pluginLOC;"
