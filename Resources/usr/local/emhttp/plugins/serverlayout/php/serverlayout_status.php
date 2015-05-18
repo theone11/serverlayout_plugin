@@ -21,7 +21,8 @@ if (file_exists($automatic_data)) {
 .container {
   width: <? echo ($width * $columns); ?>px;
   height: <? echo ($width * $rows); ?>px;
-  margin: 0px;
+  margin-left: auto;
+  margin-right: auto;
   background: rgba(54, 25, 25, 0);  /* Transparent Background */
   overflow: hidden;
   box-sizing: border-box;
@@ -49,7 +50,7 @@ if (file_exists($automatic_data)) {
   float:left;
   background-image: url(<?php echo $frontpanel_imgfile; ?>);
   border-radius: <?php echo $border_radius; ?>px;
-	background-position: center;
+  background-position: center;
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
@@ -66,23 +67,31 @@ if (file_exists($automatic_data)) {
   overflow: hidden;
   color: white;
 }
+
+.cell_text span:nth-child(even) {
+  color: black;
+}
+
+.cell_text span:nth-child(odd) {
+  color: white;
+}
 </style>
 
 <script type="text/javascript">
 function UpdateDIVSizes() {
   var orientation = <?php echo $orientation; ?>;
-  var element = document.getElementsByClassName("container");
+  var element = document.getElementById("container");
   if (orientation == 0) {
-    element[i].style.height = <?php echo ($height * $rows); ?>;
+    element.style.height = "<?php echo ($height * $rows); ?>px";
   } else {
-    element[i].style.width = <?php echo ($height * $columns); ?>;
+    element.style.width = "<?php echo ($height * $columns); ?>px";
   }
 }
 </script>
 </HEAD>
 <BODY>
 
-<div class="container">
+<div class="container" id="container">
 <?php for ($i = 1; $i <= $rows; $i++) { ?>
   <div class="row_container">
   <?php for ($j = 1; $j <= $columns; $j++) {
@@ -92,18 +101,18 @@ function UpdateDIVSizes() {
       <div class="cell_background">
         <div class="cell_text">
         <?php $tray_num = (($i-1) * $columns) + $j;
-              echo $tray_num." / ";
+              echo "<span>".$tray_num."</span>";
               for ($k = 1; $k <= $num_disks; $k++) {
                 if ($serverlayout_cfg[$serverlayout_auto[$k]['SN']]['TRAY_NUM'] == $tray_num) {
                   for ($m = 1; $m <= ($num_data_col-$num_data_col_not_show); $m++) {
                     $index = "SHOW".$m;
-                    if (($m == 1) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['DEVICE']." / "; }
-                    if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FAMILY']." / "; }
-                    if (($m == 3) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['MODEL']." / "; }
-                    if (($m == 4) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['SN']." / "; }
-                    if (($m == 5) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['FIRMWARE']." / "; }
-                    if (($m == 6) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_auto[$k]['CAPACITY']." / "; }
-                    if (($m == 7) and ($serverlayout_cfg[$index] == "SHOW" )) { echo $serverlayout_cfg[$serverlayout_auto[$k]['SN']]['PURCHASE_DATE']." / "; }
+                    if (($m == 1) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['DEVICE']."</span>"; }
+                    if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['FAMILY']."</span>"; }
+                    if (($m == 3) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['MODEL']."</span>"; }
+                    if (($m == 4) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['SN']."</span>"; }
+                    if (($m == 5) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['FIRMWARE']."</span>"; }
+                    if (($m == 6) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['CAPACITY']."</span>"; }
+                    if (($m == 7) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_cfg[$serverlayout_auto[$k]['SN']]['PURCHASE_DATE']."</span>"; }
                   }
                 }
               } ?>
