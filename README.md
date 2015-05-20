@@ -1,6 +1,7 @@
 #Server Layout plugin for unRAID v6
 
-The plugin enables you to view the devices (HDDs, and in the future: CD/DVD ROMs, USB, etc...) in a physical manner.
+The *Server Layout* plugin enables you to view the devices (HDDs, CD/DVD ROMS) in a physical manner.
+You can configure the server’s disk tray layout, assign each storage device to a drive tray and enter additional data manually (Purchase Date, etc…)
 
 ##To install under unRAID v6:
 1. In the unRAID Plugin Manager under "Install Plugin" tab enter https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/virtualbox.plg

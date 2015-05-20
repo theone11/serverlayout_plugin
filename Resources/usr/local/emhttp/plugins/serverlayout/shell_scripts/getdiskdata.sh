@@ -1,19 +1,5 @@
 #!/bin/sh
 
-#################
-# L O G I T
-#################
-logit()
-{
-  logger -trc.serverlayout -plocal7.info -is "$1"
-  echo "$1"
-}
-
-#######################
-# G E T D I S K D A T A
-#######################
-getdiskdata()
-{
   AUTODATAFILE=$1
   echo -n "" > ${AUTODATAFILE}
   INDEX=1
@@ -100,18 +86,3 @@ getdiskdata()
     fi  
   done < /tmp/lsusb_output
   rm -f /tmp/lsusb_output
-}
-
-###################
-# M A I N
-###################
-
-case "$1" in
-  'getdiskdata')
-   getdiskdata $2
-  ;;
-  *)
-    echo "usage $0 "
-    echo ""
-    echo "         getdiskdata output_filename"
-esac

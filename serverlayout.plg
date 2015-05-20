@@ -116,8 +116,8 @@ if [ "$INSTALL_PKG" == "true" ] ; then
   [ -d "&emhttpLOC;" ] &amp;&amp; rm -fR "&emhttpLOC;"
   <!--# Extract files -->
   tar -xf "&pluginLOC;/&packagefile;" -C "/"
-  <!-- Make rc.&name executable -->
-  chmod 0770 "/etc/rc.d/rc.&name;"
+  <!-- Make getdiskdata.sh executable -->
+  chmod 0770 "$emhttpLOC/shell_scripts/getdiskdata.sh"
   <!--# Edit PAGE file  - add version number and ending "-" -->
   echo "Version=\"&version;\"" &gt;&gt; "&emhttpLOC;/&name;.page"
   echo "---" &gt;&gt; "&emhttpLOC;/&name;.page"
@@ -181,7 +181,6 @@ logit()
 
 logit "Removing plugin..."
 [ -f "/tmp/&name;-install" ] &amp;&amp; rm -f "/tmp/&name;-install"
-[ -f "/etc/rc.d/rc.&name;" ] &amp;&amp; rm -f "/etc/rc.d/rc.&name;"
 [ -d "&emhttpLOC;" ] &amp;&amp; rm -fR "&emhttpLOC;"
 logit "Plugin stopped and removed - no files removed from &pluginLOC;"
 </INLINE>

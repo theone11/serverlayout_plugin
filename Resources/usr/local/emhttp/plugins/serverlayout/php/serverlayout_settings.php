@@ -97,6 +97,7 @@ if ($orientation == 0) {
   color: white;
 }
 
+table.disk_data {overflow: auto;}
 table.disk_data td {width:auto; white-space:nowrap;}
 table.disk_data thead tr:first-child td{text-align:center;font-size:13px;background:-webkit-radial-gradient(#E0E0E0,#C0C0C0);background:linear-gradient(#E0E0E0,#C0C0C0);border-right:1px solid #F0F0F0;}
 table.disk_data tbody td {padding-left:5px; padding-right:5px;}
