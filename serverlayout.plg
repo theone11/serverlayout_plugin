@@ -117,7 +117,7 @@ if [ "$INSTALL_PKG" == "true" ] ; then
   <!--# Extract files -->
   tar -xf "&pluginLOC;/&packagefile;" -C "/"
   <!-- Make getdiskdata.sh executable -->
-  chmod 0770 "$emhttpLOC;/shell_scripts/getdiskdata.sh"
+  chmod 0770 "&emhttpLOC;/shell_scripts/getdiskdata.sh"
   <!--# Edit PAGE file  - add version number and ending "-" -->
   echo "Version=\"&version;\"" &gt;&gt; "&emhttpLOC;/&name;.page"
   echo "---" &gt;&gt; "&emhttpLOC;/&name;.page"
