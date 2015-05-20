@@ -6,7 +6,7 @@
 <!ENTITY version     "2015.05.17">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Development/&name;.plg">
 <!ENTITY packageVER  "v1.0">
-<!ENTITY packageMD5  "c64fcc4f34c9a6dfa68108fe1343a8ba">
+<!ENTITY packageMD5  "056790f54c412bd624916321371b9f29">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Development/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -117,7 +117,7 @@ if [ "$INSTALL_PKG" == "true" ] ; then
   <!--# Extract files -->
   tar -xf "&pluginLOC;/&packagefile;" -C "/"
   <!-- Make getdiskdata.sh executable -->
-  chmod 0770 "$emhttpLOC/shell_scripts/getdiskdata.sh"
+  chmod 0770 "$emhttpLOC;/shell_scripts/getdiskdata.sh"
   <!--# Edit PAGE file  - add version number and ending "-" -->
   echo "Version=\"&version;\"" &gt;&gt; "&emhttpLOC;/&name;.page"
   echo "---" &gt;&gt; "&emhttpLOC;/&name;.page"
