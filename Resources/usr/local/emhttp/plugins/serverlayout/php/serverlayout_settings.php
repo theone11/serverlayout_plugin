@@ -361,44 +361,58 @@ function UpdateDIVSizes() {
 
 <form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="progressFrame">
 
-  <?php if ($layout_orientation == 0) { $level_1_div_width = 100; } else { $level_1_div_width = 24; } ?>
-  <div style="width: <?php echo $level_1_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden">
-    <?php if ($layout_orientation == 0) { $level_2_div_width = 49; } else { $level_2_div_width = 100; } ?>
-    <div style="width: <?php echo $level_2_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden">
+  <?php if ($layout_orientation == 0) { $level_1_div_width = 100; } else { $level_1_div_width = 28; } ?>
+  <div style="width: <?php echo $level_1_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
+    <?php if ($layout_orientation == 0) { $level_2_div_width = 33; } else { $level_2_div_width = 100; } ?>
+    <div style="width: <?php echo $level_2_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
       <div id="title">
         <span class="left">Controls</span>
       </div>
-      <?php if ($layout_orientation == 0) { $level_3_div_width = 33; } else { $level_3_div_width = 100; } ?>
+      <?php if ($layout_orientation == 0) { $level_3_div_width = 100; } else { $level_3_div_width = 100; } ?>
       <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
-        <input type="submit" name="apply" value="Save & Apply"></div>
+        <input type="submit" name="apply" value="Save Data & Apply Configuration"></div>
       <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
         <input type="submit" name="scan" value="Scan Hardware"></div>
       <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
         <button type="button" onClick="done();">Exit ServerLayout</button></div>
-      <div id="title">
-        <span class="left">Layout Settings - Enable editing <input type="checkbox" name="EDIT_LAYOUT" id="EDIT_LAYOUT" onchange="EditLayoutCheckbox(this)"></span>
-      </div>
-      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
-        Rows: <select name="ROWS" id="ROWS" size="1" onchange="DefineColumnsDropDownList()">
-                  <option value="" disabled></option>
-                  <?php for ($k = 1; $k <= $max_trays; $k++) { ?>
-                  <option value="<? echo $k ?>"<? if ($serverlayout_cfg['ROWS'] == $k) { ?> selected<? } ?>><? echo $k ?></option>
-                  <?php } ?>
-                </select></div>
-      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
-        Columns: <select name="COLUMNS" id="COLUMNS" size="1">
-                   </select></div>
-      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
-        Drive Trays Orientation:
-          <select name="ORIENTATION" id="ORIENTATION" size="1" >
-            <option value="0"<? if ($orientation == "0") { ?> selected<? } ?>>Horizontal</option>
-            <option value="90"<? if ($orientation == "90") { ?> selected<? } ?>>Vertical</option>
-          </select></div>
-    <?php if ($layout_orientation == 0) { ?>
     </div>
 
-    <div style="width: 49%; float:right; border: 0px solid black; overflow: hidden">
-    <?php } ?>
+    <div style="width: <?php echo $level_2_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
+      <div id="title">
+        <span class="left">Layout Settings</span>
+      </div>
+      <div class="margin-left:auto; margin-right:auto;">
+        <table>
+          <tr>
+            <td>Enable editing:</td>
+            <td><input type="checkbox" name="EDIT_LAYOUT" id="EDIT_LAYOUT" onchange="EditLayoutCheckbox(this)"></td>
+          </tr>
+          <tr>
+            <td>Rows:</td>
+            <td><select name="ROWS" id="ROWS" size="1" onchange="DefineColumnsDropDownList()">
+                    <option value="" disabled></option>
+                    <?php for ($k = 1; $k <= $max_trays; $k++) { ?>
+                    <option value="<? echo $k ?>"<? if ($serverlayout_cfg['ROWS'] == $k) { ?> selected<? } ?>><? echo $k ?></option>
+                    <?php } ?>
+                  </select></td>
+          </tr>
+          <tr>
+            <td>Columns:</td>
+            <td><select name="COLUMNS" id="COLUMNS" size="1">
+                     </select></td>
+          </tr>
+          <tr>
+            <td>Drive Trays Orientation:</td>
+            <td><select name="ORIENTATION" id="ORIENTATION" size="1" >
+              <option value="0"<? if ($orientation == "0") { ?> selected<? } ?>>Horizontal</option>
+              <option value="90"<? if ($orientation == "90") { ?> selected<? } ?>>Vertical</option>
+           </select></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <div style="width: <?php echo $level_2_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
       <div id="title">
         <span class="left">Preview Server Layout</span>
       </div>
@@ -432,7 +446,7 @@ function UpdateDIVSizes() {
 
   <div style="width: 100%; float:left; border: 0px solid black;">
   <?php } else { ?>
-  <div style="width: 74%; float:right; border: 0px solid black;">
+  <div style="width: 70%; float:right; border: 0px solid black;">
   <?php } ?>
     <div id="title">
       <span class="left">Device List and Data Entry - Enable editing <input type="checkbox" name="EDIT_TABLE" id="EDIT_TABLE" onchange="EditTableCheckbox(this)"></span>
