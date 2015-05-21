@@ -234,6 +234,9 @@ function TrayOptionsStartup() {
           }
         }
       }
+      if (element.options[element.selectedIndex].text == "Unassigned") {
+        element.style.backgroundColor = "#ffb2ae";
+      }
     }
   }
 }
@@ -243,6 +246,13 @@ function UpdateTrayOptions(current_tray_num, element) {
   var num_trays = <?php echo $num_trays ?>;
   var value = element.value;
   var oldvalue = element.oldvalue;
+
+  if (value == "") {
+     element.style.backgroundColor = "#ffb2ae";
+  }
+  else {
+    element.style.backgroundColor = "#aeffb2";
+  }
   
   for (i = 1; i <= num_disks; i++) {
     var index = "TRAY_NUM"+i;
@@ -298,9 +308,11 @@ function UpdateTrayOptions(current_tray_num, element) {
 //  alert("Moving device"+device_list[current_tray_num-1]+" from "+oldvalue+" to "+value);
   if (value != "") {
     document.getElementById("TRAY_TEXT"+value).innerHTML = value+" - "+device_list[current_tray_num-1]; // Change DIV HTML content for new tray if it is assigned
+    document.getElementById("TRAY_TEXT"+value).style.color = "#aeffb2";
   }
   if (oldvalue != "") {
-    document.getElementById("TRAY_TEXT"+oldvalue).innerHTML = oldvalue+" - "; // Change DIV HTML content for previous tray if it was assigned
+    document.getElementById("TRAY_TEXT"+oldvalue).innerHTML = oldvalue; // Change DIV HTML content for previous tray if it was assigned
+    document.getElementById("TRAY_TEXT"+oldvalue).style.color = "#aeffb2";
   }
 }
 
