@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.05.17">
+<!ENTITY version     "2015.05.24">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Development/&name;.plg">
 <!ENTITY packageVER  "v1.0">
 <!ENTITY packageMD5  "08deae21d373e2878268f3947f4e3346">
@@ -20,7 +20,7 @@
 >
 
 <CHANGES>
-###2015.05.17
+###2015.05.24
 - Initial Release
 </CHANGES>
 
@@ -112,30 +112,12 @@ fi
 if [ "$INSTALL_PKG" == "true" ] ; then
   logit "Extracting plugin package..."
   <!--# Remove current existing files -->
-  [ -f "/etc/rc.d/rc.&name;" ] &amp;&amp; rm -f "/etc/rc.d/rc.&name;"
   [ -d "&emhttpLOC;" ] &amp;&amp; rm -fR "&emhttpLOC;"
   <!--# Extract files -->
   tar -xf "&pluginLOC;/&packagefile;" -C "/"
-  <!-- Make getdiskdata.sh executable -->
-  chmod 0770 "&emhttpLOC;/shell_scripts/getdiskdata.sh"
   <!--# Edit PAGE file  - add version number and ending "-" -->
   echo "Version=\"&version;\"" &gt;&gt; "&emhttpLOC;/&name;.page"
   echo "---" &gt;&gt; "&emhttpLOC;/&name;.page"
-  <!--# Create or fix configuration file -->
-  if [ ! -f "&pluginLOC;/&name;.cfg" ] ; then
-    logit "Configuration file not found. Creating configuration file..."
-  fi
-  logit "Checking all configuration file parameters exist"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep ROWS` ] &amp;&amp; echo "ROWS=\"6\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep COLUMNS` ] &amp;&amp; echo "COLUMNS=\"4\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep ORIENTATION` ] &amp;&amp; echo "ORIENTATION=\"0\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW1` ] &amp;&amp; echo "SHOW1=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW2` ] &amp;&amp; echo "SHOW2=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW3` ] &amp;&amp; echo "SHOW3=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW4` ] &amp;&amp; echo "SHOW4=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW5` ] &amp;&amp; echo "SHOW5=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW6` ] &amp;&amp; echo "SHOW6=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
-  [ ! `cat "&pluginLOC;/&name;.cfg" | grep SHOW7` ] &amp;&amp; echo "SHOW7=\"HIDE\"" &gt;&gt; "&pluginLOC;/&name;.cfg"
 
   rm -Rf "/tmp/&name;-packages"
   rm -f "/tmp/&name;-install"

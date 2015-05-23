@@ -1,18 +1,14 @@
 <?php
 include 'serverlayout_constants.php';
 
-$serverlayout_cfg = parse_ini_file($serverlayout_cfg_file, true);
-$rows = $serverlayout_cfg['ROWS'];
-$columns = $serverlayout_cfg['COLUMNS'];
-$orientation = $serverlayout_cfg['ORIENTATION'];
-$num_trays = $num_columns * $num_rows;
+$myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
+$myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
+file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
 
-if (file_exists($automatic_data)) {
-  $serverlayout_auto = parse_ini_file($automatic_data, true);
-  $num_disks = count($serverlayout_auto, COUNT_NORMAL);
-} else {
-  $num_disks = 0;
-}
+$rows = $myJSONconfig["LAYOUT"]['ROWS'];
+$columns = $myJSONconfig["LAYOUT"]['COLUMNS'];
+$orientation = $myJSONconfig["LAYOUT"]['ORIENTATION'];
+$num_trays = $num_columns * $num_rows;
 ?>
 
 <HTML>
@@ -102,20 +98,15 @@ function UpdateDIVSizes() {
         <div class="cell_text">
         <?php $tray_num = (($i-1) * $columns) + $j;
               echo "<span>".$tray_num."</span>";
-              for ($k = 1; $k <= $num_disks; $k++) {
-                if ($serverlayout_cfg[$serverlayout_auto[$k]['SN']]['TRAY_NUM'] == $tray_num) {
-                  for ($m = 1; $m <= ($num_data_col-$num_data_col_not_show); $m++) {
-                    $index = "SHOW".$m;
-                    if (($m == 1) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['DEVICE']."</span>"; }
-                    if (($m == 2) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['FAMILY']."</span>"; }
-                    if (($m == 3) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['MODEL']."</span>"; }
-                    if (($m == 4) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['SN']."</span>"; }
-                    if (($m == 5) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['FIRMWARE']."</span>"; }
-                    if (($m == 6) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_auto[$k]['CAPACITY']."</span>"; }
-                    if (($m == 7) and ($serverlayout_cfg[$index] == "SHOW" )) { echo "<span> ".$serverlayout_cfg[$serverlayout_auto[$k]['SN']]['PURCHASE_DATE']."</span>"; }
+              foreach (myJSONconfig["DISK_DATA"] as $disk) {
+                if (($disk["STATUS"]=="INSTALLED") and ($disk['TRAY_NUM'] == $tray_num)) {
+                  foreach (myJSONconfig["DATA_COLUMNS"] as $data_col) {
+                    if ($data_col["SHOW_DATA"] == "YES") {
+                      echo "<span>".$disk[$data_col["NAME"]]." </span>";
+                    }
                   }
                 }
-              } ?>
+              }
         </div>
       </div>
     </div>

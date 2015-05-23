@@ -52,20 +52,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
     // Save to CONFIG file
     file_put_contents($serverlayout_cfg_file, $arguments);
-
-  // If "Scan Hardware" button pressed
-  } elseif (isset($_POST['scan'])) {
-      echo $scan_command;
-      shell_exec($scan_command);
   }
-
-} else {  // Not POST method
-
-//  $is_post = false;
-//  $dataOK = true;
-//  $rowsERR = false;
-//  $columnsERR = false;
-
 }
 ?>
 
