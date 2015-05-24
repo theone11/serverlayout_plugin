@@ -1,4 +1,6 @@
 <?php
+include 'serverlayout_constants.php';
+
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
 $myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
 file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
@@ -422,7 +424,8 @@ function UpdateDIVSizes() {
           <?php foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) { ?>
           <td>
           <?php echo $data_column["Title"]; ?>
-            <input class="CHECK_SHOW_DATA" type="checkbox" name="SHOW_<?php echo $data_column["NAME"]; ?>" id="SHOW_<?php echo $data_column["NAME"]; ?>" value="YES">
+            <input class="CHECK_SHOW_DATA" type="checkbox" name="SHOW_CHECKBOXES[]" value="YES">
+            <input type="hidden" name="SHOW_CHECKBOXES_NAME[]" value="<?php echo $data_column["NAME"]; ?>">
           </td>
           <?php } ?>
         </tr>
@@ -434,12 +437,10 @@ function UpdateDIVSizes() {
                       echo "<td>";
                       switch($data_column["NAME"]) {
                         case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") { ?>
-                                                     <select class="MANUAL_DATA TRAY_NUM_CLASS" name=<?php echo "\"TRAY_NUM_".$disk["SN"]."\""; ?> id=<?php echo "\"TRAY_NUM_".$disk["SN"]."\""; ?> size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions(this.name, <?php echo $disk["DEVICE"]; ?>, this); this.oldvalue = this.value;">
+                                                     <select class="MANUAL_DATA TRAY_NUM_CLASS" name="TRAY_NUMS[]" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions(this.name, <?php echo $disk["DEVICE"]; ?>, this); this.oldvalue = this.value;">
                                                      </select>
-                                                     <?php } else {
-                                                             echo $disk["TRAY_NUM"];
-                                                           };
-                                                     break;
+                                                     <input type="hidden" name="TRAY_NUM_SN[]" value="<?php echo $disk["SN"]; ?>">
+                                                     <?php break;
                         case "TYPE"                : switch ($disk["TYPE"]) {
                                                        case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:auto;height:20px"> <? break;
                                                        case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:auto;height:20px"> <? break;
@@ -457,7 +458,9 @@ function UpdateDIVSizes() {
                         case "FIRST_INSTALL_DATE"  : echo $disk["FIRST_INSTALL_DATE"]; break;
                         case "RECENT_INSTALL_DATE" : echo $disk["RECENT_INSTALL_DATE"]; break;
                         case "LAST_SEEN_DATE"      : echo $disk["LAST_SEEN_DATE"]; break;
-                        case "PURCHASE_DATE"       : echo "<span class=\"MANUAL_DATA\">".$disk["PURCHASE_DATE"]."</span>"; break;
+                        case "PURCHASE_DATE"       : ?> <input class="MANUAL_DATA" type="text" name="PURCHASE_DATES[]" style="width: 6em;" maxlength="10" value="<? echo $disk["PURCHASE_DATE"];?>">
+                                                        <input type="hidden" name="PURCHASE_DATES_SN[]" value="<?php echo $disk["SN"]; ?>">
+                                                     <?php break;
                         default                    :
                       }
                       echo "</td>";
@@ -467,7 +470,7 @@ function UpdateDIVSizes() {
                 }
               } else {
                 echo "<tr>";
-                echo "<td align="center" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No disks found - Scan Hardware</td>"
+                echo "<td align="center" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No disks found</td>"
                 echo "</tr>";
               } ?>
       </table>

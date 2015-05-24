@@ -1,7 +1,5 @@
 <?php
 $max_trays = 26;
-$num_data_col = 9;
-$num_data_col_not_show = 2;  // TYPE (Must be 1st), TRAY_NUM (Must be last)
 
 // Constants - Data file locations
 $automatic_data = "/boot/config/plugins/serverlayout/AutomaticData.cfg";
@@ -24,18 +22,18 @@ $height = 80;
 $default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"));
 
 $default_col_data = array("DATA_COLUMNS" => array (
-                      array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",              "SHOW_DATA" => "NO",  "ORDER" => "1"),
-                      array("NAME" => "TYPE",                "TITLE" => "Type",                "SHOW_DATA" => "NO",  "ORDER" => "2"),
-                      array("NAME" => "DEVICE",              "TITLE" => "Device",              "SHOW_DATA" => "YES", "ORDER" => "3"),
-                      array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",        "SHOW_DATA" => "YES", "ORDER" => "4"),
-                      array("NAME" => "MODEL",               "TITLE" => "Model",               "SHOW_DATA" => "YES", "ORDER" => "5"),
-                      array("NAME" => "SN",                  "TITLE" => "Serial Number",       "SHOW_DATA" => "YES", "ORDER" => "6"),
-                      array("NAME" => "FW",                  "TITLE" => "Firmware",            "SHOW_DATA" => "YES", "ORDER" => "7"),
-                      array("NAME" => "CAPACITY",            "TITLE" => "Capacity",            "SHOW_DATA" => "YES", "ORDER" => "8"),
-                      array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install Date",  "SHOW_DATA" => "YES", "ORDER" => "9"),
-                      array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install Date", "SHOW_DATA" => "YES", "ORDER" => "10"),
-                      array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen Date",      "SHOW_DATA" => "YES", "ORDER" => "11"),
-                      array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",       "SHOW_DATA" => "YES", "ORDER" => "12"),
+                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",              "SHOW_DATA" => "NO",  "ORDER" => "1"),
+                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",                "SHOW_DATA" => "NO",  "ORDER" => "2"),
+                      "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",              "SHOW_DATA" => "YES", "ORDER" => "3"),
+                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",        "SHOW_DATA" => "YES", "ORDER" => "4"),
+                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",               "SHOW_DATA" => "YES", "ORDER" => "5"),
+                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",       "SHOW_DATA" => "YES", "ORDER" => "6"),
+                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",            "SHOW_DATA" => "YES", "ORDER" => "7"),
+                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",            "SHOW_DATA" => "YES", "ORDER" => "8"),
+                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install Date",  "SHOW_DATA" => "YES", "ORDER" => "9"),
+                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install Date", "SHOW_DATA" => "YES", "ORDER" => "10"),
+                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen Date",      "SHOW_DATA" => "YES", "ORDER" => "11"),
+                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",       "SHOW_DATA" => "YES", "ORDER" => "12"),
                       ));
 
 $template_disk = array("TRAY_NUM"            => "",

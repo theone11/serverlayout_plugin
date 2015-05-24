@@ -5,53 +5,52 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   // If "Apply" button pressed
   if(isset($_POST['apply'])) {
-    // Write new configuration data    
-    $arguments = "";
-    $rows_new = $_POST['ROWS'];
-    $arguments .= "ROWS=\"".$rows_new."\"\n";
-    $columns_new = $_POST['COLUMNS'];
-    $arguments .= "COLUMNS=\"".$columns_new."\"\n";
-    $orientation_new = $_POST['ORIENTATION'];
-    $arguments .= "ORIENTATION=\"".$orientation_new."\"\n";
-    // Write SHOW/HIDE configuration
-    for ($i = 1; $i <= ($num_data_col-$num_data_col_not_show); $i++) {
-      $temp = "SHOW".$i;
-      if (isset($_POST[$temp]) and ($_POST[$temp] == "SHOW")) {
-        $arguments .= "SHOW".$i."=\"SHOW\"\n";
-      } else {
-        $arguments .= "SHOW".$i."=\"HIDE\"\n";
-      }
-    }
+
+    // Get or create JSON configuration file
+    $myJSONconfig = Get_JSON_Config_File();
+
+    // Get new configuration data    
+    $rows_new = $_POST["ROWS"];
+    $columns_new = $_POST["COLUMNS"];
     // Get previous ROWS and COLUMNS settings
-    $serverlayout_cfg = parse_ini_file($serverlayout_cfg_file, true);
-    $rows_old = $serverlayout_cfg['ROWS'];
-    $columns_old = $serverlayout_cfg['COLUMNS'];
-    // Get number of disks
-    if (file_exists($automatic_data)) {
-      $serverlayout_auto = parse_ini_file($automatic_data, true);
-      $num_disks = count($serverlayout_auto, COUNT_NORMAL);
-    } else {
-      $num_disks = 0;
-    }
-    for ($i = 1; $i <= $num_disks; $i++) {
-      $temp = $serverlayout_auto[$i]['SN'];
-      $arguments .= "[".$temp."]\n";
-      // Check if ROWS / COLUMNS / ORIENTATION have changed
-      if (($rows_new == $rows_old) and ($columns_new == $columns_old)) {
-        // At least one of the following ROWS / COLUMNS has changed - Don't save TRAY_NUM assignments
-        if ($serverlayout_auto[$i]['TYPE'] != "USB") {  // Also don't save if device is USB
-          $temp = "TRAY_NUM".$i;
-          $temp2 = $_POST[$temp];
-          $arguments .= "TRAY_NUM=\"".$temp2."\"\n";
-        }
+    $rows_old = $myJSONconfig["LAYOUT"]["ROWS"];
+    $columns_old = $myJSONconfig["LAYOUT"]["COLUMNS"];
+
+    // Write new layout configuration data    
+    $myJSONconfig["LAYOUT"]["ROWS"] = $rows_new;
+    $myJSONconfig["LAYOUT"]["COLUMNS"] = $columns_new;
+    $myJSONconfig["LAYOUT"]["ORIENTATION"] = $_POST["ORIENTATION"];
+
+    // Write SHOW configuration
+    $showcheckboxes = $_POST["SHOW_CHECKBOXES"];
+    $showcheckboxes_name = $_POST["SHOW_CHECKBOXES_NAME"];
+    foreach (array_combine($showcheckboxes_name, $showcheckboxes) as $showcheckbox_name => $showcheckbox) {
+      if (isset($showcheckbox) and ($showcheckbox == "YES")) {
+        $myJSONconfig["DATA_COLUMNS"][$showcheckbox_name]["SHOW_DATA"] = "YES";
+      } else {
+        $myJSONconfig["DATA_COLUMNS"][$showcheckbox_name]["SHOW_DATA"] = "NO";
       }
-      // Save all other disk information
-      $temp = "PURCHASE_DATE".$i;
-      $temp2 = $_POST[$temp];
-      $arguments .= "PURCHASE_DATE=\"".$temp2."\"\n";
     }
-    // Save to CONFIG file
-    file_put_contents($serverlayout_cfg_file, $arguments);
+
+    // Write TRAY_NUM configuration
+    $traynums = $_POST["TRAY_NUMS"];
+    $traynums_sn = $_POST["TRAY_NUMS_SN"];
+    foreach (array_combine($traynums_sn, $traynums) as $traynum_sn => $traynum) {
+      if (($rows_new == $rows_old) and ($columns_new == $columns_old)) {
+        $myJSONconfig["DISK_DATA"][$traynum_sn]["TRAY_NUM"] = $traynum;
+      } else {
+        $myJSONconfig["DISK_DATA"][$traynum_sn]["TRAY_NUM"] = "";
+    }
+
+    // Write PURCHASE_DATE configuration
+    $purchasedates = $_POST["PURCHASE_DATE"];
+    $purchasedates_sn = $_POST["PURCHASE_DATE_SN"];
+    foreach (array_combine($purchasedates_sn, $purchasedates) as $purchasedate_sn => $purchasedate) {
+      $myJSONconfig["DISK_DATA"][$purchasedate_sn]["TRAY_NUM"] = $purchasedate;
+    }
+
+    // Save configuration data to JSON configuration file
+    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
   }
 }
 ?>
