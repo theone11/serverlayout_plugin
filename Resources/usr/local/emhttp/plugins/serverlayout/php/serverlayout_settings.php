@@ -1,28 +1,21 @@
 <?php
-include 'serverlayout_constants.php';
+require_once('serverlayout_constants.php');
 
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
 $myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
 file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
 
-$rows = $myJSONconfig["LAYOUT"]['ROWS'];
-$columns = $myJSONconfig["LAYOUT"]['COLUMNS'];
-$orientation = $myJSONconfig["LAYOUT"]['ORIENTATION'];
+$rows = $myJSONconfig["LAYOUT"]["ROWS"];
+$columns = $myJSONconfig["LAYOUT"]["COLUMNS"];
+$orientation = $myJSONconfig["LAYOUT"]["ORIENTATION"];
 $num_trays = $columns * $rows;
-
-$num_disks = 0;
-foreach ($myJSONconfig as $disk) {
-  if ($disk["STATUS"] == "INSTALLED") {
-    $num_disks = $num_disks + 1;
-  }
-}
 
 // Variables and Calculations for layout styles
 
 $width_preview = $width/$factor;
 $height_preview = $height/$factor;
 $border_radius_preview = $border_radius/$factor;
-$background_padding_preview = $background_padding;
+$background_padding_preview = $background_padding/$factor;
 
 if ($orientation == 0) {
   if (($columns * $width) > ($rows * $height)) {
@@ -119,69 +112,49 @@ table.disk_data tbody tr:hover {background-color:#FDFD96;}
 <script type="text/javascript">
 function validateForm() {
   var elements = document.getElementsByClassName("LAYOUT_DATA");
-  for each (element in elements) {
-    element.disabled = false;
+  for (i = 0; i < elements.length; i++) {
+    elements[i].disabled = false;
   }
 
   var elements = document.getElementsByClassName("MANUAL_DATA");
-  for each (element in elements) {
-    element.disabled = false;
+  for (i = 0; i < elements.length; i++) {
+    elements[i].disabled = false;
   }
 }
 
 function InitDisabledFields() {
   var elements = document.getElementsByClassName("LAYOUT_DATA");
-  for each (element in elements) {
-    element.disabled = true;
+  for (i = 0; i < elements.length; i++) {
+    elements[i].disabled = true;
   }
 
   var elements = document.getElementsByClassName("MANUAL_DATA");
-  for each (element in elements) {
-    element.disabled = true;
+  for (i = 0; i < elements.length; i++) {
+    elements[i].disabled = true;
   }
 }
 
-function StartUp() {
-  DefineColumnsDropDownList();
-  TrayOptionsStartup();
-  InitDisabledFields();
-  InitShowCheckboxed();
-  UpdateDIVSizes();
-}
-
-function InitShowCheckboxed() {
-  var initial_shows = {<?$first = true;
-                         foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
-                           if ($first) {
-                             $first = false;
-                             echo "SHOW_".$data_column["NAME"].":\"".$data_column["SHOW"]."\"";
-                           } else {
-                             echo ", SHOW_".$data_column["NAME"].":\"".$data_column["SHOW"]."\"";
-                           }
-                         } ?>];
+function InitShowCheckboxes() {
+  var initial_shows = {<?php $first = true;
+                             foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
+                               if ($first) {
+                                 $first = false;
+                                 echo "SHOW_".$data_column["NAME"].":\"".$data_column["SHOW_DATA"]."\"";
+                               } else {
+                                 echo ", SHOW_".$data_column["NAME"].":\"".$data_column["SHOW_DATA"]."\"";
+                               }
+                             } ?>};
 
   var elements = document.getElementsByClassName("CHECK_SHOW_DATA");
-  for each (element in elements) {
-    if (initial_shows[element.name] == "YES") {
-      element.checked = true;
+  for (i = 0; i < elements.length; i++) {
+    if (initial_shows[elements[i].getAttribute("id")] == "YES") {
+      elements[i].checked = true;
     } else {
-      element.checked = false;
+      elements[i].checked = false;
     }
   }
 }
 
-function InitDisabledFields() {
-  var elements = document.getElementsByClassName("LAYOUT_DATA");
-  for each (element in elements) {
-    element.disabled = true;
-  }
-
-  var elements = document.getElementsByClassName("MANUAL_DATA");
-  for each (element in elements) {
-    element.disabled = true;
-  }
-}
-  
 function DefineColumnsDropDownList() {
   var rows = document.getElementById("ROWS").value;
   var columnsE = document.getElementById("COLUMNS");
@@ -203,43 +176,43 @@ function DefineColumnsDropDownList() {
 function TrayOptionsStartup() {
   var num_trays = <?php echo $num_trays ?>;
   // Create initial_trays array for all disks found
-  var initial_trays = [<?$first = true;
-                         foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                           if (($disk["STATUS"] == "INSTALLED") and ($disk["TYPE"] != USB)) {
-                             if ($first) {
-                               $first = false;
-                               echo "\"".$disk["TRAY_NUM"]."\"";
-                             } else {
-                               echo ", \"".disk["TRAY_NUM"]."\"";
-                             }
-                           }
-                         } ?>];
+  var initial_trays = [<?php $first = true;
+                             foreach ($myJSONconfig["DISK_DATA"] as $disk) {
+                               if (($disk["STATUS"] == "INSTALLED") and ($disk["TYPE"] != USB)) {
+                                 if ($first) {
+                                   $first = false;
+                                   echo "\"".$disk["TRAY_NUM"]."\"";
+                                 } else {
+                                   echo ", \"".$disk["TRAY_NUM"]."\"";
+                                 }
+                               }
+                             } ?>];
 
   var elements = document.getElementsByClassName("TRAY_NUM_CLASS");
 
-  for each (element in elements) {
-    element.options.length = 0;
-    element.options[0] = new Option("Unassigned", "", false, true);  // Add EMPTY option and define as selected
+  for (i = 0; i < elements.length; i++) {
+    elements[i].options.length = 0;
+    elements[i].options[0] = new Option("Unassigned", "", false, true);  // Add EMPTY option and define as selected
     var count = 1;  // Start from 2nd option (1st option is EMPTY)
     for (j = 1; j <= num_trays; j++) {  // Scan all options
       if (parseInt(j) == parseInt(initial_trays[i-1])) {  // If option is the saved option
-        element.options[count] = new Option(j, j, false, true);  // Create new option and define as selected
-        element.options[0].selected = false;  // Remove selected from EMPTY option
+        elements[i].options[count] = new Option(j, j, false, true);  // Create new option and define as selected
+        elements[i].options[0].selected = false;  // Remove selected from EMPTY option
         count++;
       } else {
         if (initial_trays.indexOf(j.toString()) == -1) {
-          element.options[count] = new Option(j, j, false, false);  // Option does not exists in this and other TRAY_NUMs. Create new option and define as not selected
+          elements[i].options[count] = new Option(j, j, false, false);  // Option does not exists in this and other TRAY_NUMs. Create new option and define as not selected
           count++;
         }
       }
     }
-    if (element.options[element.selectedIndex].text == "Unassigned") {
-      element.style.backgroundColor = "#ffb2ae";
+    if (elements[i].options[elements[i].selectedIndex].text == "Unassigned") {
+      elements[i].style.backgroundColor = "#ffb2ae";
     }
   }
 }
   
-function UpdateTrayOptions(current_tray_name, device, this_element) {
+function UpdateTrayOptions(device, this_element) {
   var value = this_element.value;
   var oldvalue = this_element.oldvalue;
 
@@ -251,30 +224,31 @@ function UpdateTrayOptions(current_tray_name, device, this_element) {
   }
 
   var elements = document.getElementsByClassName("TRAY_NUM_CLASS");
-  
-  for each (element in elements) {
-    if (element.name != this_element.name) {
+  alert(elements.length);
+  for (i = 0; i < elements.length; i++) {
+    alert("Element Name: "+elements[i].getAttribute("id")+" This Element Name: "+this_element.getAttribute("id"));
+    if (elements[i].getAttribute("id") != this_element.getAttribute("id")) {
       // Start - Remove option from all other TRAY_NUMs
       if (value != "") {  // If new value is not "Unassigned" then remove it from other TRAYS
-        var num_options = element.options.length;
+        var num_options = elements[i].options.length;
         for (j = 0; j < num_options; j++) {  // Go over all options
-          if (element.options[j].value == value) {  // Find option with same value
-            element.options.remove(j);  // Remove option
+          if (elements[i].options[j].value == value) {  // Find option with same value
+            elements[i].options.remove(j);  // Remove option
             break;  // Need to break because option found and length is now 1 option less
           }
         }
       }
       // Start - Add previous option back to all other TRAY_NUMs
       if (oldvalue != "") {
-        var num_options = element.options.length;  // Get number of options again because changed - option might have been removed
+        var num_options = elements[i].options.length;  // Get number of options again because changed - option might have been removed
         var not_found = true;
         for (j = 1; j < num_options; j++) {  // Go over all options except EMPTY
-          if (parseInt(oldvalue) <= parseInt(element.options[j].value)) {
+          if (parseInt(oldvalue) <= parseInt(elements[i].options[j].value)) {
             not_found = false;
             var new_option = document.createElement("option");
             new_option.value = oldvalue;
             new_option.text = oldvalue;
-            element.options.add(new_option, j);
+            elements[i].options.add(new_option, j);
             break;  // Found and added option in correct (sorted) place
           }
         }
@@ -282,7 +256,7 @@ function UpdateTrayOptions(current_tray_name, device, this_element) {
           var new_option = document.createElement("option");
           new_option.value = oldvalue;
           new_option.text = oldvalue;
-          element.options.add(new_option, num_options);
+          elements[i].options.add(new_option, num_options);
         }
       }
     }
@@ -299,13 +273,24 @@ function UpdateTrayOptions(current_tray_name, device, this_element) {
   }
 }
 
-function EditCheckbox(myCheckbox, group) {
-  var elements = document.getElementsByClassName(group);
-  for each (element in elements) {
+function EditCheckboxLayout(myCheckbox) {
+  var elements = document.getElementsByClassName("LAYOUT_DATA");
+  for (i = 0; i < elements.length; i++) {
     if (myCheckbox.checked) {
-      element.disabled = false;
+      elements[i].disabled = false;
     } else {
-      element.disabled = true;
+      elements[i].disabled = true;
+    }
+  }
+}
+
+function EditCheckboxData(myCheckbox) {
+  var elements = document.getElementsByClassName("MANUAL_DATA");
+  for (i = 0; i < elements.length; i++) {
+    if (myCheckbox.checked) {
+      elements[i].disabled = false;
+    } else {
+      elements[i].disabled = true;
     }
   }
 }
@@ -318,6 +303,15 @@ function UpdateDIVSizes() {
   } else {
     element.style.width = "<?php echo ($height_preview * $columns); ?>px";
   }
+}
+
+function StartUp() {
+  alert("starting up StartUp()...");
+  DefineColumnsDropDownList();
+  TrayOptionsStartup();
+  InitDisabledFields();
+  InitShowCheckboxes();
+  UpdateDIVSizes();
 }
 
 </script>
@@ -338,8 +332,6 @@ function UpdateDIVSizes() {
       <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
         <input type="submit" name="apply" value="Save Data & Apply Configuration"></div>
       <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
-        <input type="submit" name="scan" value="Scan Hardware"></div>
-      <div style="width: <?php echo $level_3_div_width; ?>%; float:left; border: 0px solid black;">
         <button type="button" onClick="done();">Exit ServerLayout</button></div>
     </div>
 
@@ -351,7 +343,7 @@ function UpdateDIVSizes() {
         <table>
           <tr>
             <td>Enable editing:</td>
-            <td><input type="checkbox" name="EDIT_LAYOUT" id="EDIT_LAYOUT" onchange="EditCheckbox(this, "LAYOUT_DATA")"></td>
+            <td><input type="checkbox" name="EDIT_LAYOUT" id="EDIT_LAYOUT" onchange="EditCheckboxLayout(this)"></td>
           </tr>
           <tr>
             <td>Rows:</td>
@@ -393,7 +385,7 @@ function UpdateDIVSizes() {
               <?php $tray_num = (($i-1) * $columns) + $j; ?>
               <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
               <?php echo "<span>".$tray_num."</span>";
-                    foreach (myJSONconfig["DISK_DATA"] as $disk) {
+                    foreach ($myJSONconfig["DISK_DATA"] as $disk) {
                       if (($disk["STATUS"]=="INSTALLED") and ($disk["TRAY_NUM"] == $tray_num)) {
                         echo "<span> ".$disk["DEVICE"]."</span>";
                       }
@@ -415,7 +407,7 @@ function UpdateDIVSizes() {
   <div style="width: 70%; float:right; border: 0px solid black;">
   <?php } ?>
     <div id="title">
-      <span class="left">Device List and Data Entry - Enable editing <input type="checkbox" name="EDIT_TABLE" id="EDIT_TABLE" onchange="EditCheckbox(this, "MANUAL_DATA")"></span>
+      <span class="left">Installed Devices and Data Entry - Enable editing <input type="checkbox" name="EDIT_TABLE" id="EDIT_TABLE" onchange="EditCheckboxData(this)"></span>
     </div>
     <div>
       <table class="disk_data">
@@ -423,61 +415,63 @@ function UpdateDIVSizes() {
         <tr>
           <?php foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) { ?>
           <td>
-          <?php echo $data_column["Title"]; ?>
-            <input class="CHECK_SHOW_DATA" type="checkbox" name="SHOW_CHECKBOXES[]" value="YES">
+          <?php echo $data_column["TITLE"]; ?>
+            <input class="CHECK_SHOW_DATA" type="checkbox" id="SHOW_<?php echo $data_column["NAME"]; ?>" name="SHOW_CHECKBOXES[]" value="YES">
             <input type="hidden" name="SHOW_CHECKBOXES_NAME[]" value="<?php echo $data_column["NAME"]; ?>">
           </td>
           <?php } ?>
         </tr>
-        <?php if ($num_disks > 0) {
-                foreach ($myJSONconfig["DISK_DATA"] as $disk { 
-                  if ($disk["STATUS"] == "INSTALLED") {
-                    echo "<tbody><tr>"
-                    foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
-                      echo "<td>";
-                      switch($data_column["NAME"]) {
-                        case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") { ?>
-                                                     <select class="MANUAL_DATA TRAY_NUM_CLASS" name="TRAY_NUMS[]" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions(this.name, <?php echo $disk["DEVICE"]; ?>, this); this.oldvalue = this.value;">
-                                                     </select>
-                                                     <input type="hidden" name="TRAY_NUM_SN[]" value="<?php echo $disk["SN"]; ?>">
-                                                     <?php break;
-                        case "TYPE"                : switch ($disk["TYPE"]) {
-                                                       case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:auto;height:20px"> <? break;
-                                                       case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:auto;height:20px"> <? break;
-                                                       case "CD/DVD": ?> <img src=<?php echo $optical_imgfile; ?> style="width:auto;height:20px"> <? break;
-                                                       default: echo $disk["TYPE"];
-                                                     }
-                                                     break;
-                      
-                        case "DEVICE"              : echo $disk["DEVICE"]; break;
-                        case "MANUFACTURER"        : echo $disk["MANUFACTURER"]; break;
-                        case "MODEL"               : echo $disk["MODEL"]; break;
-                        case "SN"                  : echo $disk["SN"]; break;
-                        case "FW"                  : echo $disk["FW"]; break;
-                        case "CAPACITY"            : echo $disk["CAPACITY"]; break;
-                        case "FIRST_INSTALL_DATE"  : echo $disk["FIRST_INSTALL_DATE"]; break;
-                        case "RECENT_INSTALL_DATE" : echo $disk["RECENT_INSTALL_DATE"]; break;
-                        case "LAST_SEEN_DATE"      : echo $disk["LAST_SEEN_DATE"]; break;
-                        case "PURCHASE_DATE"       : ?> <input class="MANUAL_DATA" type="text" name="PURCHASE_DATES[]" style="width: 6em;" maxlength="10" value="<? echo $disk["PURCHASE_DATE"];?>">
-                                                        <input type="hidden" name="PURCHASE_DATES_SN[]" value="<?php echo $disk["SN"]; ?>">
-                                                     <?php break;
-                        default                    :
-                      }
-                      echo "</td>";
+        <?php $no_installed_disk = true;
+              foreach ($myJSONconfig["DISK_DATA"] as $disk) {
+                if ($disk["STATUS"] == "INSTALLED") {
+                  $no_installed_disk = false;
+                  echo "<tbody><tr>";
+                  foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
+                    echo "<td>";
+                    switch($data_column["NAME"]) {
+                      case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") { ?>
+                                                   <select class="MANUAL_DATA TRAY_NUM_CLASS" id="TRAY_NUM_<?php echo $disk["SN"]; ?>" name="TRAY_NUMS[]" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions('<?php echo $disk["DEVICE"]; ?>', this); this.oldvalue = this.value;">
+                                                   </select>
+                                                   <input type="hidden" name="TRAY_NUM_SN[]" value="<?php echo $disk["SN"]; ?>">
+                                                   <?php }
+                                                   break;
+                      case "TYPE"                : switch ($disk["TYPE"]) {
+                                                     case "SATA": echo "<img src=\"".$sata_imgfile."\" style=\"width:auto;height:20px\">"; break;
+                                                     case "USB": echo "<img src=\"".$usb_imgfile."\" style=\"width:auto;height:20px\">"; break;
+                                                     case "CD/DVD": echo "<img src=\"".$optical_imgfile."\" style=\"width:auto;height:20px\">"; break;
+                                                     default: echo $disk["TYPE"];
+                                                   }
+                                                   break;
+                    
+                      case "DEVICE"              : echo $disk["DEVICE"]; break;
+                      case "MANUFACTURER"        : echo $disk["MANUFACTURER"]; break;
+                      case "MODEL"               : echo $disk["MODEL"]; break;
+                      case "SN"                  : echo $disk["SN"]; break;
+                      case "FW"                  : echo $disk["FW"]; break;
+                      case "CAPACITY"            : echo $disk["CAPACITY"]; break;
+                      case "FIRST_INSTALL_DATE"  : echo $disk["FIRST_INSTALL_DATE"]; break;
+                      case "RECENT_INSTALL_DATE" : echo $disk["RECENT_INSTALL_DATE"]; break;
+                      case "LAST_SEEN_DATE"      : echo $disk["LAST_SEEN_DATE"]; break;
+                      case "PURCHASE_DATE"       : ?> <input class="MANUAL_DATA" type="text" name="PURCHASE_DATES[]" style="width: 6em;" maxlength="10" value="<?php echo $disk["PURCHASE_DATE"]; ?>">
+                                                      <input type="hidden" name="PURCHASE_DATES_SN[]" value="<?php echo $disk["SN"]; ?>">
+                                                   <?php break;
+                      default                    :
                     }
-                    echo "</tr>";
+                    echo "</td>";
                   }
+                  echo "</tr>";
                 }
-              } else {
+              }
+              if ($no_installed_disk) {
                 echo "<tr>";
-                echo "<td align="center" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No installed disks found</td>"
+                echo "<td align=\"center\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No installed disks found</td>";
                 echo "</tr>";
               } ?>
       </table>
     </div>
 
     <div id="title">
-      <span class="left">Device History</span>
+      <span class="left">Historical Devices</span>
     </div>
     <div>
       <table class="disk_data">
@@ -485,50 +479,51 @@ function UpdateDIVSizes() {
         <tr>
           <?php foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) { ?>
           <td>
-          <?php echo $data_column["Title"]; ?>
+          <?php echo $data_column["TITLE"]; ?>
           </td>
           <?php } ?>
         </tr>
-        <?php if ($num_disks > 0) {
-                foreach ($myJSONconfig["DISK_DATA"] as $disk { 
-                  if ($disk["STATUS"] == "HISTORICAL") {
-                    echo "<tbody><tr>"
-                    foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
-                      echo "<td>";
-                      switch($data_column["NAME"]) {
-                        case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") {
-                                                       echo $disk[TRAY_NUM];
-                                                     }
-                                                     break;
-                        case "TYPE"                : switch ($disk["TYPE"]) {
-                                                       case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:auto;height:20px"> <? break;
-                                                       case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:auto;height:20px"> <? break;
-                                                       case "CD/DVD": ?> <img src=<?php echo $optical_imgfile; ?> style="width:auto;height:20px"> <? break;
-                                                       default: echo $disk["TYPE"];
-                                                     }
-                                                     break;
-                      
-                        case "DEVICE"              : echo $disk["DEVICE"]; break;
-                        case "MANUFACTURER"        : echo $disk["MANUFACTURER"]; break;
-                        case "MODEL"               : echo $disk["MODEL"]; break;
-                        case "SN"                  : echo $disk["SN"]; break;
-                        case "FW"                  : echo $disk["FW"]; break;
-                        case "CAPACITY"            : echo $disk["CAPACITY"]; break;
-                        case "FIRST_INSTALL_DATE"  : echo $disk["FIRST_INSTALL_DATE"]; break;
-                        case "RECENT_INSTALL_DATE" : echo $disk["RECENT_INSTALL_DATE"]; break;
-                        case "LAST_SEEN_DATE"      : echo $disk["LAST_SEEN_DATE"]; break;
-                        case "PURCHASE_DATE"       : echo $disk[PURCHASE_DATE];
-                                                     break;
-                        default                    :
-                      }
-                      echo "</td>";
+        <?php $no_historical_disk = true;
+              foreach ($myJSONconfig["DISK_DATA"] as $disk) { 
+                if ($disk["STATUS"] == "HISTORICAL") {
+                  $no_historical_disk = false;
+                  echo "<tbody><tr>";
+                  foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
+                    echo "<td>";
+                    switch($data_column["NAME"]) {
+                      case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") {
+                                                     echo $disk[TRAY_NUM];
+                                                   }
+                                                   break;
+                      case "TYPE"                : switch ($disk["TYPE"]) {
+                                                     case "SATA": echo "<img src=\"".$sata_imgfile."\" style=\"width:auto;height:20px\">"; break;
+                                                     case "USB": echo "<img src=\"".$usb_imgfile."\" style=\"width:auto;height:20px\">"; break;
+                                                     case "CD/DVD": echo "<img src=\"".$optical_imgfile."\" style=\"width:auto;height:20px\">"; break;
+                                                     default: echo $disk["TYPE"];
+                                                   }
+                                                   break;
+                    
+                      case "DEVICE"              : echo $disk["DEVICE"]; break;
+                      case "MANUFACTURER"        : echo $disk["MANUFACTURER"]; break;
+                      case "MODEL"               : echo $disk["MODEL"]; break;
+                      case "SN"                  : echo $disk["SN"]; break;
+                      case "FW"                  : echo $disk["FW"]; break;
+                      case "CAPACITY"            : echo $disk["CAPACITY"]; break;
+                      case "FIRST_INSTALL_DATE"  : echo $disk["FIRST_INSTALL_DATE"]; break;
+                      case "RECENT_INSTALL_DATE" : echo $disk["RECENT_INSTALL_DATE"]; break;
+                      case "LAST_SEEN_DATE"      : echo $disk["LAST_SEEN_DATE"]; break;
+                      case "PURCHASE_DATE"       : echo $disk[PURCHASE_DATE];
+                                                   break;
+                      default                    :
                     }
-                    echo "</tr>";
+                    echo "</td>";
                   }
+                  echo "</tr>";
                 }
-              } else {
+              }
+              if ($no_historical_disk) {
                 echo "<tr>";
-                echo "<td align="center" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No historical disks found</td>"
+                echo "<td align=\"center\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No historical disks found</td>";
                 echo "</tr>";
               } ?>
       </table>

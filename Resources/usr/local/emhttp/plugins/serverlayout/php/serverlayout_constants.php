@@ -81,7 +81,7 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
   // Constants - GLOBAL constants
   $template_disk = $GLOBALS["template_disk"];
 
-  if (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"])) {  // Disk already exists in DISK_DATA array
+  if ((count.$myJSONconfig["DISK_DATA"] > 0) and (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"]))) {  // Disk already exists in DISK_DATA array
     $device_save = $disk["DEVICE"];                                 // Save new DEVICE
     foreach (array_keys($template_disk) as $key) {
       $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all existing data - for array_replace_recursive later on
@@ -186,14 +186,13 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
 
   // Find USB devices
 
-  #$data = explode("\n", shell_exec("lsusb"));
-  $data = explode("\n", file_get_contents("lsusb_data.txt"));
+  $data = explode("\n", shell_exec("lsusb"));
 
   foreach ($data as $line) {
     $bus = trim(substr($line, strpos($line, "Bus ")+strlen("Bus "), 3));
     $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
 
-    $device_data = explode("\n", shell_exec("lsusb -D /dev/bus/usb/".$bus."/".$device]));
+    $device_data = explode("\n", shell_exec("lsusb -D /dev/bus/usb/".$bus."/".$device));
 
     $disk = $template_disk;  // Create a new disk array from template
     $is_USB = "";

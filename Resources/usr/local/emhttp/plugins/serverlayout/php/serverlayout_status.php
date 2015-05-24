@@ -1,5 +1,5 @@
 <?php
-include 'serverlayout_constants.php';
+require_once('serverlayout_constants.php');
 
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
 $myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
@@ -75,6 +75,7 @@ $num_trays = $num_columns * $num_rows;
 
 <script type="text/javascript">
 function UpdateDIVSizes() {
+  alert("starting up UpdateDIVSizes()...");
   var orientation = <?php echo $orientation; ?>;
   var element = document.getElementById("container");
   if (orientation == 0) {
@@ -98,15 +99,15 @@ function UpdateDIVSizes() {
         <div class="cell_text">
         <?php $tray_num = (($i-1) * $columns) + $j;
               echo "<span>".$tray_num."</span>";
-              foreach (myJSONconfig["DISK_DATA"] as $disk) {
+              foreach ($myJSONconfig["DISK_DATA"] as $disk) {
                 if (($disk["STATUS"]=="INSTALLED") and ($disk['TRAY_NUM'] == $tray_num)) {
-                  foreach (myJSONconfig["DATA_COLUMNS"] as $data_col) {
+                  foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
                     if ($data_col["SHOW_DATA"] == "YES") {
                       echo "<span>".$disk[$data_col["NAME"]]." </span>";
                     }
                   }
                 }
-              }
+              } ?>
         </div>
       </div>
     </div>

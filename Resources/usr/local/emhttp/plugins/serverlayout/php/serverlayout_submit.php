@@ -1,5 +1,5 @@
 <?php
-include 'serverlayout_constants.php';
+require_once('serverlayout_constants.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -40,6 +40,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $myJSONconfig["DISK_DATA"][$traynum_sn]["TRAY_NUM"] = $traynum;
       } else {
         $myJSONconfig["DISK_DATA"][$traynum_sn]["TRAY_NUM"] = "";
+      }
     }
 
     // Write PURCHASE_DATE configuration
