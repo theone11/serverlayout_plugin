@@ -470,11 +470,70 @@ function UpdateDIVSizes() {
                 }
               } else {
                 echo "<tr>";
-                echo "<td align="center" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No disks found</td>"
+                echo "<td align="center" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No installed disks found</td>"
                 echo "</tr>";
               } ?>
       </table>
     </div>
+
+    <div id="title">
+      <span class="left">Device History</span>
+    </div>
+    <div>
+      <table class="disk_data">
+        <thead>
+        <tr>
+          <?php foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) { ?>
+          <td>
+          <?php echo $data_column["Title"]; ?>
+          </td>
+          <?php } ?>
+        </tr>
+        <?php if ($num_disks > 0) {
+                foreach ($myJSONconfig["DISK_DATA"] as $disk { 
+                  if ($disk["STATUS"] == "HISTORICAL") {
+                    echo "<tbody><tr>"
+                    foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
+                      echo "<td>";
+                      switch($data_column["NAME"]) {
+                        case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") {
+                                                       echo $disk[TRAY_NUM];
+                                                     }
+                                                     break;
+                        case "TYPE"                : switch ($disk["TYPE"]) {
+                                                       case "SATA": ?> <img src=<?php echo $sata_imgfile; ?> style="width:auto;height:20px"> <? break;
+                                                       case "USB": ?> <img src=<?php echo $usb_imgfile; ?> style="width:auto;height:20px"> <? break;
+                                                       case "CD/DVD": ?> <img src=<?php echo $optical_imgfile; ?> style="width:auto;height:20px"> <? break;
+                                                       default: echo $disk["TYPE"];
+                                                     }
+                                                     break;
+                      
+                        case "DEVICE"              : echo $disk["DEVICE"]; break;
+                        case "MANUFACTURER"        : echo $disk["MANUFACTURER"]; break;
+                        case "MODEL"               : echo $disk["MODEL"]; break;
+                        case "SN"                  : echo $disk["SN"]; break;
+                        case "FW"                  : echo $disk["FW"]; break;
+                        case "CAPACITY"            : echo $disk["CAPACITY"]; break;
+                        case "FIRST_INSTALL_DATE"  : echo $disk["FIRST_INSTALL_DATE"]; break;
+                        case "RECENT_INSTALL_DATE" : echo $disk["RECENT_INSTALL_DATE"]; break;
+                        case "LAST_SEEN_DATE"      : echo $disk["LAST_SEEN_DATE"]; break;
+                        case "PURCHASE_DATE"       : echo $disk[PURCHASE_DATE];
+                                                     break;
+                        default                    :
+                      }
+                      echo "</td>";
+                    }
+                    echo "</tr>";
+                  }
+                }
+              } else {
+                echo "<tr>";
+                echo "<td align="center" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No historical disks found</td>"
+                echo "</tr>";
+              } ?>
+      </table>
+    </div>
+
   </div>
 
 </form>
