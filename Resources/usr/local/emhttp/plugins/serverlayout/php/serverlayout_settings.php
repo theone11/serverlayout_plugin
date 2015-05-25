@@ -99,11 +99,6 @@ table.disk_data {overflow: auto;}
 table.disk_data td {width:auto; white-space:nowrap;}
 table.disk_data thead tr:first-child td{text-align:center;font-size:13px;background:-webkit-radial-gradient(#E0E0E0,#C0C0C0);background:linear-gradient(#E0E0E0,#C0C0C0);border-right:1px solid #F0F0F0;}
 table.disk_data tbody td {padding-left:5px; padding-right:5px;}
-table.disk_data tbody td:nth-child(-n+2) {text-align:center;}
-table.disk_data tbody td:nth-child(n+3):nth-child(-n+5) {text-align:left;}
-table.disk_data tbody td:nth-child(n+6):nth-child(-n+7) {text-align:right;}
-table.disk_data tbody td:nth-child(n+8):nth-child(-n+8) {text-align:center;}
-table.disk_data tbody td:nth-child(n+9):nth-child(-n+9) {text-align:right;}
 table.disk_data tbody tr:nth-child(even) {background-color:#F8F8F8;}
 table.disk_data tbody tr:hover {background-color:#FDFD96;}
 
@@ -427,7 +422,7 @@ function StartUp() {
                   $no_installed_disk = false;
                   echo "<tbody><tr>";
                   foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
-                    echo "<td>";
+                    echo "<td class=\"text-align:".$data_column["TEXT_ALIGN"]."\">";
                     switch($data_column["NAME"]) {
                       case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") { ?>
                                                    <select class="MANUAL_DATA TRAY_NUM_CLASS" id="TRAY_NUM_<?php echo $disk["SN"]; ?>" name="TRAY_NUMS[]" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions('<?php echo $disk["DEVICE"]; ?>', this); this.oldvalue = this.value;">
@@ -442,20 +437,10 @@ function StartUp() {
                                                      default: echo $disk["TYPE"];
                                                    }
                                                    break;
-                    
-                      case "DEVICE"              : echo $disk["DEVICE"]; break;
-                      case "MANUFACTURER"        : echo $disk["MANUFACTURER"]; break;
-                      case "MODEL"               : echo $disk["MODEL"]; break;
-                      case "SN"                  : echo $disk["SN"]; break;
-                      case "FW"                  : echo $disk["FW"]; break;
-                      case "CAPACITY"            : echo $disk["CAPACITY"]; break;
-                      case "FIRST_INSTALL_DATE"  : echo $disk["FIRST_INSTALL_DATE"]; break;
-                      case "RECENT_INSTALL_DATE" : echo $disk["RECENT_INSTALL_DATE"]; break;
-                      case "LAST_SEEN_DATE"      : echo $disk["LAST_SEEN_DATE"]; break;
                       case "PURCHASE_DATE"       : ?> <input class="MANUAL_DATA" type="text" name="PURCHASE_DATES[]" style="width: 6em;" maxlength="10" value="<?php echo $disk["PURCHASE_DATE"]; ?>">
                                                       <input type="hidden" name="PURCHASE_DATES_SN[]" value="<?php echo $disk["SN"]; ?>">
                                                    <?php break;
-                      default                    :
+                      default                    : echo $disk[$data_column["NAME"]];
                     }
                     echo "</td>";
                   }
@@ -489,12 +474,8 @@ function StartUp() {
                   $no_historical_disk = false;
                   echo "<tbody><tr>";
                   foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
-                    echo "<td>";
+                    echo "<td class=\"text-align:".$data_column["TEXT_ALIGN"]."\">";
                     switch($data_column["NAME"]) {
-                      case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") {
-                                                     echo $disk[TRAY_NUM];
-                                                   }
-                                                   break;
                       case "TYPE"                : switch ($disk["TYPE"]) {
                                                      case "SATA": echo "<img src=\"".$sata_imgfile."\" style=\"width:auto;height:20px\">"; break;
                                                      case "USB": echo "<img src=\"".$usb_imgfile."\" style=\"width:auto;height:20px\">"; break;
@@ -502,19 +483,7 @@ function StartUp() {
                                                      default: echo $disk["TYPE"];
                                                    }
                                                    break;
-                    
-                      case "DEVICE"              : echo $disk["DEVICE"]; break;
-                      case "MANUFACTURER"        : echo $disk["MANUFACTURER"]; break;
-                      case "MODEL"               : echo $disk["MODEL"]; break;
-                      case "SN"                  : echo $disk["SN"]; break;
-                      case "FW"                  : echo $disk["FW"]; break;
-                      case "CAPACITY"            : echo $disk["CAPACITY"]; break;
-                      case "FIRST_INSTALL_DATE"  : echo $disk["FIRST_INSTALL_DATE"]; break;
-                      case "RECENT_INSTALL_DATE" : echo $disk["RECENT_INSTALL_DATE"]; break;
-                      case "LAST_SEEN_DATE"      : echo $disk["LAST_SEEN_DATE"]; break;
-                      case "PURCHASE_DATE"       : echo $disk[PURCHASE_DATE];
-                                                   break;
-                      default                    :
+                      default                    : echo $disk[$data_column["NAME"]];
                     }
                     echo "</td>";
                   }
