@@ -251,6 +251,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       if ($myJSONconfig["DISK_DATA"][$disk_SN]["FOUND"] == "NO") {
         $myJSONconfig["DISK_DATA"][$disk_SN]["STATUS"] = "HISTORICAL";
         $myJSONconfig["DISK_DATA"][$disk_SN]["DEVICE"] = "";
+        $myJSONconfig["DISK_DATA"][$disk_SN]["PATH"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["TRAY_NUM"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["FOUND"] = "YES";
       }
