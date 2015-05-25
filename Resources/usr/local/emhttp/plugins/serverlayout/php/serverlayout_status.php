@@ -98,15 +98,19 @@ function UpdateDIVSizes() {
       <div class="cell_background">
         <div class="cell_text">
         <?php $tray_num = (($i-1) * $columns) + $j;
-              echo "<span>".$tray_num."</span>";
+              $no_disk_exist = true;
               foreach ($myJSONconfig["DISK_DATA"] as $disk) {
                 if (($disk["STATUS"]=="INSTALLED") and ($disk['TRAY_NUM'] == $tray_num)) {
+                  $no_disk_exist = false;
                   foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
                     if ($data_col["SHOW_DATA"] == "YES") {
                       echo "<span>".$disk[$data_col["NAME"]]." </span>";
                     }
                   }
                 }
+              }
+              if ($no_disk_exist) {
+                echo "<span>".$tray_num."</span>";
               } ?>
         </div>
       </div>
