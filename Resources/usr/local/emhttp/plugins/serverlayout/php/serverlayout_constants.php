@@ -135,13 +135,13 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
 
   // Find HDD and CD/DVD devices
 
-  $data = explode("\n", shell_exec("ls -las /dev/disk/by-id"));
+  $data = explode("\n", shell_exec("ls -las /dev/disk/by-id 2>/dev/null"));
 
   foreach ($data as $line) {
     if ((strstr($line, "ata-")) and (!strstr($line, "-part"))) {  // Look for SATA devices (HDD and CD/DVD ROMs) AND not partitions
       $disk = $template_disk;  // Create a new disk array from template
       $disk["DEVICE"] = trim(substr($line, strpos($line, "../../")+strlen("../../")));  // Update device id in any case
-      $lsscsi_data = explode("\n", shell_exec("lsscsi"));
+      $lsscsi_data = explode("\n", shell_exec("lsscsi 2>/dev/null"));
       foreach ($lsscsi_data as $data_line) {
         if (strstr($data_line, "/dev/".$disk["DEVICE"])) {
           $disk["PATH"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
@@ -151,7 +151,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       }
       if (substr($disk["DEVICE"],0,2) == "sd") {  // Get HDD data
         $disk["TYPE"] = "SATA";
-        $device_data = explode("\n", shell_exec("smartctl -i /dev/".$disk["DEVICE"]));
+        $device_data = explode("\n", shell_exec("smartctl -i /dev/".$disk["DEVICE"]." 2>/dev/null"));
         foreach ($device_data as $data_line) {
           if (strpos($data_line, ":")) {
             $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
@@ -169,7 +169,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       } elseif (substr($disk["DEVICE"],0,2) == "sr") {  // Get CD/DVD data
         $disk["TYPE"] = "CD/DVD";
         $disk["CAPACITY"] = "CD/DVD";
-        $device_data = explode("\n", shell_exec("hdparm -I /dev/".$disk["DEVICE"]));
+        $device_data = explode("\n", shell_exec("hdparm -I /dev/".$disk["DEVICE"]." 2>/dev/null"));
         foreach ($device_data as $data_line) {
           if (strpos($data_line, ":")) {
             $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
@@ -179,7 +179,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
             }
           }
         }
-        $device_data = explode("\n", shell_exec("smartctl -i /dev/".$disk["DEVICE"]));
+        $device_data = explode("\n", shell_exec("smartctl -i /dev/".$disk["DEVICE"]." 2>/dev/null"));
         foreach ($device_data as $data_line) {
           if (strpos($data_line, ":")) {
             $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
@@ -200,48 +200,48 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
 
   // Find USB devices
 
-  $data = explode("\n", shell_exec("lsusb"));
+  $data = explode("\n", shell_exec("lsusb 2>/dev/null"));
 
   foreach ($data as $line) {
-    $bus = trim(substr($line, strpos($line, "Bus ")+strlen("Bus "), 3));
-    $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
-    $disk["PATH"] = "/".$bus."/".$device;
+    if (strstr($line, "Bus ") and strstr($line, "Device ")) {
+      $disk = $template_disk;  // Create a new disk array from template
 
-    $device_data = explode("\n", shell_exec("lsusb -D /dev/bus/usb/".$bus."/".$device));
+      $bus = trim(substr($line, strpos($line, "Bus ")+strlen("Bus "), 3));
+      $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
+      $disk["PATH"] = "/".$bus."/".$device;
 
-    $disk = $template_disk;  // Create a new disk array from template
-    $is_USB = "";
+      $device_data = explode("\n", shell_exec("lsusb -D /dev/bus/usb/".$bus."/".$device." 2>/dev/null"));
+      $is_USB = "";
 
-    foreach ($device_data as $data_line) {
-      $parameter = trim(substr(trim($data_line), 0, strpos(trim($data_line), " ")));
-
-      switch ($parameter) {
-        case "iManufacturer"   : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter)+13)); break;
-        case "iProduct"        : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter)+18)); break;
-        case "iSerial"         : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)+19))); break;
-        case "bInterfaceClass" : $is_USB = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter))+10)); break;
-        default :
-      }
-    }
-
-    if ($is_USB == "Mass Storage") {
-
-      $disk["TYPE"] = "USB";
-    
-      $device_data = explode("\n", shell_exec("ls -las /dev/disk/by-id/*".$disk["SN"]."*"));
-      if (!strstr($device_data[0], "No such file or directory")) {
-        $disk["DEVICE"] = trim(substr($device_data[0], strpos($device_data[0], "../../")+strlen("../../")));
-      }
-
-      $device_data = explode("\n", shell_exec("sgdisk -p /dev/".$disk["DEVICE"]));
       foreach ($device_data as $data_line) {
-        if (strpos($data_line, "sectors, ")) {
-          $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "sectors, ")+strlen("sectors, ")));
+        $parameter = trim(substr(trim($data_line), 0, strpos(trim($data_line), " ")));
+        switch ($parameter) {
+          case "iManufacturer"   : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter)+13)); break;
+          case "iProduct"        : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter)+18)); break;
+          case "iSerial"         : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)+19))); break;
+          case "bInterfaceClass" : $is_USB = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter))+10)); break;
+          default :
         }
       }
 
-      $myJSONconfig = Check_Add_Update_Disk($myJSONconfig, $disk);
+      if ($is_USB == "Mass Storage") {
+        $disk["TYPE"] = "USB";
 
+        $device_data = explode("\n", shell_exec("ls -las /dev/disk/by-id/*".$disk["SN"]."* 2>/dev/null"));
+        if (!strstr($device_data[0], "No such file or directory")) {
+          $disk["DEVICE"] = trim(substr($device_data[0], strpos($device_data[0], "../../")+strlen("../../")));
+        }
+
+        $device_data = explode("\n", shell_exec("sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null"));
+        foreach ($device_data as $data_line) {
+          if (strpos($data_line, "sectors, ")) {
+            $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "sectors, ")+strlen("sectors, ")));
+          }
+        }
+
+        $myJSONconfig = Check_Add_Update_Disk($myJSONconfig, $disk);
+
+      }
     }
   }
 
