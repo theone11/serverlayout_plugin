@@ -25,20 +25,22 @@ $default_col_data = array("DATA_COLUMNS" => array (
                       "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",              "SHOW_DATA" => "NO",  "ORDER" => "1"),
                       "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",                "SHOW_DATA" => "NO",  "ORDER" => "2"),
                       "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",              "SHOW_DATA" => "YES", "ORDER" => "3"),
-                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",        "SHOW_DATA" => "YES", "ORDER" => "4"),
-                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",               "SHOW_DATA" => "YES", "ORDER" => "5"),
-                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",       "SHOW_DATA" => "YES", "ORDER" => "6"),
-                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",            "SHOW_DATA" => "YES", "ORDER" => "7"),
-                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",            "SHOW_DATA" => "YES", "ORDER" => "8"),
-                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install Date",  "SHOW_DATA" => "YES", "ORDER" => "9"),
-                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install Date", "SHOW_DATA" => "YES", "ORDER" => "10"),
-                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen Date",      "SHOW_DATA" => "YES", "ORDER" => "11"),
-                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",       "SHOW_DATA" => "YES", "ORDER" => "12"),
+                      "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",                "SHOW_DATA" => "YES", "ORDER" => "4"),
+                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",        "SHOW_DATA" => "YES", "ORDER" => "5"),
+                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",               "SHOW_DATA" => "YES", "ORDER" => "6"),
+                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",       "SHOW_DATA" => "YES", "ORDER" => "7"),
+                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",            "SHOW_DATA" => "YES", "ORDER" => "8"),
+                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",            "SHOW_DATA" => "YES", "ORDER" => "9"),
+                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install Date",  "SHOW_DATA" => "YES", "ORDER" => "10"),
+                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install Date", "SHOW_DATA" => "YES", "ORDER" => "11"),
+                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen Date",      "SHOW_DATA" => "YES", "ORDER" => "12"),
+                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",       "SHOW_DATA" => "YES", "ORDER" => "13"),
                       ));
 
 $template_disk = array("TRAY_NUM"            => "",
                        "TYPE"                => "",
                        "DEVICE"              => "",
+                       "PATH"                => "",
                        "MANUFACTURER"        => "",
                        "MODEL"               => "",
                        "SN"                  => "",
@@ -82,11 +84,15 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
   $template_disk = $GLOBALS["template_disk"];
 
   if ((count.$myJSONconfig["DISK_DATA"] > 0) and (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"]))) {  // Disk already exists in DISK_DATA array
+    $path_save = $disk["PATH"];
     $device_save = $disk["DEVICE"];                                 // Save new DEVICE
     foreach (array_keys($template_disk) as $key) {
       $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all existing data - for array_replace_recursive later on
     }
     $disk["DEVICE"] = $device_save;                                 // KEEP new DEVICE
+    if ($path_save != $disk["PATH"]) {
+      $disk["TRAY_NUM"] = "";                                       // Reset TRAY_NUM if device path has changed (changed PATH)
+    }
     $disk["LAST_SEEN_DATE"] = date("Y/m/d");          // Update current date for previously out-of-array devices
     $disk["FOUND"] = "YES";                           // Change FOUND to YES for later scanning
     if ($myJSONconfig["DISK_DATA"][$disk["SN"]]["STATUS"] == "HISTORICAL") {  // Disk is HISTORICAL
@@ -135,6 +141,14 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
     if ((strstr($line, "ata-")) and (!strstr($line, "-part"))) {  // Look for SATA devices (HDD and CD/DVD ROMs) AND not partitions
       $disk = $template_disk;  // Create a new disk array from template
       $disk["DEVICE"] = trim(substr($line, strpos($line, "../../")+strlen("../../")));  // Update device id in any case
+      $lsscsi_data = explode("\n", shell_exec("lsscsi"));
+      foreach ($lsscsi_data as $data_line) {
+        if (strstr($data_line, "/dev/".$disk["DEVICE"])) {
+          $disk["PATH"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
+        } else {
+          $disk["PATH"] = "";
+        }
+      }
       if (substr($disk["DEVICE"],0,2) == "sd") {  // Get HDD data
         $disk["TYPE"] = "SATA";
         $device_data = explode("\n", shell_exec("smartctl -i /dev/".$disk["DEVICE"]));
@@ -191,6 +205,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
   foreach ($data as $line) {
     $bus = trim(substr($line, strpos($line, "Bus ")+strlen("Bus "), 3));
     $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
+    $disk["PATH"] = "/".$bus."/".$device;
 
     $device_data = explode("\n", shell_exec("lsusb -D /dev/bus/usb/".$bus."/".$device));
 
