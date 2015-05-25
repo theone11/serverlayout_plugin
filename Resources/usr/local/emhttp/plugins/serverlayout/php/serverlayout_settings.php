@@ -97,7 +97,7 @@ if ($orientation == 0) {
 
 table.disk_data {overflow: auto;}
 table.disk_data td {width:auto; white-space:nowrap;}
-table.disk_data thead tr:first-child td{text-align:center;font-size:13px;background:-webkit-radial-gradient(#E0E0E0,#C0C0C0);background:linear-gradient(#E0E0E0,#C0C0C0);border-right:1px solid #F0F0F0;}
+table.disk_data thead tr:first-child td{padding-left:5px; padding-right:5px; text-align:center;font-size:13px;background:-webkit-radial-gradient(#E0E0E0,#C0C0C0);background:linear-gradient(#E0E0E0,#C0C0C0);border-right:1px solid #F0F0F0;}
 table.disk_data tbody td {padding-left:5px; padding-right:5px;}
 table.disk_data tbody tr:nth-child(even) {background-color:#F8F8F8;}
 table.disk_data tbody tr:hover {background-color:#FDFD96;}
@@ -219,9 +219,7 @@ function UpdateTrayOptions(device, this_element) {
   }
 
   var elements = document.getElementsByClassName("TRAY_NUM_CLASS");
-  alert(elements.length);
   for (i = 0; i < elements.length; i++) {
-    alert("Element Name: "+elements[i].getAttribute("id")+" This Element Name: "+this_element.getAttribute("id"));
     if (elements[i].getAttribute("id") != this_element.getAttribute("id")) {
       // Start - Remove option from all other TRAY_NUMs
       if (value != "") {  // If new value is not "Unassigned" then remove it from other TRAYS
@@ -257,7 +255,6 @@ function UpdateTrayOptions(device, this_element) {
     }
   }
 
-//  alert("Moving device"+device_list[current_tray_num-1]+" from "+oldvalue+" to "+value);
   if (value != "") {
     document.getElementById("TRAY_TEXT"+value).innerHTML = value+" - "+device; // Change DIV HTML content for new tray if it is assigned
     document.getElementById("TRAY_TEXT"+value).style.color = "#aeffb2";
@@ -301,7 +298,6 @@ function UpdateDIVSizes() {
 }
 
 function StartUp() {
-  alert("starting up StartUp()...");
   DefineColumnsDropDownList();
   TrayOptionsStartup();
   InitDisabledFields();
@@ -422,7 +418,7 @@ function StartUp() {
                   $no_installed_disk = false;
                   echo "<tbody><tr>";
                   foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
-                    echo "<td class=\"text-align:".$data_column["TEXT_ALIGN"]."\">";
+                    echo "<td style=\"text-align:".$data_column["TEXT_ALIGN"].";\">";
                     switch($data_column["NAME"]) {
                       case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") { ?>
                                                    <select class="MANUAL_DATA TRAY_NUM_CLASS" id="TRAY_NUM_<?php echo $disk["SN"]; ?>" name="TRAY_NUMS[]" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions('<?php echo $disk["DEVICE"]; ?>', this); this.oldvalue = this.value;">
@@ -474,7 +470,7 @@ function StartUp() {
                   $no_historical_disk = false;
                   echo "<tbody><tr>";
                   foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
-                    echo "<td class=\"text-align:".$data_column["TEXT_ALIGN"]."\">";
+                    echo "<td style=\"text-align:".$data_column["TEXT_ALIGN"].";\">";
                     switch($data_column["NAME"]) {
                       case "TYPE"                : switch ($disk["TYPE"]) {
                                                      case "SATA": echo "<img src=\"".$sata_imgfile."\" style=\"width:auto;height:20px\">"; break;

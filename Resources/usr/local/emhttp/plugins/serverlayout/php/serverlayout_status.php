@@ -75,7 +75,6 @@ $num_trays = $num_columns * $num_rows;
 
 <script type="text/javascript">
 function UpdateDIVSizes() {
-  alert("starting up UpdateDIVSizes()...");
   var orientation = <?php echo $orientation; ?>;
   var element = document.getElementById("container");
   if (orientation == 0) {
@@ -99,12 +98,14 @@ function UpdateDIVSizes() {
         <div class="cell_text">
         <?php $tray_num = (($i-1) * $columns) + $j;
               $no_disk_exist = true;
-              foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                if (($disk["STATUS"]=="INSTALLED") and ($disk['TRAY_NUM'] == $tray_num)) {
-                  $no_disk_exist = false;
-                  foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
-                    if ($data_col["SHOW_DATA"] == "YES") {
-                      echo "<span>".$disk[$data_col["NAME"]]." </span>";
+              if ($myJSONconfig["DISK_DATA"] != "") {
+                foreach ($myJSONconfig["DISK_DATA"] as $disk) {
+                  if (($disk["STATUS"]=="INSTALLED") and ($disk['TRAY_NUM'] == $tray_num)) {
+                    $no_disk_exist = false;
+                    foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
+                      if ($data_col["SHOW_DATA"] == "YES") {
+                        echo "<span>".$disk[$data_col["NAME"]]." </span>";
+                      }
                     }
                   }
                 }

@@ -22,25 +22,24 @@ $height = 80;
 $default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"));
 
 $default_col_data = array("DATA_COLUMNS" => array (
-                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",              "SHOW_DATA" => "NO",  "ORDER" => "1", "TEXT_ALIGN" => "center"),
-                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",                "SHOW_DATA" => "NO",  "ORDER" => "2", "TEXT_ALIGN" => "center"),
-                      "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",              "SHOW_DATA" => "YES", "ORDER" => "3", "TEXT_ALIGN" => "center"),
-                      "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",                "SHOW_DATA" => "YES", "ORDER" => "4", "TEXT_ALIGN" => "left"),
-                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",        "SHOW_DATA" => "YES", "ORDER" => "5", "TEXT_ALIGN" => "left"),
-                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",               "SHOW_DATA" => "YES", "ORDER" => "6", "TEXT_ALIGN" => "left"),
-                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",       "SHOW_DATA" => "YES", "ORDER" => "7", "TEXT_ALIGN" => "right"),
-                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",            "SHOW_DATA" => "YES", "ORDER" => "8", "TEXT_ALIGN" => "right"),
-                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",            "SHOW_DATA" => "YES", "ORDER" => "9", "TEXT_ALIGN" => "right"),
-                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install Date",  "SHOW_DATA" => "YES", "ORDER" => "10", "TEXT_ALIGN" => "center"),
-                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install Date", "SHOW_DATA" => "YES", "ORDER" => "11", "TEXT_ALIGN" => "center"),
-                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen Date",      "SHOW_DATA" => "YES", "ORDER" => "12", "TEXT_ALIGN" => "center"),
-                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",       "SHOW_DATA" => "YES", "ORDER" => "13", "TEXT_ALIGN" => "center"),
+                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",              "SHOW_DATA" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
+                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",                "SHOW_DATA" => "NO",  "ORDER" => "2",  "TEXT_ALIGN" => "center"),
+                      "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",              "SHOW_DATA" => "YES", "ORDER" => "3",  "TEXT_ALIGN" => "center"),
+                      "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",                "SHOW_DATA" => "YES", "ORDER" => "4",  "TEXT_ALIGN" => "left"  ),
+                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",        "SHOW_DATA" => "YES", "ORDER" => "5",  "TEXT_ALIGN" => "left"  ),
+                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",               "SHOW_DATA" => "YES", "ORDER" => "6",  "TEXT_ALIGN" => "left"  ),
+                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",       "SHOW_DATA" => "YES", "ORDER" => "7",  "TEXT_ALIGN" => "right" ),
+                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",            "SHOW_DATA" => "YES", "ORDER" => "8",  "TEXT_ALIGN" => "right" ),
+                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",            "SHOW_DATA" => "YES", "ORDER" => "9",  "TEXT_ALIGN" => "right" ),
+                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install",       "SHOW_DATA" => "YES", "ORDER" => "10", "TEXT_ALIGN" => "center"),
+                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install",      "SHOW_DATA" => "YES", "ORDER" => "11", "TEXT_ALIGN" => "center"),
+                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen",           "SHOW_DATA" => "YES", "ORDER" => "12", "TEXT_ALIGN" => "center"),
+                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",       "SHOW_DATA" => "YES", "ORDER" => "13", "TEXT_ALIGN" => "center")
                       ));
 
 $template_disk = array("TRAY_NUM"            => "",
                        "TYPE"                => "",
                        "DEVICE"              => "",
-                       "PATH"                => "",
                        "MANUFACTURER"        => "",
                        "MODEL"               => "",
                        "SN"                  => "",
@@ -51,11 +50,15 @@ $template_disk = array("TRAY_NUM"            => "",
                        "LAST_SEEN_DATE"      => "",
                        "PURCHASE_DATE"       => "",
                        "STATUS"              => "",
-                       "FOUND"               => "");
+                       "FOUND"               => ""
+                       );
 
 // *****************************
 // Function Get_JSON_Config_File
 // *****************************
+// The function creates an default configuration file if none exists, otherwise it creates a default configuration
+// BUT also copies over all user defined configuration data from existing configuration file
+
 function Get_JSON_Config_File() {
   // Constants - GLOBAL constants
   $serverlayout_cfg_file = $GLOBALS["serverlayout_cfg_file"];
@@ -64,15 +67,64 @@ function Get_JSON_Config_File() {
   // Local Constants
   $default_disk_data = array("DISK_DATA" => "");
 
-  if (file_exists($serverlayout_cfg_file)) {  // Import JSON file if exists
-    $myJSONconfig = json_decode(file_get_contents($serverlayout_cfg_file), true);
-    $myJSONconfig = array_replace_recursive(array_merge($default_layout, $default_col_data, $default_disk_data), $myJSONconfig);
-  #  $myJSONconfig = array_diff($myJSONconfig, array_merge($default_layout, $default_col_data, $default_disk_data)); For removing unused fields - Function does not exist
+  $myJSONconfig_new = array_merge($default_layout, $default_col_data, $default_disk_data);
 
-  } else {  // Else create new JSON file
-    $myJSONconfig = array_merge($default_layout, $default_col_data, $default_disk_data);
-    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
+  if (file_exists($serverlayout_cfg_file)) {  // Import JSON file if exists
+
+    $myJSONconfig_old = json_decode(file_get_contents($serverlayout_cfg_file), true);
+
+    foreach (array_keys($myJSONconfig_new["LAYOUT"]) as $layout_key) {
+      if (array_key_exists($layout_key, $myJSONconfig_old["LAYOUT"])) {  // If Layout Key exists then copy it over - All new Keys are inherited from default
+        $myJSONconfig_new["LAYOUT"][$layout_key] = $myJSONconfig_old["LAYOUT"][$layout_key];
+      }
+    }
+    
+    foreach ($myJSONconfig_new["DATA_COLUMNS"] as $data_column_K => $data_column) {
+      if (array_key_exists($data_column_K, $myJSONconfig_old["DATA_COLUMNS"])) {  // If Data Column exists then check each key
+                                                                                  // All new Data Columns are inherited from default including their keys
+        foreach (array_keys($data_column) as $data_column_key) {
+          if (array_key_exists($data_column_key, $myJSONconfig_old["DATA_COLUMNS"][$data_column_K])) {  // If Data Column Key exists then update user defined keys only
+                                                                                                  // All new Data Columns Keys are inherited from default
+            switch ($data_column_key) {
+              case "SHOW_DATA":
+              case "ORDER"    : $myJSONconfig_new["DATA_COLUMNS"][$data_column_K][$data_column_key] = $myJSONconfig_old["DATA_COLUMNS"][$data_column_K][$data_column_key]; break;
+              default :
+            }
+          }
+        }
+      }
+    }
+    
+    if ($myJSONconfig_old["DISK_DATA"] != "") {             // If at least one disk exists
+      foreach (array_keys($myJSONconfig_old["DISK_DATA"]) as $disk_SN) {      // For each existing Disk (by key=SN)
+        foreach (array_keys($template_disk) as $disk_key) {  // For all keys in new Disk default template
+          if (array_key_exists($disk_key, $myJSONconfig_old["DISK_DATA"][$disk_SN])) {  // If key exists in old disk then copy it over
+            $myJSONconfig_new["DISK_DATA"][$disk_SN][$disk_key] = $myJSONconfig_old["DISK_DATA"][$disk_SN][$disk_key];
+          } else {                                                                  // Else it does not exist --> create new one
+            $myJSONconfig_new["DISK_DATA"][$disk_SN][$disk_key] = "";
+          }
+        }
+      }
+    }
+
+  } else {  // Else save default JSON file
+    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig_new));  // Save configuration data to JSON configuration file
   }
+  return $myJSONconfig_new;
+}
+
+// *********************
+// Function Add_New_Disk
+// *********************
+function Add_New_Disk($myJSONconfig, $disk) {
+  echo "NEW: ".$disk["SN"]."<br>";
+  $disk["FIRST_INSTALL_DATE"] = date("Y/m/d");    // New disk to server
+  $disk["LAST_SEEN_DATE"] = date("Y/m/d");        // New disk to server
+  $disk["RECENT_INSTALL_DATE"] = date("Y/m/d");   // New disk to server
+  $disk["STATUS"] = "INSTALLED";                  // Change STATUS to INSTALLED
+  $disk["FOUND"] = "YES";                         // Change FOUND to YES for later scanning
+  // Add disk to JSON array
+  $myJSONconfig["DISK_DATA"][$disk["SN"]] = $disk;
   return $myJSONconfig;
 }
 
@@ -83,36 +135,32 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
   // Constants - GLOBAL constants
   $template_disk = $GLOBALS["template_disk"];
 
-  if ((count.$myJSONconfig["DISK_DATA"] > 0) and (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"]))) {  // Disk already exists in DISK_DATA array
-    $path_save = $disk["PATH"];
-    $device_save = $disk["DEVICE"];                                 // Save new DEVICE
-    foreach (array_keys($template_disk) as $key) {
-      $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all existing data - for array_replace_recursive later on
-    }
-    $disk["DEVICE"] = $device_save;                                 // KEEP new DEVICE
-    if ($path_save != $disk["PATH"]) {
-      $disk["TRAY_NUM"] = "";                                       // Reset TRAY_NUM if device path has changed (changed PATH)
-    }
-    $disk["LAST_SEEN_DATE"] = date("Y/m/d");          // Update current date for previously out-of-array devices
-    $disk["FOUND"] = "YES";                           // Change FOUND to YES for later scanning
-    if ($myJSONconfig["DISK_DATA"][$disk["SN"]]["STATUS"] == "HISTORICAL") {  // Disk is HISTORICAL
-      $disk["RECENT_INSTALL_DATE"] = date("Y/m/d");   // Update current date for previously out-of-array devices
-      $disk["STATUS"] = "INSTALLED";                  // Change STATUS to INSTALLED
-    }
+  if ($myJSONconfig["DISK_DATA"] != "") {
+    if (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"])) {  // Disk already exists in DISK_DATA array
+      echo "EXIST: ".$disk["SN"]."<br>";
+      $path_save = $disk["PATH"];                                     // Save new PATH
+      foreach (array_keys($template_disk) as $key) {
+        $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all existing data - for array_replace_recursive later on
+      }
+      if ($path_save != $disk["PATH"]) {
+        $disk["TRAY_NUM"] = "";                                       // Reset TRAY_NUM if device path has changed (changed PATH)
+      }
+      $disk["PATH"] = $path_save;                                     // KEEP new PATH
+      $disk["LAST_SEEN_DATE"] = date("Y/m/d");                                  // Update current date for previously out-of-array devices
+      $disk["FOUND"] = "YES";                                                   // Change FOUND to YES for later scanning
+      if ($myJSONconfig["DISK_DATA"][$disk["SN"]]["STATUS"] == "HISTORICAL") {  // Disk is HISTORICAL
+        $disk["RECENT_INSTALL_DATE"] = date("Y/m/d");                           // Update current date for previously out-of-array devices
+        $disk["STATUS"] = "INSTALLED";                                          // Change STATUS to INSTALLED
+      }
 
-    // Update disk to JSON array
-    unset($myJSONconfig["DISK_DATA"][$disk["SN"]]);  // array_replace doesn't seem to work
-    $myJSONconfig["DISK_DATA"][$disk["SN"]] = $disk;      
-
-
-  } else {  // Disk new to server (also new to HISTORICAL)          
-    $disk["FIRST_INSTALL_DATE"] = date("Y/m/d");    // New disk to server
-    $disk["LAST_SEEN_DATE"] = date("Y/m/d");        // New disk to server
-    $disk["RECENT_INSTALL_DATE"] = date("Y/m/d");   // New disk to server
-    $disk["STATUS"] = "INSTALLED";                  // Change STATUS to INSTALLED
-    $disk["FOUND"] = "YES";                         // Change FOUND to YES for later scanning
-    // Add disk to JSON array
-    $myJSONconfig["DISK_DATA"][$disk["SN"]] = $disk;
+      // Update disk to JSON array
+      unset($myJSONconfig["DISK_DATA"][$disk["SN"]]);  // array_replace doesn't seem to work
+      $myJSONconfig["DISK_DATA"][$disk["SN"]] = $disk;
+    } else {                                           // Disk new to server (also new to HISTORICAL)
+      $myJSONconfig = Add_New_Disk($myJSONconfig, $disk);
+    }
+  } else {                                             // Server Empty
+    $myJSONconfig = Add_New_Disk($myJSONconfig, $disk);
   }
 
   return $myJSONconfig;
