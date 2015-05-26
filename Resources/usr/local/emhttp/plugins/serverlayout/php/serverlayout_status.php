@@ -1,10 +1,6 @@
 <?php
 require_once('serverlayout_constants.php');
 
-$myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
-$myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
-file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
-
 $rows = $myJSONconfig["LAYOUT"]['ROWS'];
 $columns = $myJSONconfig["LAYOUT"]['COLUMNS'];
 $orientation = $myJSONconfig["LAYOUT"]['ORIENTATION'];

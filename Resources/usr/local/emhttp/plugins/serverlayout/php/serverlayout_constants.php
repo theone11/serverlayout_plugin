@@ -53,6 +53,12 @@ $default_disk = array("TRAY_NUM"            => "",
                        "FOUND"               => ""
                        );
 
+
+$myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
+$myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
+file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
+
+
 // *****************************
 // Function Get_JSON_Config_File
 // *****************************
@@ -64,6 +70,7 @@ function Get_JSON_Config_File() {
   $serverlayout_cfg_file = $GLOBALS["serverlayout_cfg_file"];
   $default_layout = $GLOBALS["default_layout"];
   $default_col_data = $GLOBALS["default_col_data"];
+  $default_disk = $GLOBALS["default_disk"];
   // Local Constants
   $default_disk_data = array("DISK_DATA" => "");
 
