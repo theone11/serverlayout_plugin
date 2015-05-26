@@ -37,7 +37,7 @@ $default_col_data = array("DATA_COLUMNS" => array (
                       "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",       "SHOW_DATA" => "YES", "ORDER" => "13", "TEXT_ALIGN" => "center")
                       ));
 
-$template_disk = array("TRAY_NUM"            => "",
+$default_disk = array("TRAY_NUM"            => "",
                        "TYPE"                => "",
                        "DEVICE"              => "",
                        "MANUFACTURER"        => "",
@@ -67,6 +67,7 @@ function Get_JSON_Config_File() {
   // Local Constants
   $default_disk_data = array("DISK_DATA" => "");
 
+  // Define new configuration file based on default values
   $myJSONconfig_new = array_merge($default_layout, $default_col_data, $default_disk_data);
 
   if (file_exists($serverlayout_cfg_file)) {  // Import JSON file if exists
@@ -97,7 +98,7 @@ function Get_JSON_Config_File() {
     
     if ($myJSONconfig_old["DISK_DATA"] != "") {             // If at least one disk exists
       foreach (array_keys($myJSONconfig_old["DISK_DATA"]) as $disk_SN) {      // For each existing Disk (by key=SN)
-        foreach (array_keys($template_disk) as $disk_key) {  // For all keys in new Disk default template
+        foreach (array_keys($default_disk) as $disk_key) {  // For all keys in new Disk default template
           if (array_key_exists($disk_key, $myJSONconfig_old["DISK_DATA"][$disk_SN])) {  // If key exists in old disk then copy it over
             $myJSONconfig_new["DISK_DATA"][$disk_SN][$disk_key] = $myJSONconfig_old["DISK_DATA"][$disk_SN][$disk_key];
           } else {                                                                  // Else it does not exist --> create new one
@@ -107,9 +108,9 @@ function Get_JSON_Config_File() {
       }
     }
 
-  } else {  // Else save default JSON file
-    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig_new));  // Save configuration data to JSON configuration file
   }
+  // Save new configuration (default or modified) to JSON file
+  file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig_new));  // Save configuration data to JSON configuration file
   return $myJSONconfig_new;
 }
 
@@ -133,13 +134,13 @@ function Add_New_Disk($myJSONconfig, $disk) {
 // ******************************
 function Check_Add_Update_Disk($myJSONconfig, $disk) {
   // Constants - GLOBAL constants
-  $template_disk = $GLOBALS["template_disk"];
+  $default_disk = $GLOBALS["default_disk"];
 
   if ($myJSONconfig["DISK_DATA"] != "") {
     if (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"])) {  // Disk already exists in DISK_DATA array
       echo "EXIST: ".$disk["SN"]."<br>";
       $path_save = $disk["PATH"];                                     // Save new PATH
-      foreach (array_keys($template_disk) as $key) {
+      foreach (array_keys($default_disk) as $key) {
         $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all existing data - for array_replace_recursive later on
       }
       if ($path_save != $disk["PATH"]) {
@@ -172,7 +173,7 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
 function Scan_Installed_Devices_Data($myJSONconfig) {
   // Constants - GLOBAL constants
   $serverlayout_cfg_file = $GLOBALS["serverlayout_cfg_file"];
-  $template_disk = $GLOBALS["template_disk"];
+  $default_disk = $GLOBALS["default_disk"];
 
   // Change for all disks (if exists any) FOUND to "NO" for later scanning
   if ($myJSONconfig["DISK_DATA"] != "") {
@@ -187,7 +188,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
 
   foreach ($data as $line) {
     if ((strstr($line, "ata-")) and (!strstr($line, "-part"))) {  // Look for SATA devices (HDD and CD/DVD ROMs) AND not partitions
-      $disk = $template_disk;  // Create a new disk array from template
+      $disk = $default_disk;  // Create a new disk array from template
       $disk["DEVICE"] = trim(substr($line, strpos($line, "../../")+strlen("../../")));  // Update device id in any case
       $lsscsi_data = explode("\n", shell_exec("lsscsi 2>/dev/null"));
       foreach ($lsscsi_data as $data_line) {
@@ -252,7 +253,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
 
   foreach ($data as $line) {
     if (strstr($line, "Bus ") and strstr($line, "Device ")) {
-      $disk = $template_disk;  // Create a new disk array from template
+      $disk = $default_disk;  // Create a new disk array from template
 
       $bus = trim(substr($line, strpos($line, "Bus ")+strlen("Bus "), 3));
       $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
