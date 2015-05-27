@@ -1,0 +1,5 @@
+Menu="serverlayout:1"
+Icon="layout.png"
+Title="Layout"
+---
+<?php include '/usr/local/emhttp/plugins/serverlayout/php/serverlayout_layout.php' ?>

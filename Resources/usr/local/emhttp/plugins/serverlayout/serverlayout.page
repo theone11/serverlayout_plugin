@@ -1,0 +1,6 @@
+Menu="OtherSettings"
+Icon="serverlayout.png"
+Author="Dan Kessler"
+Title="Server Layout"
+Type="xmenu"
+Tabs="true"
