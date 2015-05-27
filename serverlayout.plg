@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.05.24">
+<!ENTITY version     "2015.05.28">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Development/&name;.plg">
 <!ENTITY packageVER  "v1.0">
 <!ENTITY packageMD5  "e4e4c492a763f51841b8cecf09a3bb34">
