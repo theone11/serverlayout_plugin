@@ -4,11 +4,11 @@
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
 <!ENTITY version     "2015.05.28">
-<!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Master/&name;.plg">
+<!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "v1.0">
 <!ENTITY packageMD5  "8327f0314558dc153e9486582fce68c8">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
-<!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Master/&packagefile;">
+<!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
 <!ENTITY emhttpLOC   "/usr/local/emhttp/plugins/&name;">
 ]>
