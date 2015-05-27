@@ -22,24 +22,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $myJSONconfig["LAYOUT"]["ORIENTATION"] = $_POST["ORIENTATION"];
 
     // Write DATA_COLUMNS new configuration
-    $showdatas = $_POST["SHOW_DATAS"];
-    $showcolumndatas_i = $_POST["SHOW_COLUMNS_I"];
-    $showcolumndatas_c = $_POST["SHOW_COLUMNS_C"];
-    for ($i = 0; $i < count($showdatas); $i++) {
-      if (isset($showdatas[$i]) and ($showdatas[i] == "YES")) {
-        $myJSONconfig["DATA_COLUMNS"][$i]["SHOW_DATA"] = "YES";
+    foreach (array_keys($myJSONconfig["DATA_COLUMNS"]) as $data_column_name) {
+      if (isset($_POST["SHOW_DATA_".$data_column_name]) and ($_POST["SHOW_DATA_".$data_column_name] == "YES")) {
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_DATA"] = "YES";
       } else {
-        $myJSONconfig["DATA_COLUMNS"][$i]["SHOW_DATA"] = "NO";
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_DATA"] = "NO";
       }
-      if (isset($showcolumndatas_i[$i]) and ($showcolumndatas_i[i] == "YES")) {
-        $myJSONconfig["DATA_COLUMNS"][$i]["SHOW_COLUMN_I"] = "YES";
+      if (isset($_POST["SHOW_COLUMN_I_".$data_column_name]) and ($_POST["SHOW_COLUMN_I_".$data_column_name] == "YES")) {
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_COLUMN_I"] = "YES";
       } else {
-        $myJSONconfig["DATA_COLUMNS"][$i]["SHOW_COLUMN_I"] = "NO";
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_COLUMN_I"] = "NO";
       }
-      if (isset($showcolumndatas_c[$i]) and ($showcolumndatas_c[i] == "YES")) {
-        $myJSONconfig["DATA_COLUMNS"][$i]["SHOW_COLUMN_C"] = "YES";
+      if (isset($_POST["SHOW_COLUMN_H_".$data_column_name]) and ($_POST["SHOW_COLUMN_H_".$data_column_name] == "YES")) {
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_COLUMN_H"] = "YES";
       } else {
-        $myJSONconfig["DATA_COLUMNS"][$i]["SHOW_COLUMN_C"] = "NO";
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_COLUMN_H"] = "NO";
       }
     }
 
@@ -49,9 +46,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $myJSONconfig["DISK_DATA"][$disk_SN]["TRAY_NUM"] = "";
       }
     }
-    
-    // Save configuration data to JSON configuration file
-    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
   }
   
   // If "Save Data" button pressed
@@ -69,10 +63,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     foreach (array_combine($purchasedates_sn, $purchasedates) as $purchasedate_sn => $purchasedate) {
       $myJSONconfig["DISK_DATA"][$purchasedate_sn]["PURCHASE_DATE"] = $purchasedate;
     }
-
-    // Save configuration data to JSON configuration file
-    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
   }
+
+  // Save configuration data to JSON configuration file
+  file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
 }
 ?>
 

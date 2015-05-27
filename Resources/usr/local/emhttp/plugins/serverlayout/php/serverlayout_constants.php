@@ -22,8 +22,8 @@ $height = 80;
 $default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"));
 
 $default_col_data = array("DATA_COLUMNS" => array (
-                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",         "SHOW_DATA" => "NO",  "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
-                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",           "SHOW_DATA" => "NO",  "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "2",  "TEXT_ALIGN" => "center"),
+                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",         "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
+                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "2",  "TEXT_ALIGN" => "center"),
                       "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",         "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "3",  "TEXT_ALIGN" => "center"),
                       "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "4",  "TEXT_ALIGN" => "left"  ),
                       "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",   "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "5",  "TEXT_ALIGN" => "left"  ),
@@ -38,20 +38,21 @@ $default_col_data = array("DATA_COLUMNS" => array (
                       ));
 
 $default_disk = array("TRAY_NUM"            => "",
-                       "TYPE"                => "",
-                       "DEVICE"              => "",
-                       "MANUFACTURER"        => "",
-                       "MODEL"               => "",
-                       "SN"                  => "",
-                       "FW"                  => "",
-                       "CAPACITY"            => "",
-                       "FIRST_INSTALL_DATE"  => "",
-                       "RECENT_INSTALL_DATE" => "",
-                       "LAST_SEEN_DATE"      => "",
-                       "PURCHASE_DATE"       => "",
-                       "STATUS"              => "",
-                       "FOUND"               => ""
-                       );
+                      "TYPE"                => "",
+                      "DEVICE"              => "",
+                      "PATH"                => "",
+                      "MANUFACTURER"        => "",
+                      "MODEL"               => "",
+                      "SN"                  => "",
+                      "FW"                  => "",
+                      "CAPACITY"            => "",
+                      "FIRST_INSTALL_DATE"  => "",
+                      "RECENT_INSTALL_DATE" => "",
+                      "LAST_SEEN_DATE"      => "",
+                      "PURCHASE_DATE"       => "",
+                      "STATUS"              => "",
+                      "FOUND"               => ""
+                      );
 
 
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
@@ -92,10 +93,12 @@ function Get_JSON_Config_File() {
                                                                                   // All new Data Columns are inherited from default including their keys
         foreach (array_keys($data_column) as $data_column_key) {
           if (array_key_exists($data_column_key, $myJSONconfig_old["DATA_COLUMNS"][$data_column_K])) {  // If Data Column Key exists then update user defined keys only
-                                                                                                  // All new Data Columns Keys are inherited from default
+                                                                                                        // All new Data Columns Keys are inherited from default
             switch ($data_column_key) {
-              case "SHOW_DATA":
-              case "ORDER"    : $myJSONconfig_new["DATA_COLUMNS"][$data_column_K][$data_column_key] = $myJSONconfig_old["DATA_COLUMNS"][$data_column_K][$data_column_key]; break;
+              case "SHOW_DATA"     :
+              case "SHOW_COLUMN_I" :
+              case "SHOW_COLUMN_H" :
+              case "ORDER"         : $myJSONconfig_new["DATA_COLUMNS"][$data_column_K][$data_column_key] = $myJSONconfig_old["DATA_COLUMNS"][$data_column_K][$data_column_key]; break;
               default :
             }
           }
@@ -125,7 +128,6 @@ function Get_JSON_Config_File() {
 // Function Add_New_Disk
 // *********************
 function Add_New_Disk($myJSONconfig, $disk) {
-  echo "NEW: ".$disk["SN"]."<br>";
   $disk["FIRST_INSTALL_DATE"] = date("Y/m/d");    // New disk to server
   $disk["LAST_SEEN_DATE"] = date("Y/m/d");        // New disk to server
   $disk["RECENT_INSTALL_DATE"] = date("Y/m/d");   // New disk to server
@@ -145,7 +147,6 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
 
   if ($myJSONconfig["DISK_DATA"] != "") {
     if (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"])) {  // Disk already exists in DISK_DATA array
-      echo "EXIST: ".$disk["SN"]."<br>";
       $path_save = $disk["PATH"];                                     // Save new PATH
       foreach (array_keys($default_disk) as $key) {
         $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all existing data - for array_replace_recursive later on

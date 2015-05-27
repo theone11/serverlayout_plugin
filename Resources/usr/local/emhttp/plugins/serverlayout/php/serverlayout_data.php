@@ -27,7 +27,8 @@ if ($orientation == 0) {
   }
 }
 
-if ($layout_orientation == 0) { $preview_div_width = 100; } else { $preview_div_width = 24; }  // Width of preview table
+if ($layout_orientation == 0) { $level_1_div_width = 100; } else { $level_1_div_width = 24; }  // Width of preview table
+if ($layout_orientation == 0) { $level_2_div_width = 49; } else { $level_2_div_width = 100; }  // Width of preview table
 if ($layout_orientation == 0) { $data_div_width = 100; } else { $data_div_width = 74; }        // Width of data tables
 ?>
 
@@ -140,7 +141,7 @@ function TrayOptionsStartup() {
     elements[i].options[0] = new Option("Unassigned", "", false, true);  // Add EMPTY option and define as selected
     var count = 1;  // Start from 2nd option (1st option is EMPTY)
     for (j = 1; j <= num_trays; j++) {  // Scan all options
-      if (parseInt(j) == parseInt(initial_trays[i-1])) {  // If option is the saved option
+      if (parseInt(j) == parseInt(initial_trays[i])) {  // If option is the saved option
         elements[i].options[count] = new Option(j, j, false, true);  // Create new option and define as selected
         elements[i].options[0].selected = false;  // Remove selected from EMPTY option
         count++;
@@ -249,45 +250,46 @@ function StartUp() {
 
 <form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="progressFrame">
 
-  <div style="width: <?php echo $preview_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
-    <div id="title">
-      <span class="left">Preview Server Layout</span>
+  <div style="width: <?php echo $level_1_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
+    <div style="width: <?php echo $level_2_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
+      <div id="title">
+        <span class="left">Commands</span>
+      </div>
+      <div style="text-align:center;"><input type="submit" name="data" value="Save Data"></div>
+      <div style="text-align:center;"><button type="button" onClick="done();">Exit ServerLayout</button></div>
     </div>
-    <div class="container_preview" id="container_preview">
-    <?php for ($i = 1; $i <= $rows; $i++) { ?>
-      <div class="row_container_preview">
-      <?php for ($j = 1; $j <= $columns; $j++) {
-          $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
-          $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
-        <div class="cell_container_preview" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
-          <div class="cell_background_preview">
-            <?php $tray_num = (($i-1) * $columns) + $j; ?>
-            <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
-            <?php echo "<span>".$tray_num."</span>";
-                  foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                    if (($disk["STATUS"]=="INSTALLED") and ($disk["TRAY_NUM"] == $tray_num)) {
-                      echo "<span> ".$disk["DEVICE"]."</span>";
-                    }
-                  } ?>
+
+    <div style="width: <?php echo $level_2_div_width; ?>%; float:right; border: 0px solid black; overflow: hidden;">
+      <div id="title">
+        <span class="left">Preview Server Layout</span>
+      </div>
+      <div class="container_preview" id="container_preview">
+      <?php for ($i = 1; $i <= $rows; $i++) { ?>
+        <div class="row_container_preview">
+        <?php for ($j = 1; $j <= $columns; $j++) {
+            $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
+            $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
+          <div class="cell_container_preview" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+            <div class="cell_background_preview">
+              <?php $tray_num = (($i-1) * $columns) + $j; ?>
+              <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
+              <?php echo "<span>".$tray_num."</span>";
+                    foreach ($myJSONconfig["DISK_DATA"] as $disk) {
+                      if (($disk["STATUS"]=="INSTALLED") and ($disk["TRAY_NUM"] == $tray_num)) {
+                        echo "<span> ".$disk["DEVICE"]."</span>";
+                      }
+                    } ?>
+              </div>
             </div>
           </div>
+        <?php } ?>
         </div>
       <?php } ?>
       </div>
-    <?php } ?>
     </div>
   </div>
 
-  <div style="width: <?php echo $data_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
-    <div>
-      <table>
-        <tr>
-          <td><input type="submit" name="data" value="Save Data"></td>
-          <td><button type="button" onClick="done();">Exit ServerLayout</button></td>
-        </tr>
-      </table>
-    </div>
-
+  <div style="width: <?php echo $data_div_width; ?>%; float:right; border: 0px solid black; overflow: auto;">
     <div id="title">
       <span class="left">Installed Devices and Data Entry - Enable editing <input type="checkbox" name="EDIT_TABLE" id="EDIT_TABLE" onchange="EditCheckboxData(this)"></span>
     </div>
@@ -295,10 +297,17 @@ function StartUp() {
       <table class="disk_data">
         <thead>
         <tr>
-          <?php foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
+          <?php $no_show_column_i = true;
+                foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
                   if ($data_column["SHOW_COLUMN_I"] == "YES") {
+                    $no_show_column_i = false;
                     echo "<td>".$data_column["TITLE"]."</td>";
                   }
+                }
+                if ($no_show_column_i) {
+                  echo "<tr>";
+                  echo "<td align=\"center\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No data columns selected in Settings tab</td>";
+                  echo "</tr>";
                 } ?>
         </tr>
         <?php $no_installed_disk = true;
@@ -311,9 +320,9 @@ function StartUp() {
                       echo "<td style=\"text-align:".$data_column["TEXT_ALIGN"].";\">";
                       switch($data_column["NAME"]) {
                         case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") { ?>
-                                                     <select class="MANUAL_DATA TRAY_NUM_CLASS" name="TRAY_NUMS[]" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions('<?php echo $disk["DEVICE"]; ?>', this); this.oldvalue = this.value;">
+                                                     <select class="MANUAL_DATA TRAY_NUM_CLASS" name="TRAY_NUMS[]" id="TRAY_NUM_<?php echo $disk["SN"]; ?> size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions('<?php echo $disk["DEVICE"]; ?>', this); this.oldvalue = this.value;">
                                                      </select>
-                                                     <input type="hidden" name="TRAY_NUM_SN[]" value="<?php echo $disk["SN"]; ?>">
+                                                     <input type="hidden" name="TRAY_NUMS_SN[]" value="<?php echo $disk["SN"]; ?>">
                                                      <?php }
                                                      break;
                         case "TYPE"                : switch ($disk["TYPE"]) {
@@ -349,10 +358,17 @@ function StartUp() {
       <table class="disk_data">
         <thead>
         <tr>
-          <?php foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
+          <?php $no_show_column_h = true;
+                foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
                   if ($data_column["SHOW_COLUMN_H"] == "YES") {
+                    $no_show_column_h = false;
                     echo "<td>".$data_column["TITLE"]."</td>";
                   }
+                }
+                if ($no_show_column_h) {
+                  echo "<tr>";
+                  echo "<td align=\"center\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No data columns selected in Settings tab</td>";
+                  echo "</tr>";
                 } ?>
         </tr>
         <?php $no_historical_disk = true;

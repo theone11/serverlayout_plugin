@@ -98,10 +98,15 @@ function UpdateDIVSizes() {
                 foreach ($myJSONconfig["DISK_DATA"] as $disk) {
                   if (($disk["STATUS"]=="INSTALLED") and ($disk['TRAY_NUM'] == $tray_num)) {
                     $no_disk_exist = false;
+                    $no_data_show = true;
                     foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
                       if ($data_col["SHOW_DATA"] == "YES") {
+                        $no_data_show = false;
                         echo "<span>".$disk[$data_col["NAME"]]." </span>";
                       }
+                    }
+                    if ($no_data_show) {
+                      echo "<span>No data fields selected in Settings tab</span>";
                     }
                   }
                 }

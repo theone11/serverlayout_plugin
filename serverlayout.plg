@@ -6,7 +6,7 @@
 <!ENTITY version     "2015.05.24">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Development/&name;.plg">
 <!ENTITY packageVER  "v1.0">
-<!ENTITY packageMD5  "5bfa3b2c78749d61bba55dc99fe0f608">
+<!ENTITY packageMD5  "e4e4c492a763f51841b8cecf09a3bb34">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/Development/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -20,7 +20,7 @@
 >
 
 <CHANGES>
-###2015.05.24
+###2015.05.28
 - Initial Release
 </CHANGES>
 
