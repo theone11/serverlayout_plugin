@@ -1,5 +1,5 @@
-Menu="serverlayout:2"
-Icon="Settings.png"
+Menu="serverlayout:3"
+Icon="settings.png"
 Title="Settings"
 ---
 <?php include '/usr/local/emhttp/plugins/serverlayout/php/serverlayout_settings.php' ?>

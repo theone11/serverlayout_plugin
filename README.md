@@ -11,16 +11,17 @@ You can configure the server’s disk tray layout, assign each storage device to a
 ##To update the plugin:
 * For WEBUI and functionality updates - Use the unRAID Plugin Manager
 
-##The WEBUI is divided into 2 parts/tabs:
-1. Status - Shows the Server Layout as was configured in the Settigns taball versions of packages and plugin and there status (installed/local/online).
-2. Settings - Includes the following configuration options:
-   - Server Layout (Rows/Comlumns) and Drive orientation (Horizontal/Vertical).
-   - Get automatic drive data and enter manual data per drive including purchase date and drive tray assignment.
-   - Set which fileds should be shown per drive on the Status tab.
+##The WEBUI is divided into 3 parts/tabs:
+1. Layout:
+   - Shows the Server Layout as was configured in the Settings tab.
+2. Data:
+   - Shows the Server Data (Installed and Historical) and allows adding and editing of manual data.
    - Preview the drive tray assignments.
+3. Settings:
+   - Configure Server Layout (Rows/Comlumns) and Drive orientation (Horizontal/Vertical).
+   - Configure which fields should be shown per drive on the Layout tab and data field columns in Data tab.
 
 Please comment on any problems encountered and any enhancements or missing features, that you would like added.
-(Here if possible: https://github.com/theone11/serverlayout_plugin/issues)
+(In this thread or here: https://github.com/theone11/serverlayout_plugin/issues)
 
 Enjoy the plugin
-

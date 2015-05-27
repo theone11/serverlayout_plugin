@@ -1,5 +1,0 @@
-Menu="serverlayout:1"
-Icon="Status.png"
-Title="Status"
----
-<?php include '/usr/local/emhttp/plugins/serverlayout/php/serverlayout_status.php' ?>

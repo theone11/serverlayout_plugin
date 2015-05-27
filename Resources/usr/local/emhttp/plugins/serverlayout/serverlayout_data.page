@@ -1,0 +1,5 @@
+Menu="serverlayout:2"
+Icon="data.png"
+Title="Data Tables"
+---
+<?php include '/usr/local/emhttp/plugins/serverlayout/php/serverlayout_data.php' ?>
