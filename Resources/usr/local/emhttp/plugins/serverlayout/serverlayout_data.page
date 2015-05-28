@@ -1,5 +1,4 @@
 Menu="serverlayout:2"
-Icon="data.png"
 Title="Data"
 ---
 <?php include '/usr/local/emhttp/plugins/serverlayout/php/serverlayout_data.php' ?>
