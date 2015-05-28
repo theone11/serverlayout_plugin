@@ -1,0 +1,4 @@
+Menu="serverlayout:4"
+Title="Report"
+---
+<?php include '/usr/local/emhttp/plugins/serverlayout/php/serverlayout_report.php' ?>

@@ -147,14 +147,21 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
 
   if ($myJSONconfig["DISK_DATA"] != "") {
     if (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"])) {  // Disk already exists in DISK_DATA array
-      $path_save = $disk["PATH"];                                     // Save new PATH
       foreach (array_keys($default_disk) as $key) {
-        $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all existing data - for array_replace_recursive later on
+        switch ($key) {
+          case "TYPE"         :                                                  // Use new data - Do not overwrite with old data
+          case "DEVICE"       :                                                  //
+          case "PATH"         :                                                  //
+          case "MANUFACTURER" :                                                  //
+          case "SN"           :                                                  //
+          case "FW"           :                                                  //
+          case "CAPACITY"     : break;                                           //
+          default: $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all other existing data (Manual data, Dates, etc...)
+        }
       }
-      if ($path_save != $disk["PATH"]) {
-        $disk["TRAY_NUM"] = "";                                       // Reset TRAY_NUM if device path has changed (changed PATH)
+      if ($disk["PATH"] != $myJSONconfig["DISK_DATA"][$disk["SN"]]["PATH"]) {
+        $disk["TRAY_NUM"] = "";                                                 // Reset TRAY_NUM if device PATH has changed
       }
-      $disk["PATH"] = $path_save;                                     // KEEP new PATH
       $disk["LAST_SEEN_DATE"] = date("Y/m/d");                                  // Update current date for previously out-of-array devices
       $disk["FOUND"] = "YES";                                                   // Change FOUND to YES for later scanning
       if ($myJSONconfig["DISK_DATA"][$disk["SN"]]["STATUS"] == "HISTORICAL") {  // Disk is HISTORICAL
@@ -193,7 +200,6 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
   // Find HDD and CD/DVD devices
 
   $data = explode("\n", shell_exec("ls -las /dev/disk/by-id 2>/dev/null"));
-
   foreach ($data as $line) {
     if ((strstr($line, "ata-")) and (!strstr($line, "-part"))) {  // Look for SATA devices (HDD and CD/DVD ROMs) AND not partitions
       $disk = $default_disk;  // Create a new disk array from template

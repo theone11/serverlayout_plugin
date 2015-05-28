@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.05.28-2">
-<!ENTITY launch      "Settings/serverlayout">
+<!ENTITY version     "2015.05.28-3">
+<!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
-<!ENTITY packageVER  "v1.2">
-<!ENTITY packageMD5  "3d0f752d0cecfbfc4c3a963328369382">
+<!ENTITY packageVER  "&version;">
+<!ENTITY packageMD5  "804a52639445d74547bcef6e96191ebb">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,6 +22,12 @@
 >
 
 <CHANGES>
+###2015.05.28-3
+- Changed "packageVER" to be same as "version"
+- Changed "launch" to be dependent on "name" of plugin
+- Added button on "Data" tab for updating Smartmontools database
+- Added "Report" tab
+- Fix: New disk scraped data was not being saved
 ###2015.05.28-2
 - Changed EOL from Windows to Unix
 - Add launch option for the Plugin Manager
