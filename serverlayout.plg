@@ -3,10 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.05.28-1">
+<!ENTITY version     "2015.05.28-2">
+<!ENTITY launch      "Settings/serverlayout">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
-<!ENTITY packageVER  "v1.1">
-<!ENTITY packageMD5  "1827852b23fc133dd3f1a0159b303583">
+<!ENTITY packageVER  "v1.2">
+<!ENTITY packageMD5  "3d0f752d0cecfbfc4c3a963328369382">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -16,10 +17,16 @@
 <PLUGIN  name="&name;"
          author="&author;"
          version="&version;"
+         launch="&launch;"
          pluginURL="&pluginURL;"
 >
 
 <CHANGES>
+###2015.05.28-2
+- Changed EOL from Windows to Unix
+- Add launch option for the Plugin Manager
+- Removed icon references from .page files
+- Removed "---" from main .page file (remove empty tab)
 ###2015.05.28-1
 - Replaced "-sata" with "-ata" when searching drives
 ###2015.05.28
@@ -117,9 +124,8 @@ if [ "$INSTALL_PKG" == "true" ] ; then
   [ -d "&emhttpLOC;" ] &amp;&amp; rm -fR "&emhttpLOC;"
   <!--# Extract files -->
   tar -xf "&pluginLOC;/&packagefile;" -C "/"
-  <!--# Edit PAGE file  - add version number and ending "-" -->
+  <!--# Edit PAGE file  - Dynamically add version number -->
   echo "Version=\"&version;\"" &gt;&gt; "&emhttpLOC;/&name;.page"
-  echo "---" &gt;&gt; "&emhttpLOC;/&name;.page"
 
   rm -Rf "/tmp/&name;-packages"
   rm -f "/tmp/&name;-install"
