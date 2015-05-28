@@ -195,7 +195,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
   $data = explode("\n", shell_exec("ls -las /dev/disk/by-id 2>/dev/null"));
 
   foreach ($data as $line) {
-    if ((strstr($line, "sata-")) and (!strstr($line, "-part"))) {  // Look for SATA devices (HDD and CD/DVD ROMs) AND not partitions
+    if ((strstr($line, "ata-")) and (!strstr($line, "-part"))) {  // Look for SATA devices (HDD and CD/DVD ROMs) AND not partitions
       $disk = $default_disk;  // Create a new disk array from template
       $disk["DEVICE"] = trim(substr($line, strpos($line, "../../")+strlen("../../")));  // Update device id in any case
       $lsscsi_data = explode("\n", shell_exec("lsscsi 2>/dev/null"));
