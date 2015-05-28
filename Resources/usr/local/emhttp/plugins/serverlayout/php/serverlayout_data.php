@@ -255,6 +255,7 @@ function StartUp() {
       <div id="title">
         <span class="left">Commands</span>
       </div>
+      <div style="text-align:center;"><input type="submit" name="update_smartmontools_database" value="Update Smartmontools Database"></div>
       <div style="text-align:center;"><input type="submit" name="data" value="Save Data"></div>
       <div style="text-align:center;"><button type="button" onClick="done();">Exit ServerLayout</button></div>
     </div>

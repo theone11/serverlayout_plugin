@@ -3,11 +3,11 @@ require_once('serverlayout_constants.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
-  // Get JSON configuration file
-  $myJSONconfig = json_decode(file_get_contents($serverlayout_cfg_file), true);
-
   // If "Save Settings" button pressed
   if(isset($_POST['settings'])) {
+
+    // Get JSON configuration file
+    $myJSONconfig = json_decode(file_get_contents($serverlayout_cfg_file), true);
 
     // Get new ROWS and COLUMNS configuration
     $rows_new = $_POST["ROWS"];
@@ -46,10 +46,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $myJSONconfig["DISK_DATA"][$disk_SN]["TRAY_NUM"] = "";
       }
     }
+
+    // Save configuration data to JSON configuration file
+    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
   }
+
   
   // If "Save Data" button pressed
   if(isset($_POST['data'])) {
+
+    // Get JSON configuration file
+    $myJSONconfig = json_decode(file_get_contents($serverlayout_cfg_file), true);
+
     // Save TRAY_NUMs
     $traynums = $_POST["TRAY_NUMS"];
     $traynums_sn = $_POST["TRAY_NUMS_SN"];
@@ -62,11 +70,17 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $purchasedates_sn = $_POST["PURCHASE_DATES_SN"];
     foreach (array_combine($purchasedates_sn, $purchasedates) as $purchasedate_sn => $purchasedate) {
       $myJSONconfig["DISK_DATA"][$purchasedate_sn]["PURCHASE_DATE"] = $purchasedate;
+
+    // Save configuration data to JSON configuration file
+    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
     }
   }
 
-  // Save configuration data to JSON configuration file
-  file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
+
+  if(isset($_POST['update_smartmontools_database'])) {
+    // Update Smartmontools database
+    shell_exec("/usr/sbin/update-smart-drivedb");
+  }
 }
 ?>
 
