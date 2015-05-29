@@ -53,31 +53,45 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
   
   // If "Save Data" button pressed
-  if(isset($_POST['data'])) {
+  else if(isset($_POST['data'])) {
 
     // Get JSON configuration file
     $myJSONconfig = json_decode(file_get_contents($serverlayout_cfg_file), true);
 
     // Save TRAY_NUMs
-    $traynums = $_POST["TRAY_NUMS"];
-    $traynums_sn = $_POST["TRAY_NUMS_SN"];
-    foreach (array_combine($traynums_sn, $traynums) as $traynum_sn => $traynum) {
-      $myJSONconfig["DISK_DATA"][$traynum_sn]["TRAY_NUM"] = $traynum;
+    $datas = $_POST["TRAY_NUMS"];
+    $keys = $_POST["TRAY_NUMS_SN"];
+    foreach (array_combine($keys, $datas) as $key => $data) {
+      $myJSONconfig["DISK_DATA"][$key]["TRAY_NUM"] = $data;
     }
 
     // Write PURCHASE_DATE configuration
-    $purchasedates = $_POST["PURCHASE_DATES"];
-    $purchasedates_sn = $_POST["PURCHASE_DATES_SN"];
-    foreach (array_combine($purchasedates_sn, $purchasedates) as $purchasedate_sn => $purchasedate) {
-      $myJSONconfig["DISK_DATA"][$purchasedate_sn]["PURCHASE_DATE"] = $purchasedate;
+    $datas = $_POST["PURCHASE_DATES"];
+    $keys = $_POST["PURCHASE_DATES_SN"];
+    foreach (array_combine($keys, $datas) as $key => $data) {
+      $myJSONconfig["DISK_DATA"][$key]["PURCHASE_DATE"] = $data;
+    }
+
+    // Write FIRST_INSTALL_DATE configuration
+    $datas = $_POST["FIRST_INSTALL_DATES"];
+    $keys = $_POST["FIRST_INSTALL_DATES_SN"];
+    foreach (array_combine($keys, $datas) as $key => $data) {
+      $myJSONconfig["DISK_DATA"][$key]["FIRST_INSTALL_DATE"] = $data;
+    }
+
+    // Write NOTES configuration
+    $datas = $_POST["NOTESS"];
+    $keys = $_POST["NOTESS_SN"];
+    foreach (array_combine($keys, $datas) as $key => $data) {
+      $myJSONconfig["DISK_DATA"][$key]["NOTES"] = $data;
+    }
 
     // Save configuration data to JSON configuration file
     file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
-    }
+
   }
 
-
-  if(isset($_POST['update_smartmontools_database'])) {
+  else if(isset($_POST['update_smartmontools_database'])) {
     // Update Smartmontools database
     shell_exec("/usr/sbin/update-smart-drivedb");
   }

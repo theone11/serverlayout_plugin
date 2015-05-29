@@ -114,8 +114,24 @@ function StartUp() {
          </select></td>
         </tr>
       </table>
+      <blockquote class='inline_help'>
+        <p><strong>Rows</strong> are the number of rows existing in your server<p>
+        <p><strong>Columns</strong> are the number of columns existing in your server<p>
+        <p><strong>Orientation</strong> is the direction the disk trays are positioned in your servr (horizontal or vertical)</p>
+        <p><ins>Note:</ins></p>
+        <p><ul><li>If rows or columns parameters are changed (and saved) then all disk tray assignments will be removed</li>
+               <li>Enable the checkbos in order to change these settings</li></ul></p>
+      </blockquote>
     </div>
-  </div>
+
+    <div id="title">
+      <span class="left">Support</span>
+    </div>
+    <div>
+      <a href="http://lime-technology.com/forum/index.php?topic=40223.0" target="_blank">Visit Server Layout plugin forum thread</a>
+    </div>
+
+    </div>
 
   <div style="width:74%; float:right; border: 0px solid black; overflow: auto;">
     <div id="title">

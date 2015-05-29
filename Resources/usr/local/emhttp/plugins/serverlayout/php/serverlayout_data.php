@@ -333,8 +333,14 @@ function StartUp() {
                                                        default: echo $disk["TYPE"];
                                                      }
                                                      break;
+                        case "FIRST_INSTALL_DATE"  : ?> <input class="MANUAL_DATA" type="text" name="FIRST_INSTALL_DATES[]" style="width: 6em;" maxlength="10" value="<?php echo $disk["FIRST_INSTALL_DATE"]; ?>">
+                                                        <input type="hidden" name="FIRST_INSTALL_DATES_SN[]" value="<?php echo $disk["SN"]; ?>">
+                                                     <?php break;
                         case "PURCHASE_DATE"       : ?> <input class="MANUAL_DATA" type="text" name="PURCHASE_DATES[]" style="width: 6em;" maxlength="10" value="<?php echo $disk["PURCHASE_DATE"]; ?>">
                                                         <input type="hidden" name="PURCHASE_DATES_SN[]" value="<?php echo $disk["SN"]; ?>">
+                                                     <?php break;
+                        case "NOTES"               : ?> <input class="MANUAL_DATA" type="text" name="NOTESS[]" style="width: 15em;" maxlength="255" value="<?php echo $disk["NOTES"]; ?>">
+                                                        <input type="hidden" name="NOTESS_SN[]" value="<?php echo $disk["SN"]; ?>">
                                                      <?php break;
                         default                    : echo $disk[$data_column["NAME"]];
                       }
