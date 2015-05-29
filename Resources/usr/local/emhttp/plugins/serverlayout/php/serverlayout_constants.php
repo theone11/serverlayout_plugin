@@ -22,19 +22,22 @@ $height = 80;
 $default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"));
 
 $default_col_data = array("DATA_COLUMNS" => array (
-                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",         "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
-                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "2",  "TEXT_ALIGN" => "center"),
-                      "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",         "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "3",  "TEXT_ALIGN" => "center"),
-                      "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "4",  "TEXT_ALIGN" => "left"  ),
-                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",   "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "5",  "TEXT_ALIGN" => "left"  ),
-                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",          "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "6",  "TEXT_ALIGN" => "left"  ),
-                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",  "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "7",  "TEXT_ALIGN" => "right" ),
-                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",       "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "8",  "TEXT_ALIGN" => "right" ),
-                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",       "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "9",  "TEXT_ALIGN" => "right" ),
-                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install",  "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "10", "TEXT_ALIGN" => "center"),
-                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install", "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "11", "TEXT_ALIGN" => "center"),
-                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen",      "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "12", "TEXT_ALIGN" => "center"),
-                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",  "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "13", "TEXT_ALIGN" => "center")
+                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
+                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",             "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "2",  "TEXT_ALIGN" => "center"),
+                      "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "3",  "TEXT_ALIGN" => "center"),
+                      "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",             "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "4",  "TEXT_ALIGN" => "left"  ),
+                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",     "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "5",  "TEXT_ALIGN" => "left"  ),
+                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",            "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "6",  "TEXT_ALIGN" => "left"  ),
+                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",    "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "7",  "TEXT_ALIGN" => "right" ),
+                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",         "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "8",  "TEXT_ALIGN" => "right" ),
+                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",         "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "9",  "TEXT_ALIGN" => "right" ),
+                      "POWER_ON_HOURS"      => array("NAME" => "POWER_ON_HOURS",      "TITLE" => "Power On Hours",   "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "10", "TEXT_ALIGN" => "right" ),
+                      "LOAD_CYCLE_COUNT"    => array("NAME" => "LOAD_CYCLE_COUNT",    "TITLE" => "Load Cycle Count", "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "11", "TEXT_ALIGN" => "right" ),
+                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install",    "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "12", "TEXT_ALIGN" => "right" ),
+                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install",   "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "13", "TEXT_ALIGN" => "center"),
+                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen",        "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "NO",  "SHOW_COLUMN_H" => "YES", "ORDER" => "14", "TEXT_ALIGN" => "center"),
+                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",    "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "15", "TEXT_ALIGN" => "center"),
+                      "NOTES"               => array("NAME" => "NOTES",               "TITLE" => "Notes",            "SHOW_DATA" => "NO",  "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "16", "TEXT_ALIGN" => "left"  )
                       ));
 
 $default_disk = array("TRAY_NUM"            => "",
@@ -46,10 +49,13 @@ $default_disk = array("TRAY_NUM"            => "",
                       "SN"                  => "",
                       "FW"                  => "",
                       "CAPACITY"            => "",
+                      "POWER_ON_HOURS"      => "",
+                      "LOAD_CYCLE_COUNT"    => "",
                       "FIRST_INSTALL_DATE"  => "",
                       "RECENT_INSTALL_DATE" => "",
                       "LAST_SEEN_DATE"      => "",
                       "PURCHASE_DATE"       => "",
+                      "NOTES"               => "",
                       "STATUS"              => "",
                       "FOUND"               => ""
                       );
@@ -149,19 +155,21 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
     if (array_key_exists($disk["SN"], $myJSONconfig["DISK_DATA"])) {  // Disk already exists in DISK_DATA array
       foreach (array_keys($default_disk) as $key) {
         switch ($key) {
-          case "TYPE"         :                                                  // Use new data - Do not overwrite with old data
-          case "DEVICE"       :                                                  //
-          case "PATH"         :                                                  //
-          case "MANUFACTURER" :                                                  //
-          case "SN"           :                                                  //
-          case "FW"           :                                                  //
-          case "CAPACITY"     : break;                                           //
+          case "TYPE"             :                                                  // Use new data in $disk - Do not overwrite with old data
+          case "DEVICE"           :                                                  //
+          case "PATH"             :                                                  //
+          case "MANUFACTURER"     :                                                  //
+          case "SN"               :                                                  //
+          case "FW"               :                                                  //
+          case "CAPACITY"         :                                                  //
+          case "POWER_ON_HOURS"   :                                                  //
+          case "LOAD_CYCLE_COUNT" : break;                                           //
           default: $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all other existing data (Manual data, Dates, etc...)
         }
       }
-      if ($disk["PATH"] != $myJSONconfig["DISK_DATA"][$disk["SN"]]["PATH"]) {
-        $disk["TRAY_NUM"] = "";                                                 // Reset TRAY_NUM if device PATH has changed
-      }
+//      if ($disk["PATH"] != $myJSONconfig["DISK_DATA"][$disk["SN"]]["PATH"]) {
+//        $disk["TRAY_NUM"] = "";                                                 // Reset TRAY_NUM if device PATH has changed
+//      }
       $disk["LAST_SEEN_DATE"] = date("Y/m/d");                                  // Update current date for previously out-of-array devices
       $disk["FOUND"] = "YES";                                                   // Change FOUND to YES for later scanning
       if ($myJSONconfig["DISK_DATA"][$disk["SN"]]["STATUS"] == "HISTORICAL") {  // Disk is HISTORICAL
@@ -170,7 +178,7 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
       }
 
       // Update disk to JSON array
-      unset($myJSONconfig["DISK_DATA"][$disk["SN"]]);  // array_replace doesn't seem to work
+      unset($myJSONconfig["DISK_DATA"][$disk["SN"]]);  // array_replace doesn't seem to work so I remove the original disk and add the new one
       $myJSONconfig["DISK_DATA"][$disk["SN"]] = $disk;
     } else {                                           // Disk new to server (also new to HISTORICAL)
       $myJSONconfig = Add_New_Disk($myJSONconfig, $disk);
@@ -214,7 +222,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       }
       if (substr($disk["DEVICE"],0,2) == "sd") {  // Get HDD data
         $disk["TYPE"] = "SATA";
-        $device_data = explode("\n", shell_exec("smartctl -i /dev/".$disk["DEVICE"]." 2>/dev/null"));
+        $device_data = explode("\n", shell_exec("smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null"));
         foreach ($device_data as $data_line) {
           if (strpos($data_line, ":")) {
             $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
@@ -226,6 +234,12 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
               case "User Capacity:"    : $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
               default :
             }
+          }
+          else if (strpos($data_line, "Power_On_Hours")) {
+            $disk["POWER_ON_HOURS"] = trim(substr($data_line, strrpos(trim($data_line), " ")));
+          }
+          else if (strpos($data_line, "Load_Cycle_Count")) {
+            $disk["LOAD_CYCLE_COUNT"] = trim(substr(trim($data_line), strrpos(trim($data_line), " ")));
           }
         }
        

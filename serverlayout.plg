@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.05.28-3">
+<!ENTITY version     "2015.05.30">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
-<!ENTITY packageMD5  "804a52639445d74547bcef6e96191ebb">
+<!ENTITY packageMD5  "610da46f5f8639eb70c60039288a7330">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,6 +22,12 @@
 >
 
 <CHANGES>
+###2015.05.30
+- Removed PATH change clears TRAY_NUM assignment
+- Allow editing of FIRST_INSTALL_DATE
+- Add POWER_ON_HOURS for HDDs
+- Add START_STOP_COUNT for HDDs
+- Add NOTES field
 ###2015.05.28-3
 - Changed "packageVER" to be same as "version"
 - Changed "launch" to be dependent on "name" of plugin
