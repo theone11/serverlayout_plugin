@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.05.30">
+<!ENTITY version     "2015.05.31">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
-<!ENTITY packageMD5  "610da46f5f8639eb70c60039288a7330">
+<!ENTITY packageMD5  "def03bb6f99eca9fddb890d81e311646">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,12 +22,15 @@
 >
 
 <CHANGES>
+###2015.05.31
+- Moved plugin to "Settings" --> "User Utilities" on unrAID WEBUI
+- Added "Set All" and "Clear All" buttons for each field view setting columns in "Settings" tab
 ###2015.05.30
 - Removed PATH change clears TRAY_NUM assignment
-- Allow editing of FIRST_INSTALL_DATE
-- Add POWER_ON_HOURS for HDDs
-- Add START_STOP_COUNT for HDDs
-- Add NOTES field
+- Enabled editing of FIRST_INSTALL_DATE
+- Added POWER_ON_HOURS for HDDs
+- Added START_STOP_COUNT for HDDs
+- Added NOTES field
 ###2015.05.28-3
 - Changed "packageVER" to be same as "version"
 - Changed "launch" to be dependent on "name" of plugin
