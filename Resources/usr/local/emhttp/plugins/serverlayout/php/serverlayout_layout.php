@@ -100,7 +100,7 @@ function UpdateDIVSizes() {
                     $no_disk_exist = false;
                     $no_data_show = true;
                     foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
-                      if ($data_col["SHOW_DATA"] == "YES") {
+                      if (($data_col["SHOW_DATA"] == "YES") and ($disk[$data_col["NAME"]] != "")) {
                         $no_data_show = false;
                         echo "<span>".$disk[$data_col["NAME"]]." </span>";
                       }

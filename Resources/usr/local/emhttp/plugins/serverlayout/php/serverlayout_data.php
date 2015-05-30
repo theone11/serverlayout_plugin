@@ -307,15 +307,16 @@ function StartUp() {
                 }
                 if ($no_show_column_i) {
                   echo "<tr>";
-                  echo "<td align=\"center\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No data columns selected in Settings tab</td>";
+                  echo "<td style=\"text-align:center;\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No data columns selected in Settings tab</td>";
                   echo "</tr>";
                 } ?>
         </tr>
+        <tbody>
         <?php $no_installed_disk = true;
               foreach ($myJSONconfig["DISK_DATA"] as $disk) {
                 if ($disk["STATUS"] == "INSTALLED") {
                   $no_installed_disk = false;
-                  echo "<tbody><tr>";
+                  echo "<tr>";
                   foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
                     if ($data_column["SHOW_COLUMN_I"] == "YES") {
                       echo "<td style=\"text-align:".$data_column["TEXT_ALIGN"].";\">";
@@ -352,7 +353,7 @@ function StartUp() {
               }
               if ($no_installed_disk) {
                 echo "<tr>";
-                echo "<td align=\"center\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No installed disks found</td>";
+                echo "<td style=\"text-align:center;\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No installed disks found</td>";
                 echo "</tr>";
               } ?>
       </table>
@@ -374,15 +375,16 @@ function StartUp() {
                 }
                 if ($no_show_column_h) {
                   echo "<tr>";
-                  echo "<td align=\"center\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No data columns selected in Settings tab</td>";
+                  echo "<td style=\"text-align:center;\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No data columns selected in Settings tab</td>";
                   echo "</tr>";
                 } ?>
         </tr>
+        <tbody>
         <?php $no_historical_disk = true;
               foreach ($myJSONconfig["DISK_DATA"] as $disk) { 
                 if ($disk["STATUS"] == "HISTORICAL") {
                   $no_historical_disk = false;
-                  echo "<tbody><tr>";
+                  echo "<tr>";
                   foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) {
                     if ($data_column["SHOW_COLUMN_H"] == "YES") {
                       echo "<td style=\"text-align:".$data_column["TEXT_ALIGN"].";\">";
@@ -404,7 +406,7 @@ function StartUp() {
               }
               if ($no_historical_disk) {
                 echo "<tr>";
-                echo "<td align=\"center\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No historical disks found</td>";
+                echo "<td style=\"text-align:center;\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No historical disks found</td>";
                 echo "</tr>";
               } ?>
       </table>

@@ -63,11 +63,29 @@ function EditCheckboxLayout(myCheckbox) {
   }
 }
 
+function UpdateShowCheckboxes(name) {
+  switch (name) {
+    case "SHOW_DATA_CLR"     : var elements = document.getElementsByClassName("SHOW_DATA_CHECKBOXES"); command = "CLR"; break;
+    case "SHOW_DATA_SET"     : var elements = document.getElementsByClassName("SHOW_DATA_CHECKBOXES"); command = "SET"; break;
+    case "SHOW_COLUMN_I_CLR" : var elements = document.getElementsByClassName("SHOW_COLUMN_I_CHECKBOXES"); command = "CLR"; break;
+    case "SHOW_COLUMN_I_SET" : var elements = document.getElementsByClassName("SHOW_COLUMN_I_CHECKBOXES");  command = "SET"; break;
+    case "SHOW_COLUMN_H_CLR" : var elements = document.getElementsByClassName("SHOW_COLUMN_H_CHECKBOXES");  command = "CLR"; break;
+    case "SHOW_COLUMN_H_SET" : var elements = document.getElementsByClassName("SHOW_COLUMN_H_CHECKBOXES");  command = "SET"; break;
+    default:
+  }
+  for (i = 0; i < elements.length; i++) {
+    if (command == "CLR") {
+      elements[i].checked = false;
+    }
+    else if (command == "SET") {
+      elements[i].checked = true;
+    }
+  }
+}
+
 function StartUp() {
   DefineColumnsDropDownList();
   InitDisabledFields();
-  InitMultipleSelect();
-  UpdateDIVSizes();
 }
 
 </script>
@@ -127,7 +145,7 @@ function StartUp() {
     <div id="title">
       <span class="left">Support</span>
     </div>
-    <div>
+    <div style="text-align:center;">
       <a href="http://lime-technology.com/forum/index.php?topic=40223.0" target="_blank">Visit Server Layout plugin forum thread</a>
     </div>
 
@@ -146,13 +164,29 @@ function StartUp() {
           <td>Show in "Installed" Table</td>
           <td>Show in "Historical" Table</td>
         </tr>
+        <tr>
+          <td>
+          </td>
+          <td>
+            <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_DATA_CLR" onClick="UpdateShowCheckboxes(this.name)">Clear All</button></div>
+            <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_DATA_SET" onClick="UpdateShowCheckboxes(this.name)">Set All</button></div>
+          </td>
+          <td>
+            <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_COLUMN_I_CLR" onClick="UpdateShowCheckboxes(this.name)">Clear All</button></div>
+            <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_COLUMN_I_SET" onClick="UpdateShowCheckboxes(this.name)">Set All</button></div>
+          </td>
+          <td>
+            <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_COLUMN_H_CLR" onClick="UpdateShowCheckboxes(this.name)">Clear All</button></div>
+            <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_COLUMN_H_SET" onClick="UpdateShowCheckboxes(this.name)">Set All</button></div>
+          </td>
+        </tr>
         <tbody>
           <?php foreach ($myJSONconfig["DATA_COLUMNS"] as $data_column) { ?>
           <tr>
             <td><?php echo $data_column["TITLE"]; ?></td>
-            <td><input type="checkbox" name="SHOW_DATA_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_DATA"] == "YES") { echo "checked"; } ?>></td>
-            <td><input type="checkbox" name="SHOW_COLUMN_I_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_COLUMN_I"] == "YES") { echo "checked"; } ?>></td>
-            <td><input type="checkbox" name="SHOW_COLUMN_H_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_COLUMN_H"] == "YES") { echo "checked"; } ?>></td>
+            <td><input type="checkbox" class="SHOW_DATA_CHECKBOXES" name="SHOW_DATA_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_DATA"] == "YES") { echo "checked"; } ?>></td>
+            <td><input type="checkbox" class="SHOW_COLUMN_I_CHECKBOXES" name="SHOW_COLUMN_I_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_COLUMN_I"] == "YES") { echo "checked"; } ?>></td>
+            <td><input type="checkbox" class="SHOW_COLUMN_H_CHECKBOXES" name="SHOW_COLUMN_H_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_COLUMN_H"] == "YES") { echo "checked"; } ?>></td>
           </tr>
           <?php } ?>
       </table>
