@@ -250,7 +250,7 @@ function StartUp() {
 
 <BODY>
 
-<form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="progressFrame">
+<form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="_blank">
 
   <div style="width: <?php echo $level_1_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
     <div style="width: <?php echo $level_2_div_width; ?>%; float:left; border: 0px solid black; overflow: hidden;">
@@ -273,6 +273,7 @@ function StartUp() {
             $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
             $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
           <div class="cell_container_preview" <?php if ($orientation == 90) {
+                                                      echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
             <div class="cell_background_preview">
               <?php $tray_num = (($i-1) * $columns) + $j; ?>
               <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">

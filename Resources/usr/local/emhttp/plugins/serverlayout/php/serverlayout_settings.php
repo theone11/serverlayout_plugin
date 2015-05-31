@@ -67,6 +67,8 @@ function UpdateShowCheckboxes(name) {
   switch (name) {
     case "SHOW_DATA_CLR"     : var elements = document.getElementsByClassName("SHOW_DATA_CHECKBOXES"); command = "CLR"; break;
     case "SHOW_DATA_SET"     : var elements = document.getElementsByClassName("SHOW_DATA_CHECKBOXES"); command = "SET"; break;
+    case "SHOW_TOOLTIP_CLR"  : var elements = document.getElementsByClassName("SHOW_TOOLTIP_CHECKBOXES"); command = "CLR"; break;
+    case "SHOW_TOOLTIP_SET"  : var elements = document.getElementsByClassName("SHOW_TOOLTIP_CHECKBOXES");  command = "SET"; break;
     case "SHOW_COLUMN_I_CLR" : var elements = document.getElementsByClassName("SHOW_COLUMN_I_CHECKBOXES"); command = "CLR"; break;
     case "SHOW_COLUMN_I_SET" : var elements = document.getElementsByClassName("SHOW_COLUMN_I_CHECKBOXES");  command = "SET"; break;
     case "SHOW_COLUMN_H_CLR" : var elements = document.getElementsByClassName("SHOW_COLUMN_H_CHECKBOXES");  command = "CLR"; break;
@@ -93,7 +95,7 @@ function StartUp() {
 
 <BODY>
 
-<form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="progressFrame">
+<form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="_blank">
 
   <div style="width:24%; float:left; border: 0px solid black; overflow: hidden;">
     <div id="title">
@@ -161,6 +163,7 @@ function StartUp() {
         <tr>
           <td>Title</td>
           <td>Show in Layout</td>
+          <td>Show in Tray Tooltip</td>
           <td>Show in "Installed" Table</td>
           <td>Show in "Historical" Table</td>
         </tr>
@@ -170,6 +173,10 @@ function StartUp() {
           <td>
             <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_DATA_CLR" onClick="UpdateShowCheckboxes(this.name)">Clear All</button></div>
             <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_DATA_SET" onClick="UpdateShowCheckboxes(this.name)">Set All</button></div>
+          </td>
+          <td>
+            <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_TOOLTIP_CLR" onClick="UpdateShowCheckboxes(this.name)">Clear All</button></div>
+            <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_TOOLTIP_SET" onClick="UpdateShowCheckboxes(this.name)">Set All</button></div>
           </td>
           <td>
             <div style="width:50%; float:left; text-align:center;"><button type="button" name="SHOW_COLUMN_I_CLR" onClick="UpdateShowCheckboxes(this.name)">Clear All</button></div>
@@ -185,6 +192,7 @@ function StartUp() {
           <tr>
             <td><?php echo $data_column["TITLE"]; ?></td>
             <td><input type="checkbox" class="SHOW_DATA_CHECKBOXES" name="SHOW_DATA_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_DATA"] == "YES") { echo "checked"; } ?>></td>
+            <td><input type="checkbox" class="SHOW_TOOLTIP_CHECKBOXES" name="SHOW_TOOLTIP_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_TOOLTIP"] == "YES") { echo "checked"; } ?>></td>
             <td><input type="checkbox" class="SHOW_COLUMN_I_CHECKBOXES" name="SHOW_COLUMN_I_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_COLUMN_I"] == "YES") { echo "checked"; } ?>></td>
             <td><input type="checkbox" class="SHOW_COLUMN_H_CHECKBOXES" name="SHOW_COLUMN_H_<?php echo $data_column["NAME"]; ?>" value="YES" <?php if ($data_column["SHOW_COLUMN_H"] == "YES") { echo "checked"; } ?>></td>
           </tr>

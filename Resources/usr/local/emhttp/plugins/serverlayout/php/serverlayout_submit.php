@@ -28,6 +28,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       } else {
         $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_DATA"] = "NO";
       }
+      if (isset($_POST["SHOW_TOOLTIP_".$data_column_name]) and ($_POST["SHOW_TOOLTIP_".$data_column_name] == "YES")) {
+        echo "SHOW_TOOLTIP_".$data_column_name." = ".$_POST["SHOW_TOOLTIP_".$data_column_name];
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_TOOLTIP"] = "YES";
+      } else {
+        echo "SHOW_TOOLTIP_".$data_column_name." = NO";
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_TOOLTIP"] = "NO";
+      }
       if (isset($_POST["SHOW_COLUMN_I_".$data_column_name]) and ($_POST["SHOW_COLUMN_I_".$data_column_name] == "YES")) {
         $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_COLUMN_I"] = "YES";
       } else {
@@ -100,5 +107,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <HTML>
 <HEAD><SCRIPT>var goback=parent.location;</SCRIPT></HEAD>
-<BODY onLoad="parent.location=goback;"</BODY>
+<BODY onLoad="parent.location=goback;"></BODY>
 </HTML>
