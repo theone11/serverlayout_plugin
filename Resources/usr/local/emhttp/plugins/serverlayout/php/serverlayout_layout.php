@@ -52,7 +52,9 @@ $num_trays = $num_columns * $num_rows;
   text-align: center;
   position: relative;           /* Vertical Center */
   top: 50%;                     /* Vertical Center */
-  transform: translateY(-50%);  /* Vertical Center */
+  -webkit-transform: translateY(-50%);  /* Vertical Center */
+      -ms-transform: translateY(-50%);  /* Vertical Center */
+          transform: translateY(-50%);  /* Vertical Center */
   padding-left: 5px;
   padding-right: 5px;
   box-sizing: border-box;
@@ -89,7 +91,7 @@ function UpdateDIVSizes() {
   <?php for ($j = 1; $j <= $columns; $j++) {
       $x_translate = $orientation/90*(-$width/2 + $height/2 - ($j-1)*($width-$height));
       $y_translate = $orientation/90*(-$width/2 + $height/2); ?>
-    <div class="cell_container" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+    <div class="cell_container" <?php if ($orientation == 90) {
       <div class="cell_background">
         <div class="cell_text">
         <?php $tray_num = (($i-1) * $columns) + $j;

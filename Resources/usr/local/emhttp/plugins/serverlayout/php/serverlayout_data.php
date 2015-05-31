@@ -78,7 +78,9 @@ if ($layout_orientation == 0) { $data_div_width = 100; } else { $data_div_width 
   text-align: center;
   position: relative;           /* Vertical Center */
   top: 50%;                     /* Vertical Center */
-  transform: translateY(-50%);  /* Vertical Center */
+  -webkit-transform: translateY(-50%);  /* Vertical Center */
+      -ms-transform: translateY(-50%);  /* Vertical Center */
+          transform: translateY(-50%);  /* Vertical Center */
   padding-left: 5px;
   padding-right: 5px;
   box-sizing: border-box;
@@ -270,7 +272,7 @@ function StartUp() {
         <?php for ($j = 1; $j <= $columns; $j++) {
             $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
             $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
-          <div class="cell_container_preview" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+          <div class="cell_container_preview" <?php if ($orientation == 90) {
             <div class="cell_background_preview">
               <?php $tray_num = (($i-1) * $columns) + $j; ?>
               <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
