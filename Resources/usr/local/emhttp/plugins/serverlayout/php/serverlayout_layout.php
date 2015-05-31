@@ -87,6 +87,7 @@ a.tooltip:hover {text-decoration:none;}
     echo "  z-index:10;display:none; padding:5px 5px;\n";
     echo "  margin-top:-10px; margin-left:".$margin_left."px;\n";
     echo "  width:".$width."px; line-height:100%;\n";
+    echo "  border-radius:".$border_radius."px;\n";
     echo "  box-shadow: 5px 5px 8px #CCC;\n";
   echo "}\n";
 
@@ -117,9 +118,9 @@ function UpdateDIVSizes() {
   <?php for ($j = 1; $j <= $columns; $j++) {
       $x_translate = $orientation/90*(-$width/2 + $height/2 - ($j-1)*($width-$height));
       $y_translate = $orientation/90*(-$width/2 + $height/2); ?>
+    <a href="#" class="tooltip">
     <div class="cell_container" <?php if ($orientation == 90) {
                                         echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
-    <a href="#" class="tooltip">
       <div class="cell_background">
         <div class="cell_text">
         <?php $tray_num = (($i-1) * $columns) + $j;
