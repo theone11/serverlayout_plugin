@@ -78,7 +78,9 @@ if ($layout_orientation == 0) { $data_div_width = 100; } else { $data_div_width 
   text-align: center;
   position: relative;           /* Vertical Center */
   top: 50%;                     /* Vertical Center */
-  transform: translateY(-50%);  /* Vertical Center */
+  -webkit-transform: translateY(-50%);  /* Vertical Center */
+      -ms-transform: translateY(-50%);  /* Vertical Center */
+          transform: translateY(-50%);  /* Vertical Center */
   padding-left: 5px;
   padding-right: 5px;
   box-sizing: border-box;
@@ -98,7 +100,7 @@ if ($layout_orientation == 0) { $data_div_width = 100; } else { $data_div_width 
 table.disk_data {overflow: auto;}
 table.disk_data td {width:auto; white-space:nowrap;}
 table.disk_data thead tr:first-child td{padding-left:5px; padding-right:5px; text-align:center;font-size:13px;background:-webkit-radial-gradient(#E0E0E0,#C0C0C0);background:linear-gradient(#E0E0E0,#C0C0C0);border-right:1px solid #F0F0F0;}
-table.disk_data tbody td {padding-left:5px; padding-right:5px;}
+table.disk_data tbody td {padding:4px; padding-left:5px; padding-right:5px;}
 table.disk_data tbody tr:nth-child(even) {background-color:#F8F8F8;}
 table.disk_data tbody tr:hover {background-color:#FDFD96;}
 
@@ -270,7 +272,8 @@ function StartUp() {
         <?php for ($j = 1; $j <= $columns; $j++) {
             $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
             $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
-          <div class="cell_container_preview" <?php if ($orientation == 90) { echo "style=\"transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+          <div class="cell_container_preview" <?php if ($orientation == 90) {
+                                                      echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
             <div class="cell_background_preview">
               <?php $tray_num = (($i-1) * $columns) + $j; ?>
               <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">

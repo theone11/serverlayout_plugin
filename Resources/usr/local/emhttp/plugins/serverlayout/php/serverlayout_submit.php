@@ -1,5 +1,6 @@
 <?php
-require_once('serverlayout_constants.php');
+//require_once('serverlayout_constants.php');
+$serverlayout_cfg_file = "/boot/config/plugins/serverlayout/serverlayout.json";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -27,6 +28,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_DATA"] = "YES";
       } else {
         $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_DATA"] = "NO";
+      }
+      if (isset($_POST["SHOW_TOOLTIP_".$data_column_name]) and ($_POST["SHOW_TOOLTIP_".$data_column_name] == "YES")) {
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_TOOLTIP"] = "YES";
+      } else {
+        $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_TOOLTIP"] = "NO";
       }
       if (isset($_POST["SHOW_COLUMN_I_".$data_column_name]) and ($_POST["SHOW_COLUMN_I_".$data_column_name] == "YES")) {
         $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_COLUMN_I"] = "YES";
@@ -100,5 +106,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 <HTML>
 <HEAD><SCRIPT>var goback=parent.location;</SCRIPT></HEAD>
-<BODY onLoad="parent.location=goback;"</BODY>
+<BODY onLoad="parent.location=goback;"></BODY>
 </HTML>

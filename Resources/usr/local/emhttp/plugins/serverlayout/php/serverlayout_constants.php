@@ -2,7 +2,6 @@
 $max_trays = 26;
 
 // Constants - Data file locations
-$automatic_data = "/boot/config/plugins/serverlayout/AutomaticData.cfg";
 $serverlayout_cfg_file = "/boot/config/plugins/serverlayout/serverlayout.json";
 
 // Constants - Image file locations
@@ -22,23 +21,23 @@ $height = 80;
 $default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"));
 
 $default_col_data = array("DATA_COLUMNS" => array (
-                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
-                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",             "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "2",  "TEXT_ALIGN" => "center"),
-                      "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "3",  "TEXT_ALIGN" => "center"),
-                      "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",             "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "4",  "TEXT_ALIGN" => "left"  ),
-                      "UNRAID"              => array("NAME" => "UNRAID",              "TITLE" => "unRAID",           "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "5",  "TEXT_ALIGN" => "left"  ),
-                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",     "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "6",  "TEXT_ALIGN" => "left"  ),
-                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",            "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "7",  "TEXT_ALIGN" => "left"  ),
-                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",    "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "8",  "TEXT_ALIGN" => "right" ),
-                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",         "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "9",  "TEXT_ALIGN" => "right" ),
-                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",         "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "10", "TEXT_ALIGN" => "right" ),
-                      "POWER_ON_HOURS"      => array("NAME" => "POWER_ON_HOURS",      "TITLE" => "Power On Hours",   "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "11", "TEXT_ALIGN" => "right" ),
-                      "LOAD_CYCLE_COUNT"    => array("NAME" => "LOAD_CYCLE_COUNT",    "TITLE" => "Load Cycle Count", "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "12", "TEXT_ALIGN" => "right" ),
-                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install",    "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "13", "TEXT_ALIGN" => "right" ),
-                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install",   "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "14", "TEXT_ALIGN" => "center"),
-                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen",        "SHOW_DATA" => "NO",  "SHOW_COLUMN_I" => "NO",  "SHOW_COLUMN_H" => "YES", "ORDER" => "15", "TEXT_ALIGN" => "center"),
-                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",    "SHOW_DATA" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "16", "TEXT_ALIGN" => "center"),
-                      "NOTES"               => array("NAME" => "NOTES",               "TITLE" => "Notes",            "SHOW_DATA" => "NO",  "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "17", "TEXT_ALIGN" => "left"  )
+                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",           "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
+                      "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",             "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "2",  "TEXT_ALIGN" => "center"),
+                      "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",           "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "3",  "TEXT_ALIGN" => "center"),
+                      "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",             "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "4",  "TEXT_ALIGN" => "left"  ),
+                      "UNRAID"              => array("NAME" => "UNRAID",              "TITLE" => "unRAID",           "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "5",  "TEXT_ALIGN" => "left"  ),
+                      "MANUFACTURER"        => array("NAME" => "MANUFACTURER",        "TITLE" => "Manufacturer",     "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "6",  "TEXT_ALIGN" => "left"  ),
+                      "MODEL"               => array("NAME" => "MODEL",               "TITLE" => "Model",            "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "7",  "TEXT_ALIGN" => "left"  ),
+                      "SN"                  => array("NAME" => "SN",                  "TITLE" => "Serial Number",    "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "8",  "TEXT_ALIGN" => "right" ),
+                      "FW"                  => array("NAME" => "FW",                  "TITLE" => "Firmware",         "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "9",  "TEXT_ALIGN" => "right" ),
+                      "CAPACITY"            => array("NAME" => "CAPACITY",            "TITLE" => "Capacity",         "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "10", "TEXT_ALIGN" => "right" ),
+                      "POWER_ON_HOURS"      => array("NAME" => "POWER_ON_HOURS",      "TITLE" => "Power On Hours",   "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "11", "TEXT_ALIGN" => "right" ),
+                      "LOAD_CYCLE_COUNT"    => array("NAME" => "LOAD_CYCLE_COUNT",    "TITLE" => "Load Cycle Count", "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "12", "TEXT_ALIGN" => "right" ),
+                      "FIRST_INSTALL_DATE"  => array("NAME" => "FIRST_INSTALL_DATE",  "TITLE" => "First Install",    "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "13", "TEXT_ALIGN" => "right" ),
+                      "RECENT_INSTALL_DATE" => array("NAME" => "RECENT_INSTALL_DATE", "TITLE" => "Recent Install",   "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "14", "TEXT_ALIGN" => "center"),
+                      "LAST_SEEN_DATE"      => array("NAME" => "LAST_SEEN_DATE",      "TITLE" => "Last Seen",        "SHOW_DATA" => "NO",  "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "NO",  "SHOW_COLUMN_H" => "YES", "ORDER" => "15", "TEXT_ALIGN" => "center"),
+                      "PURCHASE_DATE"       => array("NAME" => "PURCHASE_DATE",       "TITLE" => "Purchase Date",    "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "16", "TEXT_ALIGN" => "center"),
+                      "NOTES"               => array("NAME" => "NOTES",               "TITLE" => "Notes",            "SHOW_DATA" => "NO",  "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "17", "TEXT_ALIGN" => "left"  )
                       ));
 
 $default_disk = array("TRAY_NUM"            => "",
@@ -61,7 +60,6 @@ $default_disk = array("TRAY_NUM"            => "",
                       "STATUS"              => "",
                       "FOUND"               => ""
                       );
-
 
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
 $myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
@@ -104,6 +102,7 @@ function Get_JSON_Config_File() {
                                                                                                         // All new Data Columns Keys are inherited from default
             switch ($data_column_key) {
               case "SHOW_DATA"     :
+              case "SHOW_TOOLTIP"  :
               case "SHOW_COLUMN_I" :
               case "SHOW_COLUMN_H" :
               case "ORDER"         : $myJSONconfig_new["DATA_COLUMNS"][$data_column_K][$data_column_key] = $myJSONconfig_old["DATA_COLUMNS"][$data_column_K][$data_column_key]; break;
