@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.05.31">
+<!ENTITY version     "2015.06.01">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
-<!ENTITY packageMD5  "def03bb6f99eca9fddb890d81e311646">
+<!ENTITY packageMD5  "d172ef3bb342f7d65d9fc9658b705947">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,6 +22,11 @@
 >
 
 <CHANGES>
+###2015.06.01
+- Added transform (rotation and translate) support for other browsers (-webkit, -ms)
+- Added Tooltip Disk information for each tray on "Layout" tab and settings for each field in "Settings" tab
+- Compacted data and settings tables rows
+- Added "User Utilities" icon
 ###2015.05.31
 - Moved plugin to "Settings" --> "User Utilities" on unrAID WEBUI
 - Added "Set All" and "Clear All" buttons for each field view setting columns in "Settings" tab

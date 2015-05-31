@@ -1,5 +1,6 @@
 <?php
-require_once('serverlayout_constants.php');
+//require_once('serverlayout_constants.php');
+$serverlayout_cfg_file = "/boot/config/plugins/serverlayout/serverlayout.json";
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
@@ -29,10 +30,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_DATA"] = "NO";
       }
       if (isset($_POST["SHOW_TOOLTIP_".$data_column_name]) and ($_POST["SHOW_TOOLTIP_".$data_column_name] == "YES")) {
-        echo "SHOW_TOOLTIP_".$data_column_name." = ".$_POST["SHOW_TOOLTIP_".$data_column_name];
         $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_TOOLTIP"] = "YES";
       } else {
-        echo "SHOW_TOOLTIP_".$data_column_name." = NO";
         $myJSONconfig["DATA_COLUMNS"][$data_column_name]["SHOW_TOOLTIP"] = "NO";
       }
       if (isset($_POST["SHOW_COLUMN_I_".$data_column_name]) and ($_POST["SHOW_COLUMN_I_".$data_column_name] == "YES")) {

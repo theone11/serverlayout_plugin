@@ -70,33 +70,31 @@ $num_trays = $num_columns * $num_rows;
   color: white;
 }
 a.tooltip {outline:none; }
-a.tooltip:hover {text-decoration:none;} 
-a.tooltip .table_right td{padding:2px;}
-a.tooltip .table_right {
-    z-index:10;display:none; padding:5px 5px;
-    margin-top:-10px; margin-left:-20px;
-    width:<? echo $width; ?>px; line-height:100%;
-}
-a.tooltip:hover .table_right{
-    display:inline; position:absolute; color:#111;
-    border:1px solid #DCA; background:#fffAF0;}
+a.tooltip:hover {text-decoration:none;}
 
-a.tooltip .table_left td{padding:2px;}
-a.tooltip .table_left {
-    z-index:10;display:none; padding:5px 5px;
-    margin-top:-10px; margin-left:<? echo -(2*$width)+20; ?>px;
-    width:<? echo $width; ?>px; line-height:100%;
-}
-a.tooltip:hover .table_left{
-    display:inline; position:absolute; color:#111;
-    border:1px solid #DCA; background:#fffAF0;}
+<?php for ($j = 0; $j<=$columns; $j++) {
+  if ($orientation == "0") {
+    if ($j <= $columns/2) {
+      $margin_left = -50;
+    } else {
+      $margin_left = -(2*$width) + 50;
+    }
+  } else if ($orientation == "90") {
+    $margin_left = -($j-1)*($width-$height) - $width/2 - $height/2 - 60;
+  }
+  echo "a.tooltip .table_".$j." td{padding:2px;}\n";
+  echo "a.tooltip .table_".$j." {\n";
+    echo "  z-index:10;display:none; padding:5px 5px;\n";
+    echo "  margin-top:-10px; margin-left:".$margin_left."px;\n";
+    echo "  width:".$width."px; line-height:100%;\n";
+    echo "  box-shadow: 5px 5px 8px #CCC;\n";
+  echo "}\n";
 
-/*CSS3 extras*/
-a.tooltip table
-{
-    border-radius: <?php echo border_radius; ?>;
-    box-shadow: 5px 5px 8px #CCC;
-}
+  echo "a.tooltip:hover .table_".$j."{\n";
+    echo "  display:inline; position:absolute; color:#111;\n";
+    echo "  border:1px solid #DCA; background:#fffAF0;\n";
+  echo "}\n";
+} ?>
 </style>
 
 <script type="text/javascript">
@@ -121,7 +119,7 @@ function UpdateDIVSizes() {
       $y_translate = $orientation/90*(-$width/2 + $height/2); ?>
     <div class="cell_container" <?php if ($orientation == 90) {
                                         echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
-      <a href="#" class="tooltip">
+    <a href="#" class="tooltip">
       <div class="cell_background">
         <div class="cell_text">
         <?php $tray_num = (($i-1) * $columns) + $j;
@@ -149,24 +147,23 @@ function UpdateDIVSizes() {
               } ?>
         </div>
       </div>
-      <?php if (!$no_disk_exist) {
-              $no_data_show = true;
-              if ($j <= $columns/2) { $side = "right"; } else { $side = "left"; }
-              echo "<table class=\"table_".$side."\">";
-              foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
-                if ($data_col["SHOW_TOOLTIP"] == "YES") {
-                  $no_data_show = false;
-                  echo "<tr><td style=\"text-align:right; padding-right:5px; width:50%;\">".$data_col["TITLE"].":</td>";
-                  echo "<td style=\"text-align:left; padding-left:5px;\"><b>".$disk[$data_col["NAME"]]."</b></td></tr>";
-                }
-              }
-              if ($no_data_show) {
-                echo "<tr><td>No data fields selected in Settings tab</td><tr>";
-              }
-              echo "</table>";
-            } ?>
-      </a>
     </div>
+    <?php if (!$no_disk_exist) {
+            $no_data_show = true;
+            echo "<table class=\"table_".$j."\">";
+            foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
+              if ($data_col["SHOW_TOOLTIP"] == "YES") {
+                $no_data_show = false;
+                echo "<tr><td style=\"text-align:right; padding-right:5px; width:50%;\">".$data_col["TITLE"].":</td>";
+                echo "<td style=\"text-align:left; padding-left:5px;\"><b>".$disk[$data_col["NAME"]]."</b></td></tr>";
+              }
+            }
+            if ($no_data_show) {
+              echo "<tr><td style=\"text-align:center; height:".$height."px; vertical-align:middle;\">No data fields selected in Settings tab</td><tr>";
+            }
+            echo "</table>";
+          } ?>
+    </a>
   <?php } ?>
   </div>
 <?php } ?>

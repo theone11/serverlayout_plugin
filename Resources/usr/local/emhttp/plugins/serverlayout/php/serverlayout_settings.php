@@ -14,7 +14,6 @@ table.disk_data {overflow: auto;}
 table.disk_data td {width:auto; white-space:nowrap;}
 table.disk_data thead tr:first-child td{padding-left:5px; padding-right:5px; text-align:center;font-size:13px;background:-webkit-radial-gradient(#E0E0E0,#C0C0C0);background:linear-gradient(#E0E0E0,#C0C0C0);border-right:1px solid #F0F0F0;}
 table.disk_data tbody td:first-child {text-align:left;}
-table.disk_data tbody td {text-align:center; padding-left:5px; padding-right:5px;}
 table.disk_data tbody tr:nth-child(even) {background-color:#F8F8F8;}
 table.disk_data tbody tr:hover {background-color:#FDFD96;}
 </style>
@@ -95,7 +94,7 @@ function StartUp() {
 
 <BODY>
 
-<form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="_blank">
+<form name="serverlayout_settings" method="post" onsubmit="validateForm()" action="/plugins/serverlayout/php/serverlayout_submit.php" target="progressFrame">
 
   <div style="width:24%; float:left; border: 0px solid black; overflow: hidden;">
     <div id="title">
