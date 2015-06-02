@@ -18,7 +18,11 @@ $width = 320;
 $height = 80;
 
 // Constants - JSON configuration file
-$default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"));
+$default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"),
+                        "HIDDEN_TRAYS" => array( "1" => "NO",  "2" => "NO",  "3" => "NO",  "4" => "NO",  "5" => "NO",  "6" => "NO",  "7" => "NO",  "8" => "NO",
+                                                 "9" => "NO", "10" => "NO", "11" => "NO", "12" => "NO", "13" => "NO", "14" => "NO", "15" => "NO", "16" => "NO",
+                                                "17" => "NO", "18" => "NO", "19" => "NO", "20" => "NO", "21" => "NO", "22" => "NO", "23" => "NO", "24" => "NO")
+                        );
 
 $default_col_data = array("DATA_COLUMNS" => array (
                       "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",           "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
@@ -61,6 +65,8 @@ $default_disk = array("TRAY_NUM"            => "",
                       "FOUND"               => ""
                       );
 
+$default_disk_data = array("DISK_DATA" => "");
+
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
 $myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
 file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
@@ -78,8 +84,9 @@ function Get_JSON_Config_File() {
   $default_layout = $GLOBALS["default_layout"];
   $default_col_data = $GLOBALS["default_col_data"];
   $default_disk = $GLOBALS["default_disk"];
+  $default_disk_data = $GLOBALS["default_disk_data"];
   // Local Constants
-  $default_disk_data = array("DISK_DATA" => "");
+//  $default_disk_data = array("DISK_DATA" => "");
 
   // Define new configuration file based on default values
   $myJSONconfig_new = array_merge($default_layout, $default_col_data, $default_disk_data);

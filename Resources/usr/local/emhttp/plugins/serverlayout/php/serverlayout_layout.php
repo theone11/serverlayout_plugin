@@ -121,11 +121,11 @@ function UpdateDIVSizes() {
     <a href="#" class="tooltip">
     <div class="cell_container" <?php if ($orientation == 90) {
                                         echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+      <?php $tray_num = (($i-1) * $columns) + $j;
+            if ($myJSONconfig["HIDDEN_TRAYS"][$tray_num-1] = "NO") { ?>
       <div class="cell_background">
         <div class="cell_text">
-        <?php $tray_num = (($i-1) * $columns) + $j;
-              $no_disk_exist = true;
-              if ($myJSONconfig["DISK_DATA"] != "") {
+        <?php if ($myJSONconfig["DISK_DATA"] != "") {
                 foreach ($myJSONconfig["DISK_DATA"] as $disk) {
                   if (($disk["STATUS"]=="INSTALLED") and ($disk['TRAY_NUM'] == $tray_num)) {
                     $no_disk_exist = false;
@@ -148,6 +148,10 @@ function UpdateDIVSizes() {
               } ?>
         </div>
       </div>
+      <?php } else { ?>
+      <div class="cell_background" style="opacity:0.2;">
+      </div>
+      <?php } ?>
     </div>
     <?php if (!$no_disk_exist) {
             $no_data_show = true;
