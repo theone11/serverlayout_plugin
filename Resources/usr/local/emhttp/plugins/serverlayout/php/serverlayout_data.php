@@ -61,7 +61,7 @@ if ($layout_orientation == 0) { $data_div_width = 100; } else { $data_div_width 
   overflow: hidden;
 }
 
-.cell_background_preview {
+.cell_background_preview, .cell_background_preview_hide {
   width: <? echo ($width_preview-$background_padding_preview); ?>px;
   height: <? echo ($height_preview-$background_padding_preview); ?>px;
   box-sizing: border-box;
@@ -73,6 +73,10 @@ if ($layout_orientation == 0) { $data_div_width = 100; } else { $data_div_width 
   background-repeat: no-repeat;
   overflow: hidden;
 }  
+
+.cell_background_preview_hide {
+ opacity: 0.2;
+}
 
 .cell_text_preview {
   text-align: center;
@@ -274,8 +278,9 @@ function StartUp() {
             $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
           <div class="cell_container_preview" <?php if ($orientation == 90) {
                                                       echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+            <?php $tray_num = (($i-1) * $columns) + $j;
+                  if ($myJSONconfig["TRAY_SHOW"][$tray_num] == "YES") { ?>
             <div class="cell_background_preview">
-              <?php $tray_num = (($i-1) * $columns) + $j; ?>
               <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
               <?php echo "<span>".$tray_num."</span>";
                     foreach ($myJSONconfig["DISK_DATA"] as $disk) {
@@ -285,6 +290,10 @@ function StartUp() {
                     } ?>
               </div>
             </div>
+            <?php } else { ?>
+            <div class="cell_background_preview_hide">
+            </div>
+            <?php } ?>
           </div>
         <?php } ?>
         </div>

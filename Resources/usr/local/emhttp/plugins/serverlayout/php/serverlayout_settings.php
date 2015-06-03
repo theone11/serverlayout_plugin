@@ -105,6 +105,13 @@ function StartUp() {
     <div style="text-align:center;"><button type="button" onClick="done();">Exit ServerLayout</button></div>
 
     <div id="title">
+      <span class="left">General Settings</span>
+    </div>
+    <div style="text-align:center;">
+      <span>Enable Tray Tooltip: </span><input type="checkbox" name="TOOLTIP_ENABLE" id="TOOLTIP_ENABLE" value="YES" <?php if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") { echo "checked"; } ?>>
+    </div>
+
+    <div id="title">
       <span class="left">Layout Settings</span>
     </div>
     <div class="margin-left:auto; margin-right:auto;">

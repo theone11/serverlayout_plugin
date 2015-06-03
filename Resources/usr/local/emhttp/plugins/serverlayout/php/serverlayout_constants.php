@@ -18,10 +18,11 @@ $width = 320;
 $height = 80;
 
 // Constants - JSON configuration file
-$default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"),
-                        "HIDDEN_TRAYS" => array( "1" => "NO",  "2" => "NO",  "3" => "NO",  "4" => "NO",  "5" => "NO",  "6" => "NO",  "7" => "NO",  "8" => "NO",
-                                                 "9" => "NO", "10" => "NO", "11" => "NO", "12" => "NO", "13" => "NO", "14" => "NO", "15" => "NO", "16" => "NO",
-                                                "17" => "NO", "18" => "NO", "19" => "NO", "20" => "NO", "21" => "NO", "22" => "NO", "23" => "NO", "24" => "NO")
+$default_layout = array("GENERAL" => array("TOOLTIP_ENABLE" => "YES"),
+                        "LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"),
+                        "TRAY_SHOW" => array( "1" => "YES",  "2" => "YES",  "3" => "YES",  "4" => "YES",  "5" => "YES",  "6" => "YES",  "7" => "YES",  "8" => "YES",
+                                              "9" => "YES", "10" => "YES", "11" => "YES", "12" => "YES", "13" => "YES", "14" => "YES", "15" => "YES", "16" => "YES",
+                                             "17" => "YES", "18" => "YES", "19" => "YES", "20" => "YES", "21" => "YES", "22" => "YES", "23" => "YES", "24" => "YES")
                         );
 
 $default_col_data = array("DATA_COLUMNS" => array (
@@ -95,9 +96,21 @@ function Get_JSON_Config_File() {
 
     $myJSONconfig_old = json_decode(file_get_contents($serverlayout_cfg_file), true);
 
-    foreach (array_keys($myJSONconfig_new["LAYOUT"]) as $layout_key) {
-      if (array_key_exists($layout_key, $myJSONconfig_old["LAYOUT"])) {  // If Layout Key exists then copy it over - All new Keys are inherited from default
-        $myJSONconfig_new["LAYOUT"][$layout_key] = $myJSONconfig_old["LAYOUT"][$layout_key];
+    foreach (array_keys($myJSONconfig_new["LAYOUT"]) as $key) {
+      if (array_key_exists($key, $myJSONconfig_old["LAYOUT"])) {  // If Layout Key exists then copy it over - All new Keys are inherited from default
+        $myJSONconfig_new["LAYOUT"][$key] = $myJSONconfig_old["LAYOUT"][$key];
+      }
+    }
+
+    foreach (array_keys($myJSONconfig_new["GENERAL"]) as $key) {
+      if (array_key_exists($key, $myJSONconfig_old["GENERAL"])) {  // If General Key exists then copy it over - All new Keys are inherited from default
+        $myJSONconfig_new["GENERAL"][$key] = $myJSONconfig_old["GENERAL"][$key];
+      }
+    }
+
+    foreach (array_keys($myJSONconfig_new["TRAY_SHOW"]) as $key) {
+      if (array_key_exists($key, $myJSONconfig_old["TRAY_SHOW"])) {  // If Tray Show Key exists then copy it over - All new Keys are inherited from default
+        $myJSONconfig_new["TRAY_SHOW"][$key] = $myJSONconfig_old["TRAY_SHOW"][$key];
       }
     }
     
@@ -301,9 +314,18 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
     if (strstr($line, "Bus ") and strstr($line, "Device ")) {
       $disk = $default_disk;  // Create a new disk array from template
 
+      // Find PATH
       $bus = trim(substr($line, strpos($line, "Bus ")+strlen("Bus "), 3));
       $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
       $disk["PATH"] = "/".$bus."/".$device;
+
+      // Find UNRAID disk functionality
+      foreach ($unraid_disks as $unraid_disk) {
+        if ($unraid_disk["device"] == $disk["DEVICE"]) {
+          $disk["UNRAID"] = $unraid_disk["name"];
+          break;
+        }
+      }
 
       $device_data = explode("\n", shell_exec("lsusb -D /dev/bus/usb/".$bus."/".$device." 2>/dev/null"));
       $is_USB = "";
@@ -322,6 +344,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       if ($is_USB == "Mass Storage") {
         $disk["TYPE"] = "USB";
 
+        // Find DEVICE
         $device_data = explode("\n", shell_exec("ls -las /dev/disk/by-id/*".$disk["SN"]."* 2>/dev/null"));
         if (!strstr($device_data[0], "No such file or directory")) {
           $disk["DEVICE"] = trim(substr($device_data[0], strpos($device_data[0], "../../")+strlen("../../")));

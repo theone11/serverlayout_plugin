@@ -35,7 +35,7 @@ $num_trays = $num_columns * $num_rows;
   overflow: hidden;
 }
 
-.cell_background {
+.cell_background, .cell_background_hide {
   width: <? echo ($width-$background_padding); ?>px;
   height: <? echo ($height-$background_padding); ?>px;
   box-sizing: border-box;
@@ -48,6 +48,9 @@ $num_trays = $num_columns * $num_rows;
   overflow: hidden;
 }  
 
+.cell_background_hide {
+  opacity: 0.2;
+}
 .cell_text {
   text-align: center;
   position: relative;           /* Vertical Center */
@@ -118,11 +121,13 @@ function UpdateDIVSizes() {
   <?php for ($j = 1; $j <= $columns; $j++) {
       $x_translate = $orientation/90*(-$width/2 + $height/2 - ($j-1)*($width-$height));
       $y_translate = $orientation/90*(-$width/2 + $height/2); ?>
-    <a href="#" class="tooltip">
+    <?php if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") { ?>
+    <a href="#" class="tooltip"> <?php } ?>
     <div class="cell_container" <?php if ($orientation == 90) {
                                         echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
       <?php $tray_num = (($i-1) * $columns) + $j;
-            if ($myJSONconfig["HIDDEN_TRAYS"][$tray_num-1] = "NO") { ?>
+            $no_disk_exist = true;
+            if ($myJSONconfig["TRAY_SHOW"][$tray_num] == "YES") { ?>
       <div class="cell_background">
         <div class="cell_text">
         <?php if ($myJSONconfig["DISK_DATA"] != "") {
@@ -149,26 +154,28 @@ function UpdateDIVSizes() {
         </div>
       </div>
       <?php } else { ?>
-      <div class="cell_background" style="opacity:0.2;">
+      <div class="cell_background_hide">
       </div>
       <?php } ?>
     </div>
-    <?php if (!$no_disk_exist) {
-            $no_data_show = true;
-            echo "<table class=\"table_".$j."\">";
-            foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
-              if ($data_col["SHOW_TOOLTIP"] == "YES") {
-                $no_data_show = false;
-                echo "<tr><td style=\"text-align:right; padding-right:5px; width:50%;\">".$data_col["TITLE"].":</td>";
-                echo "<td style=\"text-align:left; padding-left:5px;\"><b>".$disk[$data_col["NAME"]]."</b></td></tr>";
+    <?php if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") {
+            if (!$no_disk_exist) {
+              $no_data_show = true;
+              echo "<table class=\"table_".$j."\">";
+              foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
+                if ($data_col["SHOW_TOOLTIP"] == "YES") {
+                  $no_data_show = false;
+                  echo "<tr><td style=\"text-align:right; padding-right:5px; width:50%;\">".$data_col["TITLE"].":</td>";
+                  echo "<td style=\"text-align:left; padding-left:5px;\"><b>".$disk[$data_col["NAME"]]."</b></td></tr>";
+                }
               }
+              if ($no_data_show) {
+                echo "<tr><td style=\"text-align:center; height:".$height."px; vertical-align:middle;\">No data fields selected in Settings tab</td><tr>";
+              }
+              echo "</table>";
             }
-            if ($no_data_show) {
-              echo "<tr><td style=\"text-align:center; height:".$height."px; vertical-align:middle;\">No data fields selected in Settings tab</td><tr>";
-            }
-            echo "</table>";
+            echo "</a>";
           } ?>
-    </a>
   <?php } ?>
   </div>
 <?php } ?>

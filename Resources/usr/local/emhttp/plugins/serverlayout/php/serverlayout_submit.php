@@ -22,6 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $myJSONconfig["LAYOUT"]["COLUMNS"] = $columns_new;
     $myJSONconfig["LAYOUT"]["ORIENTATION"] = $_POST["ORIENTATION"];
 
+    // Write General settings
+    if (isset($_POST["TOOLTIP_ENABLE"]) and ($_POST["TOOLTIP_ENABLE"] == "YES")) {
+      $myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] = "YES";
+    } else {
+      $myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] = "NO";
+    }
+    
     // Write DATA_COLUMNS new configuration
     foreach (array_keys($myJSONconfig["DATA_COLUMNS"]) as $data_column_name) {
       if (isset($_POST["SHOW_DATA_".$data_column_name]) and ($_POST["SHOW_DATA_".$data_column_name] == "YES")) {

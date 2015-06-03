@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.06.01">
+<!ENTITY version     "2015.06.xx">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
@@ -22,6 +22,11 @@
 >
 
 <CHANGES>
+###2015.06.xx
+- Removed "User Utilities" icon - part of unRAID v6 RC4
+- Added support for HIDDEN TRAYS - click on preview tray to show/hide it - don't forget to save settings
+- Add Enable/Disable for Tooltips
+- Fixed UNRAID assignments for USB devices
 ###2015.06.01
 - Added transform (rotation and translate) support for other browsers (-webkit, -ms)
 - Added Tooltip Disk information for each tray on "Layout" tab and settings for each field in "Settings" tab
