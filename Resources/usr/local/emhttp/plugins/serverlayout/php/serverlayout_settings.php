@@ -146,8 +146,8 @@ function StartUp() {
         <p><strong>Columns</strong> are the number of columns existing in your server<p>
         <p><strong>Orientation</strong> is the direction the disk trays are positioned in your servr (horizontal or vertical)</p>
         <p><ins>Note:</ins></p>
-        <p><ul><li>If rows or columns parameters are changed (and saved) then all disk tray assignments will be removed</li>
-               <li>Enable the checkbos in order to change these settings</li></ul></p>
+        <p><ul><li>If rows or columns parameters are changed (and saved) then all disk tray assignments will be removed and all trays will be visible again</li>
+               <li>Enable the checkbox in order to change these settings</li></ul></p>
       </blockquote>
     </div>
 

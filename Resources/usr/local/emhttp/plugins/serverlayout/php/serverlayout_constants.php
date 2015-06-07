@@ -1,5 +1,5 @@
 <?php
-$max_trays = 26;
+$max_trays = 99;
 
 // Constants - Data file locations
 $serverlayout_cfg_file = "/boot/config/plugins/serverlayout/serverlayout.json";
@@ -96,6 +96,11 @@ function Get_JSON_Config_File() {
 
     $myJSONconfig_old = json_decode(file_get_contents($serverlayout_cfg_file), true);
 
+    $rows_old = $myJSONconfig_old["LAYOUT"]["ROWS"];
+    $columns_old = $myJSONconfig_old["LAYOUT"]["COLUMNS"];
+    $rows_new = $myJSONconfig_new["LAYOUT"]["ROWS"];
+    $columns_new = $myJSONconfig_new["LAYOUT"]["COLUMNS"];
+
     foreach (array_keys($myJSONconfig_new["LAYOUT"]) as $key) {
       if (array_key_exists($key, $myJSONconfig_old["LAYOUT"])) {  // If Layout Key exists then copy it over - All new Keys are inherited from default
         $myJSONconfig_new["LAYOUT"][$key] = $myJSONconfig_old["LAYOUT"][$key];
@@ -108,9 +113,14 @@ function Get_JSON_Config_File() {
       }
     }
 
-    foreach (array_keys($myJSONconfig_new["TRAY_SHOW"]) as $key) {
-      if (array_key_exists($key, $myJSONconfig_old["TRAY_SHOW"])) {  // If Tray Show Key exists then copy it over - All new Keys are inherited from default
-        $myJSONconfig_new["TRAY_SHOW"][$key] = $myJSONconfig_old["TRAY_SHOW"][$key];
+    // Copy to the new array only the values that exist in the old array
+    for ($i = 1; $i <= ($rows_old*$columns_old); $i++) {
+      $myJSONconfig_new["TRAY_SHOW"][$i] = $myJSONconfig_old["TRAY_SHOW"][$i];
+    }
+    // Clear/Destroy unused TRAY_SHOWs if there are now less trays than default number
+    if (($rows_new*$columns_new) > ($rows_old*$columns_old)) {
+      for ($i = ($rows_old*$columns_old + 1); $i <= ($rows_new*$columns_new); $i++) {
+        unset($myJSONconfig_new["TRAY_SHOW"][$i]);
       }
     }
     
@@ -319,14 +329,6 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
       $disk["PATH"] = "/".$bus."/".$device;
 
-      // Find UNRAID disk functionality
-      foreach ($unraid_disks as $unraid_disk) {
-        if ($unraid_disk["device"] == $disk["DEVICE"]) {
-          $disk["UNRAID"] = $unraid_disk["name"];
-          break;
-        }
-      }
-
       $device_data = explode("\n", shell_exec("lsusb -D /dev/bus/usb/".$bus."/".$device." 2>/dev/null"));
       $is_USB = "";
 
@@ -348,6 +350,14 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
         $device_data = explode("\n", shell_exec("ls -las /dev/disk/by-id/*".$disk["SN"]."* 2>/dev/null"));
         if (!strstr($device_data[0], "No such file or directory")) {
           $disk["DEVICE"] = trim(substr($device_data[0], strpos($device_data[0], "../../")+strlen("../../")));
+        }
+
+        // Find UNRAID disk functionality
+        foreach ($unraid_disks as $unraid_disk) {
+          if ($unraid_disk["device"] == $disk["DEVICE"]) {
+            $disk["UNRAID"] = $unraid_disk["name"];
+            break;
+          }
         }
 
         $device_data = explode("\n", shell_exec("sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null"));
