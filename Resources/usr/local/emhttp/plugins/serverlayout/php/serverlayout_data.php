@@ -61,7 +61,7 @@ if ($layout_orientation == 0) { $data_div_width = 100; } else { $data_div_width 
   overflow: hidden;
 }
 
-.cell_background_preview {
+.cell_background_preview, .cell_background_preview_hide {
   width: <? echo ($width_preview-$background_padding_preview); ?>px;
   height: <? echo ($height_preview-$background_padding_preview); ?>px;
   box-sizing: border-box;
@@ -73,6 +73,10 @@ if ($layout_orientation == 0) { $data_div_width = 100; } else { $data_div_width 
   background-repeat: no-repeat;
   overflow: hidden;
 }  
+
+.cell_background_preview_hide {
+ opacity: 0.2;
+}
 
 .cell_text_preview {
   text-align: center;
@@ -136,21 +140,33 @@ function TrayOptionsStartup() {
                                }
                              } ?>];
 
+  var tray_shows = [<?php $first = true;
+                          foreach ($myJSONconfig["TRAY_SHOW"] as $tray_show) {
+                            if ($first) {
+                              $first = false;
+                              echo "\"".$tray_show."\"";
+                            } else {
+                              echo ", \"".$tray_show."\"";
+                            }
+                          } ?>];
+
   var elements = document.getElementsByClassName("TRAY_NUM_CLASS");
 
   for (i = 0; i < elements.length; i++) {
     elements[i].options.length = 0;
     elements[i].options[0] = new Option("Unassigned", "", false, true);  // Add EMPTY option and define as selected
     var count = 1;  // Start from 2nd option (1st option is EMPTY)
-    for (j = 1; j <= num_trays; j++) {  // Scan all options
-      if (parseInt(j) == parseInt(initial_trays[i])) {  // If option is the saved option
-        elements[i].options[count] = new Option(j, j, false, true);  // Create new option and define as selected
-        elements[i].options[0].selected = false;  // Remove selected from EMPTY option
-        count++;
-      } else {
-        if (initial_trays.indexOf(j.toString()) == -1) {
-          elements[i].options[count] = new Option(j, j, false, false);  // Option does not exists in this and other TRAY_NUMs. Create new option and define as not selected
+    for (j = 1; j <= num_trays; j++) {  // Scan all options except EMPTY option (j = 0)
+      if (tray_shows[j-1] == "YES") {
+        if (parseInt(j) == parseInt(initial_trays[i])) {  // If option is the saved option
+          elements[i].options[count] = new Option(j, j, false, true);  // Create new option and define as selected
+          elements[i].options[0].selected = false;  // Remove selected from EMPTY option
           count++;
+        } else {
+          if (initial_trays.indexOf(j.toString()) == -1) {
+            elements[i].options[count] = new Option(j, j, false, false);  // Option does not exists in this and other TRAY_NUMs. Create new option and define as not selected
+            count++;
+          }
         }
       }
     }
@@ -173,11 +189,11 @@ function UpdateTrayOptions(device, this_element) {
 
   var elements = document.getElementsByClassName("TRAY_NUM_CLASS");
   for (i = 0; i < elements.length; i++) {
-    if (elements[i].getAttribute("id") != this_element.getAttribute("id")) {
+    if (elements[i].getAttribute("id") != this_element.getAttribute("id")) {  // Manipulate all trays that are not the one that has changed
       // Start - Remove option from all other TRAY_NUMs
       if (value != "") {  // If new value is not "Unassigned" then remove it from other TRAYS
         var num_options = elements[i].options.length;
-        for (j = 0; j < num_options; j++) {  // Go over all options
+        for (j = 1; j < num_options; j++) {  // Go over all options except EMPTY option (j = 0)
           if (elements[i].options[j].value == value) {  // Find option with same value
             elements[i].options.remove(j);  // Remove option
             break;  // Need to break because option found and length is now 1 option less
@@ -188,7 +204,7 @@ function UpdateTrayOptions(device, this_element) {
       if (oldvalue != "") {
         var num_options = elements[i].options.length;  // Get number of options again because changed - option might have been removed
         var not_found = true;
-        for (j = 1; j < num_options; j++) {  // Go over all options except EMPTY
+        for (j = 1; j < num_options; j++) {  // Go over all options except EMPTY option (j = 0)
           if (parseInt(oldvalue) <= parseInt(elements[i].options[j].value)) {
             not_found = false;
             var new_option = document.createElement("option");
@@ -226,6 +242,62 @@ function EditCheckboxData(myCheckbox) {
     } else {
       elements[i].disabled = true;
     }
+  }
+}
+
+function TrayShowUpdate(element, tray_num) {
+  if (element.className == "cell_background_preview_hide") {
+  // If element class is "cell_background_preview_hide" then change the class type to "cell_background_preview"
+  // and add tray_num option to all TRAY_NUM_CLASS elements !!! sorted !!!
+    element.className = "cell_background_preview";
+    var tray_showE = document.getElementsByName("TRAY_SHOW_"+tray_num)[0];
+    tray_showE.value = "YES";
+    var elements = document.getElementsByClassName("TRAY_NUM_CLASS");
+    for (i = 0; i < elements.length; i++) {
+      var num_options = elements[i].options.length;
+      var not_found = true;
+      for (j = 1; j < num_options; j++) {  // Go over all options except EMPTY option (j = 0)
+        if (tray_num < elements[i].options[j].value) {
+          not_found = false;
+          var new_option = document.createElement("option");
+          new_option.value = tray_num;
+          new_option.text = tray_num;
+          elements[i].options.add(new_option, j);
+          break;  // Found and added option in correct (sorted) place
+        }
+      }
+      if (not_found) {
+        var new_option = document.createElement("option");
+        new_option.value = tray_num;
+        new_option.text = tray_num;
+        elements[i].options.add(new_option, num_options);
+      }
+    }
+  } else if (element.className == "cell_background_preview") {
+  // If element class is "cell_background_preview" then change the class type to "cell_background_preview_hide"
+  // and remove tray_num option from all TRAY_NUM_CLASS elements, if it is a "selected" option then change and set unassigned (0) as the new "selected" option
+      element.className = "cell_background_preview_hide";
+      var tray_showE = document.getElementsByName("TRAY_SHOW_"+tray_num)[0];
+      tray_showE.value = "NO";
+      var elements = document.getElementsByClassName("TRAY_NUM_CLASS");
+      for (i = 0; i < elements.length; i++) {
+        var num_options = elements[i].options.length;
+        for (j = 1; j < num_options; j++) {  // Go over all options except EMPTY option (j = 0)
+//          alert(elements[i].getAttribute("id")+" "+elements[i].options.length+" "+tray_num+" "+elements[i].options[j].value+" "+elements[i].options[j].selected);
+          if (elements[i].options[j].value > tray_num) {  // Because options are sorted then skip larger options than tray_num
+            break;
+          }
+          else if (elements[i].options[j].value == tray_num) {  // Find option with same value
+            if (elements[i].options[j].selected == true) {  // If tray number that is going to be hidden is selected then change selection to unassigned.
+              elements[i].options[0].selected = true;
+              elements[i].style.backgroundColor = "#ffb2ae";
+              document.getElementById("TRAY_TEXT"+tray_num).innerHTML = tray_num; // Remove device name from preview text
+            }
+            elements[i].options.remove(j);  // Remove option
+            break;  // Need to break because option found and length is now 1 option less
+          }
+        }
+      }
   }
 }
 
@@ -271,11 +343,15 @@ function StartUp() {
         <div class="row_container_preview">
         <?php for ($j = 1; $j <= $columns; $j++) {
             $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
-            $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2); ?>
-          <div class="cell_container_preview" <?php if ($orientation == 90) {
-                                                      echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
-            <div class="cell_background_preview">
-              <?php $tray_num = (($i-1) * $columns) + $j; ?>
+            $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2);
+            $tray_num = (($i-1) * $columns) + $j; ?>
+          <div class="cell_container_preview"
+               <?php if ($orientation == 90) { echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);
+                                                                        -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);
+                                                                        transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+            <?php if ($myJSONconfig["TRAY_SHOW"][$tray_num] == "YES") { ?>
+            <div class="cell_background_preview" onclick="TrayShowUpdate(this, <?php echo $tray_num; ?>)">
+              <input type="hidden" name="TRAY_SHOW_<?php echo $tray_num; ?>" value="<?php echo $myJSONconfig["TRAY_SHOW"][$tray_num]; ?>">
               <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
               <?php echo "<span>".$tray_num."</span>";
                     foreach ($myJSONconfig["DISK_DATA"] as $disk) {
@@ -285,6 +361,11 @@ function StartUp() {
                     } ?>
               </div>
             </div>
+            <?php } else if ($myJSONconfig["TRAY_SHOW"][$tray_num] == "NO") { ?>
+            <div class="cell_background_preview_hide" onclick="TrayShowUpdate(this, <?php echo $tray_num; ?>)">
+              <input type="hidden" name="TRAY_SHOW_<?php echo $tray_num; ?>" value="<?php echo $myJSONconfig["TRAY_SHOW"][$tray_num]; ?>">
+            </div>
+            <?php } ?>
           </div>
         <?php } ?>
         </div>
@@ -325,7 +406,7 @@ function StartUp() {
                       echo "<td style=\"text-align:".$data_column["TEXT_ALIGN"].";\">";
                       switch($data_column["NAME"]) {
                         case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") { ?>
-                                                     <select class="MANUAL_DATA TRAY_NUM_CLASS" name="TRAY_NUMS[]" id="TRAY_NUM_<?php echo $disk["SN"]; ?> size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions('<?php echo $disk["DEVICE"]; ?>', this); this.oldvalue = this.value;">
+                                                     <select class="MANUAL_DATA TRAY_NUM_CLASS" name="TRAY_NUMS[]" id="TRAY_NUM_<?php echo $disk["SN"]; ?>" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions('<?php echo $disk["DEVICE"]; ?>', this); this.oldvalue = this.value;">
                                                      </select>
                                                      <input type="hidden" name="TRAY_NUMS_SN[]" value="<?php echo $disk["SN"]; ?>">
                                                      <?php }

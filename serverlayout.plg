@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.06.01">
+<!ENTITY version     "2015.06.08">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
-<!ENTITY packageMD5  "d172ef3bb342f7d65d9fc9658b705947">
+<!ENTITY packageMD5  "557c14d70deba6d0ae843708cca91909">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,6 +22,12 @@
 >
 
 <CHANGES>
+###2015.06.08
+- Added support for HIDDEN TRAYS - click on preview tray to show/hide it - don't forget to save settings
+- Increased number of maximum trays to 99 (from 26) - Supports better usage of HIDDEN TRAYS
+- Removed "User Utilities" icon - part of unRAID v6 RC4
+- Add Enable/Disable for Tooltips
+- Fixed "UNRAID" functionality recognition for USB devices
 ###2015.06.01
 - Added transform (rotation and translate) support for other browsers (-webkit, -ms)
 - Added Tooltip Disk information for each tray on "Layout" tab and settings for each field in "Settings" tab

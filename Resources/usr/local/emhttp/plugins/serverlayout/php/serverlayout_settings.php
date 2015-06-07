@@ -105,6 +105,13 @@ function StartUp() {
     <div style="text-align:center;"><button type="button" onClick="done();">Exit ServerLayout</button></div>
 
     <div id="title">
+      <span class="left">General Settings</span>
+    </div>
+    <div style="text-align:center;">
+      <span>Enable Tray Tooltip: </span><input type="checkbox" name="TOOLTIP_ENABLE" id="TOOLTIP_ENABLE" value="YES" <?php if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") { echo "checked"; } ?>>
+    </div>
+
+    <div id="title">
       <span class="left">Layout Settings</span>
     </div>
     <div class="margin-left:auto; margin-right:auto;">
@@ -139,8 +146,8 @@ function StartUp() {
         <p><strong>Columns</strong> are the number of columns existing in your server<p>
         <p><strong>Orientation</strong> is the direction the disk trays are positioned in your servr (horizontal or vertical)</p>
         <p><ins>Note:</ins></p>
-        <p><ul><li>If rows or columns parameters are changed (and saved) then all disk tray assignments will be removed</li>
-               <li>Enable the checkbos in order to change these settings</li></ul></p>
+        <p><ul><li>If rows or columns parameters are changed (and saved) then all disk tray assignments will be removed and all trays will be visible again</li>
+               <li>Enable the checkbox in order to change these settings</li></ul></p>
       </blockquote>
     </div>
 

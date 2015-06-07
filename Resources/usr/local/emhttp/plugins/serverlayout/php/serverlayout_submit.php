@@ -22,6 +22,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $myJSONconfig["LAYOUT"]["COLUMNS"] = $columns_new;
     $myJSONconfig["LAYOUT"]["ORIENTATION"] = $_POST["ORIENTATION"];
 
+    // Write General settings
+    if (isset($_POST["TOOLTIP_ENABLE"]) and ($_POST["TOOLTIP_ENABLE"] == "YES")) {
+      $myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] = "YES";
+    } else {
+      $myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] = "NO";
+    }
+    
     // Write DATA_COLUMNS new configuration
     foreach (array_keys($myJSONconfig["DATA_COLUMNS"]) as $data_column_name) {
       if (isset($_POST["SHOW_DATA_".$data_column_name]) and ($_POST["SHOW_DATA_".$data_column_name] == "YES")) {
@@ -47,9 +54,21 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     }
 
     // Clear all TRAY_NUMs if number of rows/columns has changed (can also clear historical because they should already be "")
+    // Also recreate TRAY_SHOWs array according to the new ROWS*COLUMNS and set all to "YES"
     if (($rows_new != $rows_old) or ($columns_new != $columns_old)) {
       foreach (array_keys($myJSONconfig["DISK_DATA"]) as $disk_SN) {
         $myJSONconfig["DISK_DATA"][$disk_SN]["TRAY_NUM"] = "";
+      }
+      
+      // Change all new TRAY_SHOWs to "YES"
+      for ($i = 1; $i <= ($rows_new*$columns_new); $i++) {
+        $myJSONconfig["TRAY_SHOW"][$i] = "YES";  // Recreate TRAY_SHOW array of new size with all "YES" values
+      }
+      // Clear/Destroy unused TRAY_SHOWs if there are now less trays
+      if (($rows_old*$columns_old) > ($rows_new*$columns_new)) {
+        for ($i = ($rows_new*$columns_new + 1); $i <= ($rows_old*$columns_old); $i++) {
+          unset($myJSONconfig["TRAY_SHOW"][$i]);
+        }
       }
     }
 
@@ -63,6 +82,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Get JSON configuration file
     $myJSONconfig = json_decode(file_get_contents($serverlayout_cfg_file), true);
+
+    // Save TRAY_SHOWs
+    foreach (array_keys($myJSONconfig["TRAY_SHOW"]) as $key) {
+      $myJSONconfig["TRAY_SHOW"][$key] = $_POST["TRAY_SHOW_".$key];
+    }
 
     // Save TRAY_NUMs
     $datas = $_POST["TRAY_NUMS"];

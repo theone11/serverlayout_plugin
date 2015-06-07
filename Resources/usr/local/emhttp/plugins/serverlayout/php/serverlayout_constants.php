@@ -1,5 +1,5 @@
 <?php
-$max_trays = 26;
+$max_trays = 99;
 
 // Constants - Data file locations
 $serverlayout_cfg_file = "/boot/config/plugins/serverlayout/serverlayout.json";
@@ -18,7 +18,12 @@ $width = 320;
 $height = 80;
 
 // Constants - JSON configuration file
-$default_layout = array("LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"));
+$default_layout = array("GENERAL" => array("TOOLTIP_ENABLE" => "YES"),
+                        "LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"),
+                        "TRAY_SHOW" => array( "1" => "YES",  "2" => "YES",  "3" => "YES",  "4" => "YES",  "5" => "YES",  "6" => "YES",  "7" => "YES",  "8" => "YES",
+                                              "9" => "YES", "10" => "YES", "11" => "YES", "12" => "YES", "13" => "YES", "14" => "YES", "15" => "YES", "16" => "YES",
+                                             "17" => "YES", "18" => "YES", "19" => "YES", "20" => "YES", "21" => "YES", "22" => "YES", "23" => "YES", "24" => "YES")
+                        );
 
 $default_col_data = array("DATA_COLUMNS" => array (
                       "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",           "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
@@ -61,6 +66,8 @@ $default_disk = array("TRAY_NUM"            => "",
                       "FOUND"               => ""
                       );
 
+$default_disk_data = array("DISK_DATA" => "");
+
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
 $myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
 file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
@@ -78,8 +85,9 @@ function Get_JSON_Config_File() {
   $default_layout = $GLOBALS["default_layout"];
   $default_col_data = $GLOBALS["default_col_data"];
   $default_disk = $GLOBALS["default_disk"];
+  $default_disk_data = $GLOBALS["default_disk_data"];
   // Local Constants
-  $default_disk_data = array("DISK_DATA" => "");
+//  $default_disk_data = array("DISK_DATA" => "");
 
   // Define new configuration file based on default values
   $myJSONconfig_new = array_merge($default_layout, $default_col_data, $default_disk_data);
@@ -88,9 +96,31 @@ function Get_JSON_Config_File() {
 
     $myJSONconfig_old = json_decode(file_get_contents($serverlayout_cfg_file), true);
 
-    foreach (array_keys($myJSONconfig_new["LAYOUT"]) as $layout_key) {
-      if (array_key_exists($layout_key, $myJSONconfig_old["LAYOUT"])) {  // If Layout Key exists then copy it over - All new Keys are inherited from default
-        $myJSONconfig_new["LAYOUT"][$layout_key] = $myJSONconfig_old["LAYOUT"][$layout_key];
+    $rows_old = $myJSONconfig_old["LAYOUT"]["ROWS"];
+    $columns_old = $myJSONconfig_old["LAYOUT"]["COLUMNS"];
+    $rows_new = $myJSONconfig_new["LAYOUT"]["ROWS"];
+    $columns_new = $myJSONconfig_new["LAYOUT"]["COLUMNS"];
+
+    foreach (array_keys($myJSONconfig_new["LAYOUT"]) as $key) {
+      if (array_key_exists($key, $myJSONconfig_old["LAYOUT"])) {  // If Layout Key exists then copy it over - All new Keys are inherited from default
+        $myJSONconfig_new["LAYOUT"][$key] = $myJSONconfig_old["LAYOUT"][$key];
+      }
+    }
+
+    foreach (array_keys($myJSONconfig_new["GENERAL"]) as $key) {
+      if (array_key_exists($key, $myJSONconfig_old["GENERAL"])) {  // If General Key exists then copy it over - All new Keys are inherited from default
+        $myJSONconfig_new["GENERAL"][$key] = $myJSONconfig_old["GENERAL"][$key];
+      }
+    }
+
+    // Copy to the new array only the values that exist in the old array
+    for ($i = 1; $i <= ($rows_old*$columns_old); $i++) {
+      $myJSONconfig_new["TRAY_SHOW"][$i] = $myJSONconfig_old["TRAY_SHOW"][$i];
+    }
+    // Clear/Destroy unused TRAY_SHOWs if there are now less trays than default number
+    if (($rows_new*$columns_new) > ($rows_old*$columns_old)) {
+      for ($i = ($rows_old*$columns_old + 1); $i <= ($rows_new*$columns_new); $i++) {
+        unset($myJSONconfig_new["TRAY_SHOW"][$i]);
       }
     }
     
@@ -294,6 +324,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
     if (strstr($line, "Bus ") and strstr($line, "Device ")) {
       $disk = $default_disk;  // Create a new disk array from template
 
+      // Find PATH
       $bus = trim(substr($line, strpos($line, "Bus ")+strlen("Bus "), 3));
       $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
       $disk["PATH"] = "/".$bus."/".$device;
@@ -315,9 +346,18 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       if ($is_USB == "Mass Storage") {
         $disk["TYPE"] = "USB";
 
+        // Find DEVICE
         $device_data = explode("\n", shell_exec("ls -las /dev/disk/by-id/*".$disk["SN"]."* 2>/dev/null"));
         if (!strstr($device_data[0], "No such file or directory")) {
           $disk["DEVICE"] = trim(substr($device_data[0], strpos($device_data[0], "../../")+strlen("../../")));
+        }
+
+        // Find UNRAID disk functionality
+        foreach ($unraid_disks as $unraid_disk) {
+          if ($unraid_disk["device"] == $disk["DEVICE"]) {
+            $disk["UNRAID"] = $unraid_disk["name"];
+            break;
+          }
         }
 
         $device_data = explode("\n", shell_exec("sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null"));
