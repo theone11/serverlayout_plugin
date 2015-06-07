@@ -116,13 +116,19 @@ function Get_JSON_Config_File() {
     }
     
     // Copy to the new array only the values that exist in the old array
-    for ($i = 1; $i <= ($rows_old*$columns_old); $i++) {
-      $myJSONconfig_new["TRAY_SHOW"][$i] = $myJSONconfig_old["TRAY_SHOW"][$i];
-    }
-    // Clear/Destroy unused TRAY_SHOWs if there are now less trays than default number
-    if (($rows_new*$columns_new) > ($rows_old*$columns_old)) {
-      for ($i = ($rows_old*$columns_old + 1); $i <= ($rows_new*$columns_new); $i++) {
-        unset($myJSONconfig_new["TRAY_SHOW"][$i]);
+    if ($myJSONconfig_old["TRAY_SHOW"] != "") {
+      for ($i = 1; $i <= ($rows_old*$columns_old); $i++) {
+        $myJSONconfig_new["TRAY_SHOW"][$i] = $myJSONconfig_old["TRAY_SHOW"][$i];
+      }
+      // Clear/Destroy unused TRAY_SHOWs if there are now less trays than default number
+      if (($rows_new*$columns_new) > ($rows_old*$columns_old)) {
+        for ($i = ($rows_old*$columns_old + 1); $i <= ($rows_new*$columns_new); $i++) {
+          unset($myJSONconfig_new["TRAY_SHOW"][$i]);
+        }
+      }
+    } else {
+      for ($i = 1; $i <= ($rows_old*$columns_old); $i++) {
+        $myJSONconfig_new["TRAY_SHOW"][$i] = "YES";
       }
     }
     
