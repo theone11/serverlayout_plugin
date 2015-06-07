@@ -108,11 +108,13 @@ function Get_JSON_Config_File() {
     }
 
     foreach (array_keys($myJSONconfig_new["GENERAL"]) as $key) {
-      if (array_key_exists($key, $myJSONconfig_old["GENERAL"])) {  // If General Key exists then copy it over - All new Keys are inherited from default
-        $myJSONconfig_new["GENERAL"][$key] = $myJSONconfig_old["GENERAL"][$key];
+      if ($myJSONconfig_old["GENERAL"] != "") {
+        if (array_key_exists($key, $myJSONconfig_old["GENERAL"])) {  // If General Key exists then copy it over - All new Keys are inherited from default
+          $myJSONconfig_new["GENERAL"][$key] = $myJSONconfig_old["GENERAL"][$key];
+        }
       }
     }
-
+    
     // Copy to the new array only the values that exist in the old array
     for ($i = 1; $i <= ($rows_old*$columns_old); $i++) {
       $myJSONconfig_new["TRAY_SHOW"][$i] = $myJSONconfig_old["TRAY_SHOW"][$i];
