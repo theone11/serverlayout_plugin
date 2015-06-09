@@ -258,7 +258,8 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       $lsscsi_data = explode("\n", shell_exec("lsscsi 2>/dev/null"));
       foreach ($lsscsi_data as $data_line) {
         if (strstr($data_line, "/dev/".$disk["DEVICE"])) {
-          $disk["PATH"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
+          $disk["PATH"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1));
+          break;
         }
       }
       // Find UNRAID disk functionality
@@ -329,7 +330,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
   $data = explode("\n", shell_exec("lsusb 2>/dev/null"));
 
   foreach ($data as $line) {
-    if (strstr($line, "Bus ") and strstr($line, "Device ")) {
+    if (strstr($line, "Bus ") and strstr($line, "Device ") and (strstr($line, "root hub") == false)) {
       $disk = $default_disk;  // Create a new disk array from template
 
       // Find PATH

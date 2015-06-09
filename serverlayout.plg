@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.06.08-2">
+<!ENTITY version     "2015.06.xx">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
@@ -22,6 +22,9 @@
 >
 
 <CHANGES>
+###2015.06.xx
+- HW scan optimization - Do not scan "root hub" USB devices
+- Remove EMPTY row and columns pull-down options in Layout Settings
 ###2015.06.08-2
 - Fixed bug - introduced by new parameter array "TRAY_SHOW"
 ###2015.06.08-1
