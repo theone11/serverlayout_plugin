@@ -37,18 +37,22 @@ function InitDisabledFields() {
 function DefineColumnsDropDownList() {
   var rows = document.getElementById("ROWS").value;
   var columnsE = document.getElementById("COLUMNS");
-  columnsE.options.length = 0;
-  columnsE.options[0] = new Option("", "", false, false);
-  columnsE.options[0].disabled = true;
   var columns_max = <?php echo $max_trays ?>/rows;
   var columns = <?php echo $columns; ?>;
 
+  var no_selected_option = true;
+  columnsE.options.length = 0;
+
   for (i = 1; i <= columns_max; i++) {
     if (i == columns) {
-      columnsE.options[i]=new Option(i, i, false, true);  // new Option(text, value, defaultSelected, selected);
+      columnsE.options[i-1]=new Option(i, i, false, true);  // new Option(text, value, defaultSelected, selected);
+      no_selected_option = false;
     } else {
-      columnsE.options[i]=new Option(i, i, false, false);
+      columnsE.options[i-1]=new Option(i, i, false, false);  // new Option(text, value, defaultSelected, selected);
     }
+  }
+  if (no_selected_option) {
+    columnsE.options[0].selected = true;
   }
 }
 
@@ -123,7 +127,6 @@ function StartUp() {
         <tr>
           <td>Rows:</td>
           <td><select class="LAYOUT_DATA" name="ROWS" id="ROWS" size="1" onchange="DefineColumnsDropDownList()">
-                  <option value="" disabled></option>
                   <?php for ($k = 1; $k <= $max_trays; $k++) { ?>
                   <option value="<? echo $k ?>"<? if ($rows == $k) { echo "selected"; } ?>><? echo $k; ?></option>
                   <?php } ?>

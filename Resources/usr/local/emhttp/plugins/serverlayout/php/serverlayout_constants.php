@@ -246,19 +246,29 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
     }
   }
 
-  // Find HDD and CD/DVD devices
-
+  // Go over all SATA and USB devices in /dev/disk/by-id
   $data = explode("\n", shell_exec("ls -las /dev/disk/by-id 2>/dev/null"));
   foreach ($data as $line) {
-    if ((strstr($line, "ata-")) and (!strstr($line, "-part"))) {  // Look for SATA devices (HDD and CD/DVD ROMs) AND not partitions
+    if ((strstr($line, "ata-") or strstr($line, "usb-")) and (!strstr($line, "-part"))) {  // Look for SATA and USB devices AND not partitions
       $disk = $default_disk;  // Create a new disk array from template
+      // Check if device is SATA or USB for future testing
+      if (strstr($line, "ata-")) {
+        $device_type = "SATA";
+      } else if (strstr($line, "usb-")) {
+        $device_type = "USB";
+      }
       // Find DEVICE
       $disk["DEVICE"] = trim(substr($line, strpos($line, "../../")+strlen("../../")));  // Update device id in any case
       // Find PATH
-      $lsscsi_data = explode("\n", shell_exec("lsscsi 2>/dev/null"));
+      $lsscsi_data = explode("\n", shell_exec("lsscsi -t 2>/dev/null"));
       foreach ($lsscsi_data as $data_line) {
         if (strstr($data_line, "/dev/".$disk["DEVICE"])) {
-          $disk["PATH"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
+          if ($device_type == "SATA") {
+            $disk["PATH"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1));
+          } else if ($device_type == "USB") {
+            $disk["PATH"] = trim(substr($data_line, strpos($data_line, "usb:")+4, strpos($data_line, "/dev/")-strpos($data_line, "usb:")-4-1));
+          }
+          break;
         }
       }
       // Find UNRAID disk functionality
@@ -270,29 +280,59 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       }
       // Find all other disk information
       if (substr($disk["DEVICE"],0,2) == "sd") {  // Get HDD data
-        $disk["TYPE"] = "SATA";
-        $device_data = explode("\n", shell_exec("smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null"));
-        foreach ($device_data as $data_line) {
-          if (strpos($data_line, ":")) {
-            $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
-            switch ($parameter) {
-              case "Model Family:"     : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
-              case "Device Model:"     : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
-              case "Serial Number:"    : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)))); break;
-              case "Firmware Version:" : $disk["FW"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
-              case "User Capacity:"    : $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
-              default :
+        // For HDD devices
+        if ($device_type == "SATA") {
+          $disk["TYPE"] = "SATA";
+          $device_data = explode("\n", shell_exec("smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null"));
+          foreach ($device_data as $data_line) {
+            if (strpos($data_line, ":")) {
+              $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
+              switch ($parameter) {
+                case "Model Family:"     : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+                case "Device Model:"     : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+                case "Serial Number:"    : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)))); break;
+                case "Firmware Version:" : $disk["FW"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+                case "User Capacity:"    : $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
+                default :
+              }
+            }
+            else if (strpos($data_line, "Power_On_Hours")) {
+              $disk["POWER_ON_HOURS"] = trim(substr($data_line, strrpos(trim($data_line), " ")));
+            }
+            else if (strpos($data_line, "Load_Cycle_Count")) {
+              $disk["LOAD_CYCLE_COUNT"] = trim(substr(trim($data_line), strrpos(trim($data_line), " ")));
             }
           }
-          else if (strpos($data_line, "Power_On_Hours")) {
-            $disk["POWER_ON_HOURS"] = trim(substr($data_line, strrpos(trim($data_line), " ")));
+        } else if ($device_type == "USB") {
+          // For USB devices
+          $disk["TYPE"] = "USB";
+          $device_data = explode("\n", shell_exec("udevadm info --query=property --name=/dev/".$disk["DEVICE"]." --attribute-walk 2>/dev/null"));
+          foreach ($device_data as $data_line) {
+            if (strpos($data_line, "ATTR")) {
+              $parameter = trim(substr($data_line, strpos($data_line, "{")+1, strpos($data_line, "}")-strpos($data_line, "{")-1));
+              switch ($parameter) {
+                case "serial"       : $first_quote_pos = strpos($data_line, "\"");
+                                      $disk["SN"] = trim(substr($data_line, ($first_quote_pos+1), strpos($data_line, "\"", $first_quote_pos+1) - $first_quote_pos - 1)); break;
+                case "manufacturer" : $first_quote_pos = strpos($data_line, "\"");
+                                      $disk["MANUFACTURER"] = trim(substr($data_line, ($first_quote_pos+1), strpos($data_line, "\"", $first_quote_pos+1) - $first_quote_pos - 1)); break;
+                case "product"      : $first_quote_pos = strpos($data_line, "\"");
+                                      $disk["MODEL"] = trim(substr($data_line, ($first_quote_pos+1), strpos($data_line, "\"", $first_quote_pos+1) - $first_quote_pos - 1));
+                                      break 2;
+                default:
+              }
+            }
           }
-          else if (strpos($data_line, "Load_Cycle_Count")) {
-            $disk["LOAD_CYCLE_COUNT"] = trim(substr(trim($data_line), strrpos(trim($data_line), " ")));
+          // Find USB capacity
+          $device_data = explode("\n", shell_exec("sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null"));
+          foreach ($device_data as $data_line) {
+            if (strpos($data_line, "sectors, ")) {
+              $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "sectors, ")+strlen("sectors, ")));
+            }
           }
-        }
-       
+       }
+ 
       } elseif (substr($disk["DEVICE"],0,2) == "sr") {  // Get CD/DVD data
+        // For CD/DVD devices
         $disk["TYPE"] = "CD/DVD";
         $disk["CAPACITY"] = "CD/DVD";
         $device_data = explode("\n", shell_exec("hdparm -I /dev/".$disk["DEVICE"]." 2>/dev/null"));
@@ -321,63 +361,6 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
 
       $myJSONconfig = Check_Add_Update_Disk($myJSONconfig, $disk);
 
-    }
-  }
-
-  // Find USB devices
-
-  $data = explode("\n", shell_exec("lsusb 2>/dev/null"));
-
-  foreach ($data as $line) {
-    if (strstr($line, "Bus ") and strstr($line, "Device ")) {
-      $disk = $default_disk;  // Create a new disk array from template
-
-      // Find PATH
-      $bus = trim(substr($line, strpos($line, "Bus ")+strlen("Bus "), 3));
-      $device = trim(substr($line, strpos($line, "Device ")+strlen("Device "), 3));
-      $disk["PATH"] = "/".$bus."/".$device;
-
-      $device_data = explode("\n", shell_exec("lsusb -D /dev/bus/usb/".$bus."/".$device." 2>/dev/null"));
-      $is_USB = "";
-
-      foreach ($device_data as $data_line) {
-        $parameter = trim(substr(trim($data_line), 0, strpos(trim($data_line), " ")));
-        switch ($parameter) {
-          case "iManufacturer"   : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter)+13)); break;
-          case "iProduct"        : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter)+18)); break;
-          case "iSerial"         : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)+19))); break;
-          case "bInterfaceClass" : $is_USB = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter))+10)); break;
-          default :
-        }
-      }
-
-      if ($is_USB == "Mass Storage") {
-        $disk["TYPE"] = "USB";
-
-        // Find DEVICE
-        $device_data = explode("\n", shell_exec("ls -las /dev/disk/by-id/*".$disk["SN"]."* 2>/dev/null"));
-        if (!strstr($device_data[0], "No such file or directory")) {
-          $disk["DEVICE"] = trim(substr($device_data[0], strpos($device_data[0], "../../")+strlen("../../")));
-        }
-
-        // Find UNRAID disk functionality
-        foreach ($unraid_disks as $unraid_disk) {
-          if ($unraid_disk["device"] == $disk["DEVICE"]) {
-            $disk["UNRAID"] = $unraid_disk["name"];
-            break;
-          }
-        }
-
-        $device_data = explode("\n", shell_exec("sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null"));
-        foreach ($device_data as $data_line) {
-          if (strpos($data_line, "sectors, ")) {
-            $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "sectors, ")+strlen("sectors, ")));
-          }
-        }
-
-        $myJSONconfig = Check_Add_Update_Disk($myJSONconfig, $disk);
-
-      }
     }
   }
 
