@@ -16,6 +16,7 @@ $border_radius = 8;
 $background_padding = 4;
 $width = 320;
 $height = 80;
+$status_width = $width/12;
 
 // Constants - JSON configuration file
 $default_layout = array("GENERAL" => array("TOOLTIP_ENABLE" => "YES"),
@@ -63,7 +64,8 @@ $default_disk = array("TRAY_NUM"            => "",
                       "PURCHASE_DATE"       => "",
                       "NOTES"               => "",
                       "STATUS"              => "",
-                      "FOUND"               => ""
+                      "FOUND"               => "",
+                      "COLOR"               => "",
                       );
 
 $default_disk_data = array("DISK_DATA" => "");
@@ -203,7 +205,8 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
           case "FW"               :                                                  //
           case "CAPACITY"         :                                                  //
           case "POWER_ON_HOURS"   :                                                  //
-          case "LOAD_CYCLE_COUNT" : break;                                           //
+          case "LOAD_CYCLE_COUNT" :                                                  //
+          case "COLOR"            : break;                                           //
           default: $disk[$key] = $myJSONconfig["DISK_DATA"][$disk["SN"]][$key];  // Get all other existing data (Manual data, Dates, etc...)
         }
       }
@@ -275,9 +278,14 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       foreach ($unraid_disks as $unraid_disk) {
         if ($unraid_disk["device"] == $disk["DEVICE"]) {
           $disk["UNRAID"] = $unraid_disk["name"];
+          $disk["COLOR"] =  $unraid_disk["color"];
           break;
         }
       }
+      if ($disk["COLOR"] == "") {
+        $disk["COLOR"] = "blue-on";
+      }
+      
       // Find all other disk information
       if (substr($disk["DEVICE"],0,2) == "sd") {  // Get HDD data
         // For HDD devices
@@ -373,6 +381,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
         $myJSONconfig["DISK_DATA"][$disk_SN]["PATH"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["UNRAID"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["TRAY_NUM"] = "";
+        $myJSONconfig["DISK_DATA"][$disk_SN]["COLOR"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["FOUND"] = "YES";
       }
     }

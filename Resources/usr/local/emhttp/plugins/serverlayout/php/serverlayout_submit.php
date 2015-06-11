@@ -118,8 +118,29 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     // Save configuration data to JSON configuration file
     file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
-
   }
+  
+  // If "Delete" button pressed
+  else if(isset($_POST['delete_historical'])) {
+
+    // Get JSON configuration file
+    $myJSONconfig = json_decode(file_get_contents($serverlayout_cfg_file), true);
+    
+    // Delete relevant historical devices as defined
+    if(isset($_POST["DELETE_DISK"])) {
+      if (is_array($_POST["DELETE_DISK"])) {
+        foreach ($_POST["DELETE_DISK"] as $data) {
+          unset($myJSONconfig["DISK_DATA"][$data]);
+        }
+      } else {
+        unset($myJSONconfig["DISK_DATA"][$_POST["DELETE_DISK"]]);
+      }
+    }
+
+    // Save configuration data to JSON configuration file
+    file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));
+  }
+
 
   else if(isset($_POST['update_smartmontools_database'])) {
     // Update Smartmontools database
