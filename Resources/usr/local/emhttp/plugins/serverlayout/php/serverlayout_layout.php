@@ -38,6 +38,7 @@ $num_trays = $num_columns * $num_rows;
 .cell_background, .cell_background_hide {
   width: <? echo ($width-$background_padding); ?>px;
   height: <? echo ($height-$background_padding); ?>px;
+  text-align: center;
   box-sizing: border-box;
   float:left;
   background-image: url(<?php echo $frontpanel_imgfile; ?>);
@@ -51,7 +52,21 @@ $num_trays = $num_columns * $num_rows;
 .cell_background_hide {
   opacity: 0.2;
 }
-.cell_text {
+
+.cell_status {
+  width: <?php echo $status_width; ?>px;
+  position: relative;           /* Vertical Center */
+  top: 50%;                     /* Vertical Center */
+  -webkit-transform: translateY(-50%);  /* Vertical Center */
+      -ms-transform: translateY(-50%);  /* Vertical Center */
+          transform: translateY(-50%);  /* Vertical Center */
+  box-sizing: border-box;
+  overflow: hidden;
+  float: left;
+}
+
+.cell_text_exist, .cell_text_not_exist {
+  width: 100%;
   text-align: center;
   position: relative;           /* Vertical Center */
   top: 50%;                     /* Vertical Center */
@@ -63,13 +78,19 @@ $num_trays = $num_columns * $num_rows;
   box-sizing: border-box;
   overflow: hidden;
   color: white;
+  float: left;
 }
 
-.cell_text span:nth-child(even) {
+.cell_text_exist {
+  width: <? echo ($width-$background_padding-$status_width); ?>px;
+  padding-left: 0px;
+}
+
+.cell_text_exist span:nth-child(even) {
   color: black;
 }
 
-.cell_text span:nth-child(odd) {
+.cell_text_exist span:nth-child(odd) {
   color: white;
 }
 a.tooltip {outline:none; }
@@ -129,10 +150,11 @@ function UpdateDIVSizes() {
             $no_disk_exist = true;
             if ($myJSONconfig["TRAY_SHOW"][$tray_num] == "YES") { ?>
       <div class="cell_background">
-        <div class="cell_text">
         <?php if ($myJSONconfig["DISK_DATA"] != "") {
                 foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                  if (($disk["STATUS"]=="INSTALLED") and ($disk['TRAY_NUM'] == $tray_num)) {
+                  if (($disk["STATUS"]=="INSTALLED") and ($disk["TRAY_NUM"] == $tray_num)) {
+                    echo "<div class=\"cell_status\"><img src=\"/webGui/images/".$disk["COLOR"].".png\" width=\"".$status_width."px\"></div>";
+                    echo "<div class=\"cell_text_exist\">";
                     $no_disk_exist = false;
                     $no_data_show = true;
                     foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
@@ -144,14 +166,16 @@ function UpdateDIVSizes() {
                     if ($no_data_show) {
                       echo "<span>No data fields selected in Settings tab</span>";
                     }
+                    echo "</div>";
                     break;
                   }
                 }
               }
               if ($no_disk_exist) {
+                echo "<div class=\"cell_text_not_exist\">";
                 echo "<span>".$tray_num."</span>";
+                echo "</div>";
               } ?>
-        </div>
       </div>
       <?php } else { ?>
       <div class="cell_background_hide">

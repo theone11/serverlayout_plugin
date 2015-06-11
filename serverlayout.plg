@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.06.11">
+<!ENTITY version     "2015.06.12">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
-<!ENTITY packageMD5  "554ff6f480906cf0efd9b9fa2610c37a">
+<!ENTITY packageMD5  "318daaf4615c1af376dd86aef17cc582">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,6 +22,9 @@
 >
 
 <CHANGES>
+###2015.06.12
+- Added device status icon (same as unRAID icons)
+- Added option to delete historical devices (per device) from database under "Historical Device" table
 ###2015.06.11
 - Remove EMPTY row and columns pull-down options in Layout Settings
 - HW scan speed optimization - Changed USB path from "lsusb" to "lsscsi -t"

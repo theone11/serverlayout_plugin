@@ -458,10 +458,10 @@ function StartUp() {
                   }
                 }
                 if ($no_show_column_h) {
-                  echo "<tr>";
                   echo "<td style=\"text-align:center;\" colspan=\"".count($myJSONconfig["DATA_COLUMNS"])."\">No data columns selected in Settings tab</td>";
-                  echo "</tr>";
-                } ?>
+                } else { ?>
+                  <td style="text-align:center;"><input type="submit" name="delete_historical" value="Delete"></td>
+                <?php } ?>
         </tr>
         <tbody>
         <?php $no_historical_disk = true;
@@ -484,8 +484,11 @@ function StartUp() {
                       }
                       echo "</td>";
                     }
-                  }
-                  echo "</tr>";
+                  } ?>
+                  <td>
+                    <input type="checkbox" name="DELETE_DISK[]" value="<?php echo $disk["SN"]; ?>">
+                  </td>
+                  <?php echo "</tr>";
                 }
               }
               if ($no_historical_disk) {
