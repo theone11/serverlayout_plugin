@@ -3,7 +3,7 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.06.12">
+<!ENTITY version     "2015.06.xx">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
@@ -22,6 +22,8 @@
 >
 
 <CHANGES>
+###2015.06.xx
+- Fixed indexing of tooltip table CSS
 ###2015.06.12
 - Added device status icon (same as unRAID icons)
 - Added option to delete historical devices (per device) from database under "Historical Device" table

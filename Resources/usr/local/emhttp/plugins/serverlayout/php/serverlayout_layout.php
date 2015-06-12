@@ -96,7 +96,7 @@ $num_trays = $num_columns * $num_rows;
 a.tooltip {outline:none; }
 a.tooltip:hover {text-decoration:none;}
 
-<?php for ($j = 0; $j<=$columns; $j++) {
+<?php for ($j = 1; $j<=$columns; $j++) {
   if ($orientation == "0") {
     if ($j <= $columns/2) {
       $margin_left = -50;
@@ -145,7 +145,9 @@ function UpdateDIVSizes() {
     <?php if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") { ?>
     <a href="#" class="tooltip"> <?php } ?>
     <div class="cell_container" <?php if ($orientation == 90) {
-                                        echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px); transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
+                                        echo "style=\"-webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);
+                                                      -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);
+                                                      transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
       <?php $tray_num = (($i-1) * $columns) + $j;
             $no_disk_exist = true;
             if ($myJSONconfig["TRAY_SHOW"][$tray_num] == "YES") { ?>
