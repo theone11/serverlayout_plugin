@@ -123,7 +123,7 @@ a.tooltip:hover {text-decoration:none;}
   echo "a.tooltip .table_".$j.":after {\n";
     echo "  border-top: solid transparent 10px;\n";
     echo "  border-bottom: solid transparent 10px;\n";
-    echo "  top: ".($height/2)."px;\n";
+    echo "  top: ".($height/2-$background_padding)."px;\n";
     echo "  content: \" \";\n";
     echo "  height: 0;\n";
     if ((($orientation == "0") and ($j <= $columns/2)) or ($orientation == "90")) {
