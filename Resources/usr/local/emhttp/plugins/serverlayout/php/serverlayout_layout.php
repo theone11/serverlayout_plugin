@@ -121,22 +121,22 @@ a.tooltip:hover {text-decoration:none;}
   echo "}\n";
 
   echo "a.tooltip .table_".$j.":after {\n";
-    echo "border-top: solid transparent 10px;\n";
-    echo "border-bottom: solid transparent 10px;\n";
-    echo "top: ".($height/2)."px;\n";
-    echo "content: \" \";\n";
-    echo "height: 0;\n";
+    echo "  border-top: solid transparent 10px;\n";
+    echo "  border-bottom: solid transparent 10px;\n";
+    echo "  top: ".($height/2)."px;\n";
+    echo "  content: \" \";\n";
+    echo "  height: 0;\n";
     if ((($orientation == "0") and ($j <= $columns/2)) or ($orientation == "90")) {
-      echo "right: 100%;\n";
-      echo "border-right: solid #fffAF0 10px;\n";
-      echo "margin-right: -2px;\n";
+      echo "  right: 100%;\n";
+      echo "  border-right: solid #fffAF0 10px;\n";
+      echo "  margin-right: -2px;\n";
     } else {
-      echo "left: 100%;\n";
-      echo "border-left: solid #fffAF0 10px;\n";
-      echo "margin-left: -2px;\n";
+      echo "  left: 100%;\n";
+      echo "  border-left: solid #fffAF0 10px;\n";
+      echo "  margin-left: -2px;\n";
     }
-    echo "position: absolute;\n";
-    echo "width: 0;\n";
+    echo "  position: absolute;\n";
+    echo "  width: 0;\n";
   echo "}\n";
 } ?>
 
