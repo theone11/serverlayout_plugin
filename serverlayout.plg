@@ -24,6 +24,7 @@
 <CHANGES>
 ###2015.06.xx
 - Fixed indexing of tooltip table CSS
+- Add triangle/arrow to the Tooltip frame
 ###2015.06.12
 - Added device status icon (same as unRAID icons)
 - Added option to delete historical devices (per device) from database under "Historical Device" table
