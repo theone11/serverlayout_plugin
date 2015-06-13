@@ -5,6 +5,27 @@ $rows = $myJSONconfig["LAYOUT"]['ROWS'];
 $columns = $myJSONconfig["LAYOUT"]['COLUMNS'];
 $orientation = $myJSONconfig["LAYOUT"]['ORIENTATION'];
 $num_trays = $num_columns * $num_rows;
+
+$count_usb_devices = 0;
+foreach ($myJSONconfig["DISK_DATA"] as $disk) {
+  if ($disk["TYPE"] == "USB") {
+    $count_usb_devices++;
+  }
+}
+
+if ($orientation == 0) {
+  if (($columns * $width) > ($rows * $height)) {
+    $layout_orientation = 0;
+  } else {
+    $layout_orientation = 90;
+  }
+} else {
+  if (($columns * $height) > ($rows * $width)) {
+    $layout_orientation = 0;
+  } else {
+    $layout_orientation = 90;
+  }
+}
 ?>
 
 <HTML>
@@ -93,6 +114,42 @@ $num_trays = $num_columns * $num_rows;
 .cell_text_exist span:nth-child(odd) {
   color: white;
 }
+
+.cell_background_usb {
+  width: <? echo ($width_usb); ?>px;
+  height: <? echo ($height_usb); ?>px;
+  box-sizing: border-box;
+  display: inline-block;
+  background-image: url(<?php echo $frontpanelusb_imgfile; ?>);
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  overflow: hidden;
+}  
+
+.cell_text_usb {
+  width: 100%;
+  text-align: center;
+  position: relative;           /* Vertical Center */
+  top: 50%;                     /* Vertical Center */
+  -webkit-transform: translateY(-50%);  /* Vertical Center */
+      -ms-transform: translateY(-50%);  /* Vertical Center */
+          transform: translateY(-50%);  /* Vertical Center */
+  padding-left: 30px;
+  padding-right: 100px;
+  box-sizing: border-box;
+  overflow: hidden;
+  color: white;
+}
+
+.cell_text_usb span:nth-child(even) {
+  color: black;
+}
+
+.cell_text_usb span:nth-child(odd) {
+  color: white;
+}
+
 a.tooltip {outline:none; }
 a.tooltip:hover {text-decoration:none;}
 
@@ -226,6 +283,51 @@ function UpdateDIVSizes() {
   </div>
 <?php } ?>
 </div>
+
+<br>
+<br>
+
+<?php if ($count_usb_devices > 0) { ?>
+<div style="text-align:center;">
+<?php foreach ($myJSONconfig["DISK_DATA"] as $disk) {
+        if ($disk["TYPE"] == "USB") {
+          $no_data_show = true;
+          if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") { ?>
+            <a href="#" class="tooltip">
+    <?php }
+          echo "<div class=\"cell_background_usb\">";
+          echo "<div class=\"cell_text_usb\">";
+          foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
+            if (($data_col["SHOW_DATA"] == "YES") and ($disk[$data_col["NAME"]] != "")) {
+              $no_data_show = false;
+              echo "<span>".$disk[$data_col["NAME"]]." </span>";
+            }
+          }
+          if ($no_data_show) {
+            echo "<span>No data fields selected in Settings tab</span>";
+          }
+          echo "</div>";
+          echo "</div>";
+          if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") {
+            $no_data_show = true;
+            echo "<table class=\"table_1\">";
+            foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
+              if ($data_col["SHOW_TOOLTIP"] == "YES") {
+                $no_data_show = false;
+                echo "<tr><td style=\"text-align:right; padding-right:5px; width:50%;\">".$data_col["TITLE"].":</td>";
+                echo "<td style=\"text-align:left; padding-left:5px;\"><b>".$disk[$data_col["NAME"]]."</b></td></tr>";
+              }
+            }
+            if ($no_data_show) {
+              echo "<tr><td style=\"text-align:center; height:".$height."px; vertical-align:middle;\">No data fields selected in Settings tab</td><tr>";
+            }
+            echo "</table>";
+            echo "</a>";
+          }
+        }
+      } ?>
+</div>
+<?php } ?>
 
 <script>UpdateDIVSizes();</script>
 

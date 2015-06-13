@@ -106,19 +106,33 @@ function StartUp() {
       <span class="left">Commands</span>
     </div>
     <div style="text-align:center;"><input type="submit" name="settings" value="Save Layout Configuration"></div>
+    <blockquote class='inline_help'>
+      <p>Save all data on current tab<p>
+    </blockquote>
     <div style="text-align:center;"><button type="button" onClick="done();">Exit ServerLayout</button></div>
+    <blockquote class='inline_help'>
+      <p>Exit plugin and return to unRAID Settings Page<p>
+    </blockquote>
 
     <div id="title">
       <span class="left">General Settings</span>
     </div>
-    <div style="text-align:center;">
-      <span>Enable Tray Tooltip: </span><input type="checkbox" name="TOOLTIP_ENABLE" id="TOOLTIP_ENABLE" value="YES" <?php if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") { echo "checked"; } ?>>
+    <div>
+      <table>
+        <tr>
+          <td>Enable Tray Tooltip:</td>
+          <td><input type="checkbox" name="TOOLTIP_ENABLE" id="TOOLTIP_ENABLE" value="YES" <?php if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") { echo "checked"; } ?>></td>
+        </tr>
+      </table>
+      <blockquote class='inline_help'>
+        <p>Enable the above checkbox in order to show the Tray Tooltips in the Layout tab<p>
+      </blockquote>
     </div>
 
     <div id="title">
       <span class="left">Layout Settings</span>
     </div>
-    <div class="margin-left:auto; margin-right:auto;">
+    <div>
       <table>
         <tr>
           <td>Enable editing:</td>
@@ -145,6 +159,7 @@ function StartUp() {
         </tr>
       </table>
       <blockquote class='inline_help'>
+        <p>Enable the checkbox in order to edit the below options<p>
         <p><strong>Rows</strong> are the number of rows existing in your server<p>
         <p><strong>Columns</strong> are the number of columns existing in your server<p>
         <p><strong>Orientation</strong> is the direction the disk trays are positioned in your servr (horizontal or vertical)</p>
