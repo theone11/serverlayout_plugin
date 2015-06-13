@@ -197,6 +197,34 @@ a.tooltip:hover {text-decoration:none;}
   echo "}\n";
 } ?>
 
+  a.tooltip .table_usb td{padding:2px;}
+  a.tooltip .table_usb {
+    z-index:10;display:none; padding:5px 5px;
+    margin-bottom:0px; margin-left:<?php echo (-($width_usb+$width)/2); ?>px;
+    width:<?php echo $width; ?>px; line-height:100%;
+    border-radius:<?php echo $border_radius; ?>px;
+    box-shadow: 5px 5px 8px #CCC;
+    bottom: <?php echo ($height_usb); ?>px;
+  }
+
+  a.tooltip:hover .table_usb{
+    display:inline; position:absolute; color:#111;
+    border:1px solid #DCA; background:#fffAF0;
+  }
+
+  a.tooltip .table_usb:after {
+    border-left: solid transparent 10px;
+    border-right: solid transparent 10px;
+    left: 50%;
+    content: " ";
+    height: 0;
+    border-top: solid #fffAF0 10px;
+    bottom: -10px;
+    margin-left: -13px;
+    position: absolute;
+    width: 0;
+  }
+
 </style>
 
 <script type="text/javascript">
@@ -310,11 +338,11 @@ function UpdateDIVSizes() {
           echo "</div>";
           if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") {
             $no_data_show = true;
-            echo "<table class=\"table_1\">";
+            echo "<table class=\"table_usb\">";
             foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
               if ($data_col["SHOW_TOOLTIP"] == "YES") {
                 $no_data_show = false;
-                echo "<tr><td style=\"text-align:right; padding-right:5px; width:50%;\">".$data_col["TITLE"].":</td>";
+                echo "<tr><td style=\"text-align:right; padding-right:5px; width:60%;\">".$data_col["TITLE"].":</td>";
                 echo "<td style=\"text-align:left; padding-left:5px;\"><b>".$disk[$data_col["NAME"]]."</b></td></tr>";
               }
             }
