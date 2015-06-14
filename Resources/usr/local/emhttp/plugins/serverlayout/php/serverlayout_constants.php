@@ -19,8 +19,8 @@ $width = 320;
 $height = 80;
 $status_width = $width/12;
 
-$width_usb = 674/2.8;
-$height_usb = 229/2.8;
+$width_usb = 874/3;
+$height_usb = 229/3;
 
 // Constants - JSON configuration file
 $default_layout = array("GENERAL" => array("TOOLTIP_ENABLE" => "YES"),

@@ -8,7 +8,7 @@ $num_trays = $num_columns * $num_rows;
 
 $count_usb_devices = 0;
 foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-  if ($disk["TYPE"] == "USB") {
+  if (($disk["TYPE"] == "USB") and ($disk["STATUS"] == "INSTALLED")) {
     $count_usb_devices++;
   }
 }
@@ -18,12 +18,14 @@ if ($orientation == 0) {
     $layout_orientation = 0;
   } else {
     $layout_orientation = 90;
+    $trays_width = $rows * $height;
   }
 } else {
   if (($columns * $height) > ($rows * $width)) {
     $layout_orientation = 0;
   } else {
     $layout_orientation = 90;
+    $trays_width = $rows * $width;
   }
 }
 ?>
@@ -125,6 +127,9 @@ if ($orientation == 0) {
   background-size: cover;
   background-repeat: no-repeat;
   overflow: hidden;
+  margin-left: 15px;
+  margin-right: 15px;
+  margin-top: 15px;
 }  
 
 .cell_text_usb {
@@ -135,8 +140,8 @@ if ($orientation == 0) {
   -webkit-transform: translateY(-50%);  /* Vertical Center */
       -ms-transform: translateY(-50%);  /* Vertical Center */
           transform: translateY(-50%);  /* Vertical Center */
-  padding-left: 30px;
-  padding-right: 100px;
+  padding-left: 10px;
+  padding-right: 70px;
   box-sizing: border-box;
   overflow: hidden;
   color: white;
@@ -197,22 +202,22 @@ a.tooltip:hover {text-decoration:none;}
   echo "}\n";
 } ?>
 
-  a.tooltip .table_usb td{padding:2px;}
-  a.tooltip .table_usb {
+  a.tooltip .table_usb_0 td{padding:2px;}
+  a.tooltip .table_usb_0 {
     z-index:10;display:none; padding:5px 5px;
-    margin-bottom:0px; margin-left:<?php echo (-($width_usb+$width)/2); ?>px;
+    margin-bottom:0px; margin-left:<?php echo (-($width_usb+$width)/2 - 15); ?>px;
     width:<?php echo $width; ?>px; line-height:100%;
     border-radius:<?php echo $border_radius; ?>px;
     box-shadow: 5px 5px 8px #CCC;
     bottom: <?php echo ($height_usb); ?>px;
   }
 
-  a.tooltip:hover .table_usb{
+  a.tooltip:hover .table_usb_0 {
     display:inline; position:absolute; color:#111;
     border:1px solid #DCA; background:#fffAF0;
   }
 
-  a.tooltip .table_usb:after {
+  a.tooltip .table_usb_0:after {
     border-left: solid transparent 10px;
     border-right: solid transparent 10px;
     left: 50%;
@@ -221,6 +226,33 @@ a.tooltip:hover {text-decoration:none;}
     border-top: solid #fffAF0 10px;
     bottom: -10px;
     margin-left: -13px;
+    position: absolute;
+    width: 0;
+  }
+
+  a.tooltip .table_usb_90 td{padding:2px;}
+  a.tooltip .table_usb_90 {
+    z-index:10;display:none; padding:5px 5px;
+    margin-bottom:0px; margin-left:<?php echo (-(2*$width_usb) - 25); ?>px;
+    width:<?php echo $width; ?>px; line-height:100%;
+    border-radius:<?php echo $border_radius; ?>px;
+    box-shadow: 5px 5px 8px #CCC;
+  }
+
+  a.tooltip:hover .table_usb_90 {
+    display:inline; position:absolute; color:#111;
+    border:1px solid #DCA; background:#fffAF0;
+  }
+
+  a.tooltip .table_usb_90:after {
+    border-top: solid transparent 10px;
+    border-bottom: solid transparent 10px;
+    top: <?php echo ($height_usb/2 + 25); ?>px;
+    left: 100%;
+    content: " ";
+    height: 0;
+    border-left: solid #fffAF0 10px;
+    margin-left: -2px;
     position: absolute;
     width: 0;
   }
@@ -240,6 +272,10 @@ function UpdateDIVSizes() {
 </script>
 </HEAD>
 <BODY>
+
+<?php if (($count_usb_devices > 0) and ($layout_orientation == "90")) {
+        echo "<div style=\"width:".($trays_width + 100)."px; float:left;\">";
+      } ?>
 
 <div class="container" id="container">
 <?php for ($i = 1; $i <= $rows; $i++) { ?>
@@ -312,13 +348,21 @@ function UpdateDIVSizes() {
 <?php } ?>
 </div>
 
-<br>
-<br>
+<?php if (($count_usb_devices > 0) and ($layout_orientation == "90")) {
+        echo "</div>";
+      } ?>
 
-<?php if ($count_usb_devices > 0) { ?>
+
+
+<?php if ($count_usb_devices > 0) {
+        if ($layout_orientation == "0") {
+          echo "<br><br><br>";
+        } else {
+          echo "<div style=\"text-align:center; width:".($width_usb+100)."px; float:right;\">";
+        } ?>
 <div style="text-align:center;">
 <?php foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-        if ($disk["TYPE"] == "USB") {
+        if (($disk["TYPE"] == "USB") and ($disk["STATUS"] == "INSTALLED")) {
           $no_data_show = true;
           if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") { ?>
             <a href="#" class="tooltip">
@@ -338,7 +382,11 @@ function UpdateDIVSizes() {
           echo "</div>";
           if ($myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] == "YES") {
             $no_data_show = true;
-            echo "<table class=\"table_usb\">";
+            if ($layout_orientation == "0") {
+              echo "<table class=\"table_usb_0\">";
+            } else {
+              echo "<table class=\"table_usb_90\">";
+            }
             foreach ($myJSONconfig["DATA_COLUMNS"] as $data_col) {
               if ($data_col["SHOW_TOOLTIP"] == "YES") {
                 $no_data_show = false;
@@ -356,6 +404,10 @@ function UpdateDIVSizes() {
       } ?>
 </div>
 <?php } ?>
+
+<?php if (($count_usb_devices > 0) and ($layout_orientation == "90")) {
+        echo "</div>";
+      } ?>
 
 <script>UpdateDIVSizes();</script>
 
