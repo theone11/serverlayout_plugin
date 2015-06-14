@@ -6,6 +6,7 @@ $serverlayout_cfg_file = "/boot/config/plugins/serverlayout/serverlayout.json";
 
 // Constants - Image file locations
 $frontpanel_imgfile = "/plugins/serverlayout/images/frontpanel.jpg";
+$frontpanelusb_imgfile = "/plugins/serverlayout/images/frontpanelusb.png";
 $sata_imgfile = "/plugins/serverlayout/images/SATA_Logo.png";
 $usb_imgfile = "/plugins/serverlayout/images/USB_Logo.png";
 $optical_imgfile = "/plugins/serverlayout/images/opticalmedia_Logo.png";
@@ -17,6 +18,9 @@ $background_padding = 4;
 $width = 320;
 $height = 80;
 $status_width = $width/12;
+
+$width_usb = 874/3;
+$height_usb = 229/3;
 
 // Constants - JSON configuration file
 $default_layout = array("GENERAL" => array("TOOLTIP_ENABLE" => "YES"),
