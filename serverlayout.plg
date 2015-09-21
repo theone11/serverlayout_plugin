@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2015.06.15">
+<!ENTITY version     "2015.09.22">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
-<!ENTITY packageMD5  "25d58763a9164394dcb2dded7501e01c">
+<!ENTITY packageMD5  "ce70eb29e7da5d1ba443505b2cf80932">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,6 +22,10 @@
 >
 
 <CHANGES>
+###2015.09.22
+- Fixed USB location in "Layout" tab when trays are configured as Vertical and the array is "narrow"
+- Removed all duration other than hours in Power-On-Hours
+- Added support for SCSI (SAS) drives
 ###2015.06.15
 - Fixed indexing of tooltip table CSS
 - Added triangle/arrow to the Tooltip frame

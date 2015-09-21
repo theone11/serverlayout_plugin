@@ -13,19 +13,19 @@ foreach ($myJSONconfig["DISK_DATA"] as $disk) {
   }
 }
 
-if ($orientation == 0) {
+if ($orientation == "0") {
   if (($columns * $width) > ($rows * $height)) {
-    $layout_orientation = 0;
+    $layout_orientation = "0";
   } else {
-    $layout_orientation = 90;
-    $trays_width = $rows * $height;
+    $layout_orientation = "90";
+    $trays_width = $columns * $width;
   }
 } else {
   if (($columns * $height) > ($rows * $width)) {
-    $layout_orientation = 0;
+    $layout_orientation = "0";
   } else {
-    $layout_orientation = 90;
-    $trays_width = $rows * $width;
+    $layout_orientation = "90";
+    $trays_width = $columns * $height;
   }
 }
 ?>
@@ -45,7 +45,7 @@ if ($orientation == 0) {
 
 .row_container {
   width: <? echo ($width * $columns); ?>px;
-  height: <? if ($orientation == 0) { echo $height; } else { echo $width; } ?>px;
+  height: <? if ($orientation == "0") { echo $height; } else { echo $width; } ?>px;
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -295,7 +295,7 @@ function UpdateDIVSizes() {
       <div class="cell_background">
         <?php if ($myJSONconfig["DISK_DATA"] != "") {
                 foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                  if (($disk["STATUS"]=="INSTALLED") and ($disk["TRAY_NUM"] == $tray_num)) {
+                  if (($disk["STATUS"] == "INSTALLED") and ($disk["TRAY_NUM"] == $tray_num)) {
                     echo "<div class=\"cell_status\"><img src=\"/webGui/images/".$disk["COLOR"].".png\" width=\"".$status_width."px\"></div>";
                     echo "<div class=\"cell_text_exist\">";
                     $no_disk_exist = false;
