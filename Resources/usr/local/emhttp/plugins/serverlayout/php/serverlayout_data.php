@@ -413,6 +413,7 @@ function StartUp() {
                                                      break;
                         case "TYPE"                : switch ($disk["TYPE"]) {
                                                        case "SATA": echo "<img src=\"".$sata_imgfile."\" style=\"width:auto;height:20px\">"; break;
+                                                       case "SAS": echo "<img src=\"".$sas_imgfile."\" style=\"width:auto;height:20px\">"; break;
                                                        case "USB": echo "<img src=\"".$usb_imgfile."\" style=\"width:auto;height:20px\">"; break;
                                                        case "CD/DVD": echo "<img src=\"".$optical_imgfile."\" style=\"width:auto;height:20px\">"; break;
                                                        default: echo $disk["TYPE"];
@@ -475,6 +476,7 @@ function StartUp() {
                       switch($data_column["NAME"]) {
                         case "TYPE"                : switch ($disk["TYPE"]) {
                                                        case "SATA": echo "<img src=\"".$sata_imgfile."\" style=\"width:auto;height:20px\">"; break;
+                                                       case "SAS": echo "<img src=\"".$sas_imgfile."\" style=\"width:auto;height:20px\">"; break;
                                                        case "USB": echo "<img src=\"".$usb_imgfile."\" style=\"width:auto;height:20px\">"; break;
                                                        case "CD/DVD": echo "<img src=\"".$optical_imgfile."\" style=\"width:auto;height:20px\">"; break;
                                                        default: echo $disk["TYPE"];

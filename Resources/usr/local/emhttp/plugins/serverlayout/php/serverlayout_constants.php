@@ -8,6 +8,7 @@ $serverlayout_cfg_file = "/boot/config/plugins/serverlayout/serverlayout.json";
 $frontpanel_imgfile = "/plugins/serverlayout/images/frontpanel.jpg";
 $frontpanelusb_imgfile = "/plugins/serverlayout/images/frontpanelusb.png";
 $sata_imgfile = "/plugins/serverlayout/images/SATA_Logo.png";
+$sas_imgfile = "/plugins/serverlayout/images/SAS_Logo.png";
 $usb_imgfile = "/plugins/serverlayout/images/USB_Logo.png";
 $optical_imgfile = "/plugins/serverlayout/images/opticalmedia_Logo.png";
 
@@ -253,14 +254,16 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
     }
   }
 
-  // Go over all SATA and USB devices in /dev/disk/by-id
+  // Go over all SATA, SAS and USB devices in /dev/disk/by-id
   $data = explode("\n", shell_exec("ls -las /dev/disk/by-id 2>/dev/null"));
   foreach ($data as $line) {
-    if ((strstr($line, "ata-") or strstr($line, "usb-")) and (!strstr($line, "-part"))) {  // Look for SATA and USB devices AND not partitions
+    if ((strstr($line, "ata-") or strstr($line, "usb-") or strstr($line, "scsi-")) and (!strstr($line, "-part"))) {  // Look for SATA, SAS and USB devices AND not partitions
       $disk = $default_disk;  // Create a new disk array from template
-      // Check if device is SATA or USB for future testing
+      // Check if device is SATA, SAS or USB for future testing
       if (strstr($line, "ata-")) {
         $device_type = "SATA";
+      } else if (strstr($line, "scsi-")) {
+        $device_type = "SAS";
       } else if (strstr($line, "usb-")) {
         $device_type = "USB";
       }
@@ -270,7 +273,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       $lsscsi_data = explode("\n", shell_exec("lsscsi -t 2>/dev/null"));
       foreach ($lsscsi_data as $data_line) {
         if (strstr($data_line, "/dev/".$disk["DEVICE"])) {
-          if ($device_type == "SATA") {
+          if (($device_type == "SATA") or ($device_type == "SAS")) {
             $disk["PATH"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1));
           } else if ($device_type == "USB") {
             $disk["PATH"] = trim(substr($data_line, strpos($data_line, "usb:")+4, strpos($data_line, "/dev/")-strpos($data_line, "usb:")-4-1));
@@ -293,8 +296,8 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       // Find all other disk information
       if (substr($disk["DEVICE"],0,2) == "sd") {  // Get HDD data
         // For HDD devices
-        if ($device_type == "SATA") {
-          $disk["TYPE"] = "SATA";
+        if (($device_type == "SATA") or ($device_type == "SAS")) {
+          $disk["TYPE"] = $device_type;
           $device_data = explode("\n", shell_exec("smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null"));
           foreach ($device_data as $data_line) {
             if (strpos($data_line, ":")) {
@@ -309,7 +312,10 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
               }
             }
             else if (strpos($data_line, "Power_On_Hours")) {
-              $disk["POWER_ON_HOURS"] = trim(substr($data_line, strrpos(trim($data_line), " ")));
+              $disk["POWER_ON_HOURS"] = trim(substr(trim($data_line), strrpos(trim($data_line), " ")));
+              if (strpos($disk["POWER_ON_HOURS"], "h")) {  // If "h" for hours exists then truncate to hours only
+                $disk["POWER_ON_HOURS"] = trim(substr($disk["POWER_ON_HOURS"], 0, strpos($disk["POWER_ON_HOURS"], "h")));
+              }
             }
             else if (strpos($data_line, "Load_Cycle_Count")) {
               $disk["LOAD_CYCLE_COUNT"] = trim(substr(trim($data_line), strrpos(trim($data_line), " ")));
