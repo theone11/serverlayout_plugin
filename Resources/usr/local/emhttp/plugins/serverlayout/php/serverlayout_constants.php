@@ -301,13 +301,16 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
           $device_data = explode("\n", shell_exec("smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null"));
           foreach ($device_data as $data_line) {
             if (strpos($data_line, ":")) {
-              $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
+              $parameter = strtolower(trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":"))));
               switch ($parameter) {
-                case "Model Family:"     : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
-                case "Device Model:"     : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
-                case "Serial Number:"    : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)))); break;
-                case "Firmware Version:" : $disk["FW"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
-                case "User Capacity:"    : $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
+                case "vendor:"           : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break; // Added for ARECA support
+                case "model family:"     : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+                case "product:"          : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break; // Added for ARECA support
+                case "device model:"     : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+                case "serial number:"    : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)))); break;
+                case "revision:"         : $disk["FW"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break; // Added for ARECA support
+                case "firmware version:" : $disk["FW"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+                case "user capacity:"    : $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "[")+1, strpos($data_line, "]")-strpos($data_line, "[")-1)); break;
                 default :
               }
             }
@@ -327,7 +330,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
           $device_data = explode("\n", shell_exec("udevadm info --query=property --name=/dev/".$disk["DEVICE"]." --attribute-walk 2>/dev/null"));
           foreach ($device_data as $data_line) {
             if (strpos($data_line, "ATTR")) {
-              $parameter = trim(substr($data_line, strpos($data_line, "{")+1, strpos($data_line, "}")-strpos($data_line, "{")-1));
+              $parameter = strtolower(trim(substr($data_line, strpos($data_line, "{")+1, strpos($data_line, "}")-strpos($data_line, "{")-1)));
               switch ($parameter) {
                 case "serial"       : $first_quote_pos = strpos($data_line, "\"");
                                       $disk["SN"] = trim(substr($data_line, ($first_quote_pos+1), strpos($data_line, "\"", $first_quote_pos+1) - $first_quote_pos - 1)); break;
@@ -356,9 +359,9 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
         $device_data = explode("\n", shell_exec("hdparm -I /dev/".$disk["DEVICE"]." 2>/dev/null"));
         foreach ($device_data as $data_line) {
           if (strpos($data_line, ":")) {
-            $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
+            $parameter = strtolower(trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":"))));
             switch ($parameter) {
-              case "Serial Number:"    : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)))); break;
+              case "serial number:"    : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)))); break;
               default :
             }
           }
@@ -366,11 +369,11 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
         $device_data = explode("\n", shell_exec("smartctl -i /dev/".$disk["DEVICE"]." 2>/dev/null"));
         foreach ($device_data as $data_line) {
           if (strpos($data_line, ":")) {
-            $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
+            $parameter = strtolower(trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":"))));
             switch ($parameter) {
-              case "Vendor:"        : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
-              case "Product:"       : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
-              case "Revision:"      : $disk["FW"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+              case "vendor:"        : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+              case "product:"       : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
+              case "revision:"      : $disk["FW"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
               default :
             }
           }
