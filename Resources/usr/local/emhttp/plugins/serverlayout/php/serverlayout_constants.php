@@ -1,4 +1,10 @@
 <?php
+// Constants - Profiler file locations
+$serverlayout_tprf_file = "/boot/config/plugins/serverlayout/serverlayout.tprofiler";
+$profiler = "";
+$profiler .= microtime(true) . ",Started serverlayout_constants.php" . "\n";
+
+// Constants - Maximum number of trays in array
 $max_trays = 99;
 
 // Constants - Data file locations
@@ -26,13 +32,14 @@ $height_usb = 229/3;
 // Constants - JSON configuration file
 $default_layout = array("GENERAL" => array("TOOLTIP_ENABLE" => "YES"),
                         "LAYOUT" => array("ROWS" => "6", "COLUMNS" => "4", "ORIENTATION" => "0"),
+                        "DEBUG" => array("TIME_PROFILING" => "NO"),
                         "TRAY_SHOW" => array( "1" => "YES",  "2" => "YES",  "3" => "YES",  "4" => "YES",  "5" => "YES",  "6" => "YES",  "7" => "YES",  "8" => "YES",
                                               "9" => "YES", "10" => "YES", "11" => "YES", "12" => "YES", "13" => "YES", "14" => "YES", "15" => "YES", "16" => "YES",
                                              "17" => "YES", "18" => "YES", "19" => "YES", "20" => "YES", "21" => "YES", "22" => "YES", "23" => "YES", "24" => "YES")
                         );
 
 $default_col_data = array("DATA_COLUMNS" => array (
-                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",           "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "1",  "TEXT_ALIGN" => "center"),
+                      "TRAY_NUM"            => array("NAME" => "TRAY_NUM",            "TITLE" => "Tray #",           "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "1",  "TEXT_ALIGN" => "center"),
                       "TYPE"                => array("NAME" => "TYPE",                "TITLE" => "Type",             "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "YES", "ORDER" => "2",  "TEXT_ALIGN" => "center"),
                       "DEVICE"              => array("NAME" => "DEVICE",              "TITLE" => "Device",           "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "3",  "TEXT_ALIGN" => "center"),
                       "PATH"                => array("NAME" => "PATH",                "TITLE" => "Path",             "SHOW_DATA" => "YES", "SHOW_TOOLTIP" => "YES", "SHOW_COLUMN_I" => "YES", "SHOW_COLUMN_H" => "NO",  "ORDER" => "4",  "TEXT_ALIGN" => "left"  ),
@@ -75,19 +82,26 @@ $default_disk = array("TRAY_NUM"            => "",
 
 $default_disk_data = array("DISK_DATA" => "");
 
+$profiler .= microtime(true) . ",Get_JSON_Config_File()" . "\n";
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
+$profiler_on = $myJSONconfig["DEBUG"]["TIME_PROFILING"];
+if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Scan_Installed_Devices_Data(myJSONconfig)" . "\n"; }
 $myJSONconfig = Scan_Installed_Devices_Data($myJSONconfig);  // Scan all installed devices
+if ($profiler_on == "YES") { $profiler .= microtime(true) . ",file_put_contents(serverlayout_cfg_file, json_encode(myJSONconfig))" . "\n"; }
 file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig));  // Save configuration data to JSON configuration file
-
+if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Save Profiling - file_put_contents(serverlayout_tprf_file, profiler)" . "\n"; }
+if ($profiler_on == "YES") { file_put_contents($serverlayout_tprf_file, $profiler); }
 
 // *****************************
 // Function Get_JSON_Config_File
 // *****************************
-// The function creates an default configuration file if none exists, otherwise it creates a default configuration
+// The function creates a default configuration file if none exists, otherwise it creates a default configuration
 // BUT also copies over all user defined configuration data from existing configuration file
 
 function Get_JSON_Config_File() {
   // Constants - GLOBAL constants
+  $profiler = $GLOBALS["profiler"];
+  $profiler_on = $GLOBALS["profiler_on"];
   $serverlayout_cfg_file = $GLOBALS["serverlayout_cfg_file"];
   $default_layout = $GLOBALS["default_layout"];
   $default_col_data = $GLOBALS["default_col_data"];
@@ -118,6 +132,14 @@ function Get_JSON_Config_File() {
       if ($myJSONconfig_old["GENERAL"] != "") {
         if (array_key_exists($key, $myJSONconfig_old["GENERAL"])) {  // If General Key exists then copy it over - All new Keys are inherited from default
           $myJSONconfig_new["GENERAL"][$key] = $myJSONconfig_old["GENERAL"][$key];
+        }
+      }
+    }
+    
+    foreach (array_keys($myJSONconfig_new["DEBUG"]) as $key) {
+      if ($myJSONconfig_old["DEBUG"] != "") {
+        if (array_key_exists($key, $myJSONconfig_old["DEBUG"])) {  // If Debug Key exists then copy it over - All new Keys are inherited from default
+          $myJSONconfig_new["DEBUG"][$key] = $myJSONconfig_old["DEBUG"][$key];
         }
       }
     }
@@ -171,6 +193,8 @@ function Get_JSON_Config_File() {
     }
 
   }
+  $GLOBALS["profiler"] = $profiler;
+  $GLOBALS["profiler_on"] = $profiler_on;
   // Save new configuration (default or modified) to JSON file
   file_put_contents($serverlayout_cfg_file, json_encode($myJSONconfig_new));  // Save configuration data to JSON configuration file
   return $myJSONconfig_new;
@@ -195,6 +219,8 @@ function Add_New_Disk($myJSONconfig, $disk) {
 // ******************************
 function Check_Add_Update_Disk($myJSONconfig, $disk) {
   // Constants - GLOBAL constants
+  $profiler = $GLOBALS["profiler"];
+  $profiler_on = $GLOBALS["profiler_on"];
   $default_disk = $GLOBALS["default_disk"];
 
   if ($myJSONconfig["DISK_DATA"] != "") {
@@ -223,6 +249,7 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
       if ($myJSONconfig["DISK_DATA"][$disk["SN"]]["STATUS"] == "HISTORICAL") {  // Disk is HISTORICAL
         $disk["RECENT_INSTALL_DATE"] = date("Y/m/d");                           // Update current date for previously out-of-array devices
         $disk["STATUS"] = "INSTALLED";                                          // Change STATUS to INSTALLED
+        $disk["TRAY_NUM"] = "";                                                 // Clear TRAY_NUM history for new assignment
       }
 
       // Update disk to JSON array
@@ -235,6 +262,8 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
     $myJSONconfig = Add_New_Disk($myJSONconfig, $disk);
   }
 
+  $GLOBALS["profiler"] = $profiler;
+  $GLOBALS["profiler_on"] = $profiler_on;
   return $myJSONconfig;
 }
 
@@ -243,19 +272,25 @@ function Check_Add_Update_Disk($myJSONconfig, $disk) {
 // ************************************
 function Scan_Installed_Devices_Data($myJSONconfig) {
   // Constants - GLOBAL constants
+  $profiler = $GLOBALS["profiler"];
+  $profiler_on = $GLOBALS["profiler_on"];
   $serverlayout_cfg_file = $GLOBALS["serverlayout_cfg_file"];
   $default_disk = $GLOBALS["default_disk"];
   $unraid_disks = $GLOBALS["disks"];
 
   // Change for all disks (if exists any) FOUND to "NO" for later scanning
+  if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - Reset FOUND to NO" . "\n"; }
   if ($myJSONconfig["DISK_DATA"] != "") {
     foreach (array_keys($myJSONconfig["DISK_DATA"]) as $disk_SN) {
       $myJSONconfig["DISK_DATA"][$disk_SN]["FOUND"] = "NO";
     }
   }
+  if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - Reset FOUND to NO". "\n"; }
 
   // Go over all SATA, SAS and USB devices in /dev/disk/by-id
+  if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - ls -las /dev/disk/by-id 2>/dev/null". "\n"; }
   $data = explode("\n", shell_exec("ls -las /dev/disk/by-id 2>/dev/null"));
+  if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Analyze - ls -las /dev/disk/by-id 2>/dev/null" . "\n"; }
   foreach ($data as $line) {
     if ((strstr($line, "ata-") or strstr($line, "usb-") or strstr($line, "scsi-")) and (!strstr($line, "-part"))) {  // Look for SATA, SAS and USB devices AND not partitions
       $disk = $default_disk;  // Create a new disk array from template
@@ -270,7 +305,9 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
       // Find DEVICE
       $disk["DEVICE"] = trim(substr($line, strpos($line, "../../")+strlen("../../")));  // Update device id in any case
       // Find PATH
+      if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - lsscsi -t 2>/dev/null" . "\n"; }
       $lsscsi_data = explode("\n", shell_exec("lsscsi -t 2>/dev/null"));
+      if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Analyze - lsscsi -t 2>/dev/null" . "\n"; }
       foreach ($lsscsi_data as $data_line) {
         if (strstr($data_line, "/dev/".$disk["DEVICE"])) {
           if (($device_type == "SATA") or ($device_type == "SAS")) {
@@ -281,6 +318,8 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
           break;
         }
       }
+      if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - lsscsi -t 2>/dev/null" . "\n"; }
+
       // Find UNRAID disk functionality
       foreach ($unraid_disks as $unraid_disk) {
         if ($unraid_disk["device"] == $disk["DEVICE"]) {
@@ -298,11 +337,13 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
         // For HDD devices
         if (($device_type == "SATA") or ($device_type == "SAS")) {
           $disk["TYPE"] = $device_type;
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
           $device_data = explode("\n", shell_exec("smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null"));
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Analyze - smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
           foreach ($device_data as $data_line) {
             if (strpos($data_line, ":")) {
-              $parameter = strtolower(trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":"))));
-              switch ($parameter) {
+              $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
+              switch (strtolower($parameter)) {
                 case "vendor:"           : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break; // Added for ARECA support
                 case "model family:"     : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
                 case "product:"          : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break; // Added for ARECA support
@@ -324,14 +365,18 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
               $disk["LOAD_CYCLE_COUNT"] = trim(substr(trim($data_line), strrpos(trim($data_line), " ")));
             }
           }
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - smartctl --all /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
+
         } else if ($device_type == "USB") {
           // For USB devices
           $disk["TYPE"] = "USB";
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - udevadm info --query=property --name=/dev/".$disk["DEVICE"]." --attribute-walk 2>/dev/null" . "\n"; }
           $device_data = explode("\n", shell_exec("udevadm info --query=property --name=/dev/".$disk["DEVICE"]." --attribute-walk 2>/dev/null"));
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Analyze - udevadm info --query=property --name=/dev/".$disk["DEVICE"]." --attribute-walk 2>/dev/null" . "\n"; }
           foreach ($device_data as $data_line) {
             if (strpos($data_line, "ATTR")) {
-              $parameter = strtolower(trim(substr($data_line, strpos($data_line, "{")+1, strpos($data_line, "}")-strpos($data_line, "{")-1)));
-              switch ($parameter) {
+              $parameter = trim(substr($data_line, strpos($data_line, "{")+1, strpos($data_line, "}")-strpos($data_line, "{")-1));
+              switch (strtolower($parameter)) {
                 case "serial"       : $first_quote_pos = strpos($data_line, "\"");
                                       $disk["SN"] = trim(substr($data_line, ($first_quote_pos+1), strpos($data_line, "\"", $first_quote_pos+1) - $first_quote_pos - 1)); break;
                 case "manufacturer" : $first_quote_pos = strpos($data_line, "\"");
@@ -343,34 +388,45 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
               }
             }
           }
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - udevadm info --query=property --name=/dev/".$disk["DEVICE"]." --attribute-walk 2>/dev/null" . "\n"; }
+
           // Find USB capacity
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
           $device_data = explode("\n", shell_exec("sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null"));
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Analyze - sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
           foreach ($device_data as $data_line) {
             if (strpos($data_line, "sectors, ")) {
               $disk["CAPACITY"] = trim(substr($data_line, strpos($data_line, "sectors, ")+strlen("sectors, ")));
             }
           }
+          if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - sgdisk -p /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
        }
  
       } elseif (substr($disk["DEVICE"],0,2) == "sr") {  // Get CD/DVD data
         // For CD/DVD devices
         $disk["TYPE"] = "CD/DVD";
         $disk["CAPACITY"] = "CD/DVD";
+        if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - hdparm -I /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
         $device_data = explode("\n", shell_exec("hdparm -I /dev/".$disk["DEVICE"]." 2>/dev/null"));
+        if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Analyze - hdparm -I /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
         foreach ($device_data as $data_line) {
           if (strpos($data_line, ":")) {
-            $parameter = strtolower(trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":"))));
-            switch ($parameter) {
+            $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
+            switch (strtolower($parameter)) {
               case "serial number:"    : $disk["SN"] = trim(substr($data_line, (strpos($data_line, $parameter)+strlen($parameter)))); break;
               default :
             }
           }
         }
+        if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - hdparm -I /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
+
+        if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - smartctl -i /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
         $device_data = explode("\n", shell_exec("smartctl -i /dev/".$disk["DEVICE"]." 2>/dev/null"));
+        if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Analyze - smartctl -i /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
         foreach ($device_data as $data_line) {
           if (strpos($data_line, ":")) {
-            $parameter = strtolower(trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":"))));
-            switch ($parameter) {
+            $parameter = trim(substr($data_line, 0, strpos($data_line, ":")+strlen(":")));
+            switch (strtolower($parameter)) {
               case "vendor:"        : $disk["MANUFACTURER"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
               case "product:"       : $disk["MODEL"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
               case "revision:"      : $disk["FW"] = trim(substr($data_line, strpos($data_line, $parameter)+strlen($parameter))); break;
@@ -378,14 +434,19 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
             }
           }
         }
+        if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - smartctl -i /dev/".$disk["DEVICE"]." 2>/dev/null" . "\n"; }
       }
 
+      if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - Check_Add_Update_Disk($myJSONconfig, $disk)" . "\n"; }
       $myJSONconfig = Check_Add_Update_Disk($myJSONconfig, $disk);
+      if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - Check_Add_Update_Disk($myJSONconfig, $disk)" . "\n"; }
 
     }
   }
+  if ($profiler_on == "YES") { $profiler .= microtime(true) . ",End - ls -las /dev/disk/by-id 2>/dev/null" . "\n"; }
 
   // Change all remaining disks (if exist any disks) with FOUND="NO" to STATUS="HISTORICAL"
+  if ($profiler_on == "YES") { $profiler .= microtime(true) . ",Start - Update not FOUND to HISTORICAL" . "\n"; }
   if ($myJSONconfig["DISK_DATA"] != "") {
     foreach (array_keys($myJSONconfig["DISK_DATA"]) as $disk_SN) {
       if ($myJSONconfig["DISK_DATA"][$disk_SN]["FOUND"] == "NO") {
@@ -393,12 +454,14 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
         $myJSONconfig["DISK_DATA"][$disk_SN]["DEVICE"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["PATH"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["UNRAID"] = "";
-        $myJSONconfig["DISK_DATA"][$disk_SN]["TRAY_NUM"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["COLOR"] = "";
         $myJSONconfig["DISK_DATA"][$disk_SN]["FOUND"] = "YES";
       }
     }
   }
+  if ($profiler_on == "YES") { $profiler .= microtime(true) . ",END - Update not FOUND to HISTORICAL" . "\n"; }
+  $GLOBALS["profiler"] = $profiler;
+  $GLOBALS["profiler_on"] = $profiler_on;
   return $myJSONconfig;
 }
 ?>
