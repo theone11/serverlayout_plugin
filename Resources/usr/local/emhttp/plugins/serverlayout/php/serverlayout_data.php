@@ -128,27 +128,24 @@ function InitDisabledFields() {
 function TrayOptionsStartup() {
   var num_trays = <?php echo $num_trays ?>;
   // Create initial_trays array for all disks found
-  var initial_trays = [<?php $first = true;
-                             foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                               if (($disk["STATUS"] == "INSTALLED") and ($disk["TYPE"] != USB)) {
-                                 if ($first) {
-                                   $first = false;
-                                   echo "\"".$disk["TRAY_NUM"]."\"";
-                                 } else {
-                                   echo ", \"".$disk["TRAY_NUM"]."\"";
-                                 }
-                               }
-                             } ?>];
+  <?php 
+  $trays = array();
+  foreach ($myJSONconfig["DISK_DATA"] as $disk) {
+    if (($disk["STATUS"] == "INSTALLED") and ($disk["TYPE"] != USB)) {
+      $disk_tray_num = "";
+      foreach ($myJSONconfig["PATH_DATA"] as $num => $value) {
+        if (isset($value) && $value == $disk['PATH_FULL']) {
+          $disk_tray_num = $num;
+          break;
+        }
+      }
+      $trays[] = $disk_tray_num;
+    }
+  } 
+  ?>
+  var initial_trays = [<?echo '"'.implode('", "', $trays).'"';?>];
 
-  var tray_shows = [<?php $first = true;
-                          foreach ($myJSONconfig["TRAY_SHOW"] as $tray_show) {
-                            if ($first) {
-                              $first = false;
-                              echo "\"".$tray_show."\"";
-                            } else {
-                              echo ", \"".$tray_show."\"";
-                            }
-                          } ?>];
+  var tray_shows = [<?echo '"'.implode('", "', $myJSONconfig["TRAY_SHOW"]).'"';?>];
 
   var elements = document.getElementsByClassName("TRAY_NUM_CLASS");
 
@@ -344,7 +341,9 @@ function StartUp() {
         <?php for ($j = 1; $j <= $columns; $j++) {
             $x_translate = $orientation/90*(-$width_preview/2 + $height_preview/2 - ($j-1)*($width_preview-$height_preview));
             $y_translate = $orientation/90*(-$width_preview/2 + $height_preview/2);
-            $tray_num = (($i-1) * $columns) + $j; ?>
+            $tray_num = (($i-1) * $columns) + $j; 
+            $tray_path = $myJSONconfig["PATH_DATA"][$tray_num];
+          ?>
           <div class="cell_container_preview"
                <?php if ($orientation == 90) { echo "style=\"transform: -webkit-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);
                                                                         -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);
@@ -355,7 +354,7 @@ function StartUp() {
               <div id="TRAY_TEXT<?php echo $tray_num; ?>" class="cell_text_preview">
               <?php echo "<span>".$tray_num."</span>";
                     foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                      if (($disk["STATUS"]=="INSTALLED") and ($disk["TRAY_NUM"] == $tray_num)) {
+                      if (($disk["STATUS"]=="INSTALLED") and ($disk["PATH_FULL"] == $tray_path)) {
                         echo "<span> ".$disk["DEVICE"]."</span>";
                       }
                     } ?>
@@ -408,7 +407,7 @@ function StartUp() {
                         case "TRAY_NUM"            : if ($disk["TYPE"] != "USB") { ?>
                                                      <select class="MANUAL_DATA TRAY_NUM_CLASS" name="TRAY_NUMS[]" id="TRAY_NUM_<?php echo $disk["SN"]; ?>" size="1" onfocus="this.oldvalue = this.value;" onchange="UpdateTrayOptions('<?php echo $disk["DEVICE"]; ?>', this); this.oldvalue = this.value;">
                                                      </select>
-                                                     <input type="hidden" name="TRAY_NUMS_SN[]" value="<?php echo $disk["SN"]; ?>">
+                                                     <input type="hidden" name="PATH_FULL[]" value="<?php echo $disk["PATH_FULL"]; ?>">
                                                      <?php }
                                                      break;
                         case "TYPE"                : switch ($disk["TYPE"]) {
