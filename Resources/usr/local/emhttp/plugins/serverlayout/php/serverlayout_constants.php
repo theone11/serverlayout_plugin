@@ -92,6 +92,14 @@ function listDir($root, $filter=null) {
   }
   return $paths;
 }
+
+function dirname2( $path, $depth ) {
+  for( $d=1 ; $d <= $depth ; $d++ ) {
+    $path = dirname( $path );
+  }
+  return $path;
+}
+
 // *****************************
 // Function Get_JSON_Config_File
 // *****************************
@@ -290,7 +298,7 @@ function Scan_Installed_Devices_Data($myJSONconfig) {
     // Find PATH
     $path = shell_exec("udevadm info -q path -n {$disk['DEVICE']}");
     $disk["PATH"] = basename(dirname(dirname($path)));
-    $disk["PATH_FULL"] = dirname(dirname(dirname($path)));
+    $disk["PATH_FULL"] = dirname2($path, 4);
 
     // Find UNRAID disk functionality
     foreach ($unraid_disks as $unraid_disk) {
