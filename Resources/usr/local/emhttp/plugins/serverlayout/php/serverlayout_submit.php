@@ -88,11 +88,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $myJSONconfig["TRAY_SHOW"][$key] = $_POST["TRAY_SHOW_".$key];
     }
 
+    // // Save TRAY_NUMs
+    // $datas = $_POST["TRAY_NUMS"];
+    // $keys = $_POST["TRAY_NUMS_SN"];
+    // foreach (array_combine($keys, $datas) as $key => $data) {
+    //   $myJSONconfig["DISK_DATA"][$key]["TRAY_NUM"] = $data;
+    // }
+
     // Save TRAY_NUMs
-    $datas = $_POST["TRAY_NUMS"];
-    $keys = $_POST["TRAY_NUMS_SN"];
-    foreach (array_combine($keys, $datas) as $key => $data) {
-      $myJSONconfig["DISK_DATA"][$key]["TRAY_NUM"] = $data;
+    $datas = $_POST["PATH_FULL"];
+    $keys = $_POST["TRAY_NUMS"];
+    for ($i=0; $i < count($datas); $i++) { 
+      $key = $keys[$i];
+      $data = $datas[$i];
+      $myJSONconfig["PATH_DATA"] = preg_grep("#{$data}#i", $myJSONconfig["PATH_DATA"], PREG_GREP_INVERT);
+      if ($key) {
+        $myJSONconfig["PATH_DATA"][$key] = $data;
+      }
     }
 
     // Write PURCHASE_DATE configuration

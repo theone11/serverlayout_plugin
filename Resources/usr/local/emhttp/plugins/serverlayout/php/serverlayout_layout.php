@@ -290,12 +290,13 @@ function UpdateDIVSizes() {
                                                       -ms-transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);
                                                       transform: rotate(-90deg) translate(".$y_translate."px, ".$x_translate."px);\""; } ?>>
       <?php $tray_num = (($i-1) * $columns) + $j;
+            $tray_path = $myJSONconfig["PATH_DATA"][$tray_num];
             $no_disk_exist = true;
             if ($myJSONconfig["TRAY_SHOW"][$tray_num] == "YES") { ?>
       <div class="cell_background">
         <?php if ($myJSONconfig["DISK_DATA"] != "") {
                 foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                  if (($disk["STATUS"] == "INSTALLED") and ($disk["TRAY_NUM"] == $tray_num)) {
+                  if (($disk["STATUS"] == "INSTALLED") and ($disk["PATH_FULL"] == $tray_path)) {
                     echo "<div class=\"cell_status\"><img src=\"/webGui/images/".$disk["COLOR"].".png\" width=\"".$status_width."px\"></div>";
                     echo "<div class=\"cell_text_exist\">";
                     $no_disk_exist = false;
