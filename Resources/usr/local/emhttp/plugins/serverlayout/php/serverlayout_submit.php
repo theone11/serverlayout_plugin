@@ -29,6 +29,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
       $myJSONconfig["GENERAL"]["TOOLTIP_ENABLE"] = "NO";
     }
     
+    // Write Debug settings
+    if (isset($_POST["TIME_PROFILING"]) and ($_POST["TIME_PROFILING"] == "YES")) {
+      $myJSONconfig["DEBUG"]["TIME_PROFILING"] = "YES";
+    } else {
+      $myJSONconfig["DEBUG"]["TIME_PROFILING"] = "NO";
+    }
+    
     // Write DATA_COLUMNS new configuration
     foreach (array_keys($myJSONconfig["DATA_COLUMNS"]) as $data_column_name) {
       if (isset($_POST["SHOW_DATA_".$data_column_name]) and ($_POST["SHOW_DATA_".$data_column_name] == "YES")) {

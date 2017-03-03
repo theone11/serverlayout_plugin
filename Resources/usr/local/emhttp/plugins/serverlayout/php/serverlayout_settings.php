@@ -176,6 +176,21 @@ function StartUp() {
       <a href="http://lime-technology.com/forum/index.php?topic=40223.0" target="_blank">Visit Server Layout plugin forum thread</a>
     </div>
 
+    <div id="title">
+      <span class="left">Debug</span>
+    </div>
+    <div>
+      <table>
+        <tr>
+          <td>Enable Time Profiling:</td>
+          <td><input type="checkbox" name="TIME_PROFILING" id="TIME_PROFILING" value="YES" <?php if ($myJSONconfig["DEBUG"]["TIME_PROFILING"] == "YES") { echo "checked"; } ?>></td>
+        </tr>
+      </table>
+      <blockquote class='inline_help'>
+        <p>Enable time profiling of the data gathering for code inspection and optimization<p>
+      </blockquote>
+    </div>
+
     </div>
 
   <div style="width:74%; float:right; border: 0px solid black; overflow: auto;">
