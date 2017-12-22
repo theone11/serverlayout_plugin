@@ -80,7 +80,7 @@ $default_disk = array("TRAY_NUM"            => "",
                       "COLOR"               => "",
                       );
 
-$default_disk_data = array("DISK_DATA" => "");
+$default_disk_data = array("DISK_DATA" => array());
 
 $profiler .= microtime(true) . ",Get_JSON_Config_File()" . "\n";
 $myJSONconfig = Get_JSON_Config_File();  // Get or create JSON configuration file
