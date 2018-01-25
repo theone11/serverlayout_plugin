@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2017.03.03">
+<!ENTITY version     "2018.01.25">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
-<!ENTITY packageMD5  "3d0e2708c524708a722d683b6afaec99">
+<!ENTITY packageMD5  "a1d785d4efed00cdc61f25cd7fe8c421">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,6 +22,8 @@
 >
 
 <CHANGES>
+###2018.01.25
+- Update for unRAID v6.4 - Thank you Squid
 ###2017.03.03
 - Added TRAY_NUM to HISTORICAL data - If drives fails you can see in which tray it was last seen
 - Added debug option - Time Profiling for data gathering performance analysis and future optimizations
