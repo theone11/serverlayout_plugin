@@ -130,7 +130,7 @@ function TrayOptionsStartup() {
   // Create initial_trays array for all disks found
   var initial_trays = [<?php $first = true;
                              foreach ($myJSONconfig["DISK_DATA"] as $disk) {
-                               if (($disk["STATUS"] == "INSTALLED") and ($disk["TYPE"] != USB)) {
+                               if (($disk["STATUS"] == "INSTALLED") and ($disk["TYPE"] != "USB")) {
                                  if ($first) {
                                    $first = false;
                                    echo "\"".$disk["TRAY_NUM"]."\"";
