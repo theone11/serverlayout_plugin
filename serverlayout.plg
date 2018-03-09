@@ -3,11 +3,11 @@
 <!DOCTYPE PLUGIN [
 <!ENTITY name        "serverlayout">
 <!ENTITY author      "Dan Kessler">
-<!ENTITY version     "2018.01.25">
+<!ENTITY version     "2018.03.09">
 <!ENTITY launch      "Settings/&name;">
 <!ENTITY pluginURL   "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&name;.plg">
 <!ENTITY packageVER  "&version;">
-<!ENTITY packageMD5  "a1d785d4efed00cdc61f25cd7fe8c421">
+<!ENTITY packageMD5  "57d111afd1a4b98d38904a2990794667">
 <!ENTITY packagefile "&name;-package-&packageVER;.tar.gz">
 <!ENTITY packageURL  "https://raw.githubusercontent.com/theone11/serverlayout_plugin/master/&packagefile;">
 <!ENTITY pluginLOC   "/boot/config/plugins/&name;">
@@ -22,6 +22,8 @@
 >
 
 <CHANGES>
+###2018.03.09
+- Update for unRAID v6.5 RC - Strict PHP regarding non-quoted constant - Thank you Squid
 ###2018.01.25
 - Update for unRAID v6.4 - Thank you Squid
 ###2017.03.03
